@@ -1,4 +1,4 @@
-package com.dev.innerview.ui.theme
+package com.dev.innerview.feature.main.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

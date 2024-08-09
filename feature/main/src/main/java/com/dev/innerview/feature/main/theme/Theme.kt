@@ -1,4 +1,4 @@
-package com.dev.innerview.ui.theme
+package com.dev.innerview.feature.main.theme
 
 import android.app.Activity
 import android.os.Build
