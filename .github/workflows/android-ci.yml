@@ -31,7 +31,9 @@ jobs:
           ${{ runner.os }}-gradle-
     
     - name: Test with Gradle
-      run: ./gradlew testDebugUnitTest
+      run: |
+        ./gradlew :app:testDebugUnitTest
+        ./gradlew :feature:testDebugUnitTest
 
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
