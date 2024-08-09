@@ -38,4 +38,4 @@ jobs:
       if: always()
       with:
         files: |
-          android/app/build/test-results/**/*.xml
+          app/build/test-results/**/*.xml
