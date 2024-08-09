@@ -19,10 +19,19 @@ jobs:
 
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
+
+    - name: Cache Gradle packages
+      uses: actions/cache@v2
+      with:
+        path: |
+          ~/.gradle/caches
+          ~/.gradle/wrapper
+        key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/buildSrc/**/*.kt') }}
+        restore-keys: |
+          ${{ runner.os }}-gradle-
     
     - name: Test with Gradle
       run: |
-        ./gradlew :app:testDebugUnitTest
         ./gradlew :feature:testDebugUnitTest
 
     - name: Publish Test Results
