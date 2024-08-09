@@ -32,7 +32,10 @@ jobs:
     
     - name: Test with Gradle
       run: |
-        ./gradlew :feature:testDebugUnitTest
+        for module in $(ls -d feature/*/); do
+          MODULE_NAME=$(basename $module)
+          ./gradlew :feature:$MODULE_NAME:testDebugUnitTest
+        done
 
     - name: Publish Test Results
       uses: EnricoMi/publish-unit-test-result-action@v2
