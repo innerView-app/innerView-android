@@ -1,4 +1,3 @@
-import com.dev.innerview.configureComposeAndroid
 import com.dev.innerview.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -9,15 +8,17 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("innerview.android.library")
+                apply("innerview.android.compose")
                 apply("innerview.android.hilt")
             }
 
-            configureComposeAndroid()
             dependencies {
                 add("implementation", libs.findLibrary("androidx.appcompat").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.runtimeCompose").get())
                 add("implementation", libs.findLibrary("androidx.lifecycle.viewModelCompose").get())
                 add("implementation", libs.findLibrary("androidx.activity.compose").get())
+
+                add("implementation", project(":core:designsystem"))
             }
         }
     }
