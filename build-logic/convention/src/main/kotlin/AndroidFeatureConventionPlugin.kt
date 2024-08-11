@@ -19,6 +19,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 add("implementation", libs.findLibrary("androidx.activity.compose").get())
 
                 add("implementation", project(":core:designsystem"))
+                add("implementation", project(":core:navigation"))
             }
         }
     }

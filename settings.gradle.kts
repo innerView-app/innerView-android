@@ -24,3 +24,4 @@ rootProject.name = "innerView"
 include(":app")
 include(":feature:main")
 include(":core:designsystem")
+include(":core:navigation")
