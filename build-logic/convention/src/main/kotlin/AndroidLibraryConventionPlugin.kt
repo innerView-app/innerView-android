@@ -11,8 +11,11 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
         with(target) {
             with(pluginManager) {
                 apply("com.android.library")
+                apply("innerview.android.hilt")
             }
+
             configureKotlinAndroid()
+
             extensions.configure<LibraryExtension> {
                 // The resource prefix is derived from the module name,
                 // so resources inside ":core:module1" must be prefixed with "core_module1_"
@@ -20,6 +23,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
                     path.split("""\W""".toRegex()).drop(1).distinct().joinToString(separator = "_")
                         .lowercase() + "_"
             }
+
             dependencies {
                 add("testImplementation", kotlin("test"))
             }
