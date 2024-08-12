@@ -1,6 +1,7 @@
 package com.dev.innerview.feature.home
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -24,6 +24,7 @@ import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
 import com.dev.innerview.core.designsystem.component.InnerViewCard
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
+import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import kotlinx.coroutines.flow.collectLatest
@@ -50,27 +51,26 @@ private fun HomeScreen(
     padding: PaddingValues,
     onInnerViewClick: (String) -> Unit
 ) {
-    Scaffold(
+    Box(
         modifier = Modifier
             .padding(padding)
-            .fillMaxSize(),
-        topBar = {
-            InnerViewTopAppBar(
-                titleString = "innerView",
-                navigationType = TopAppBarNavigationType.None,
-                actionButtons = {
-                    InnerViewAppBarIcon(
-                        imageVector = Icons.Filled.KeyboardArrowUp,
-                        navigationIconContentDescription = null
-                    )
-                }
-            )
-        }
-    ) { paddingValues ->
+            .fillMaxSize()
+    ) {
+        InnerViewTopAppBar(
+            titleString = "innerView",
+            navigationType = TopAppBarNavigationType.None,
+            actionButtons = {
+                InnerViewAppBarIcon(
+                    imageVector = Icons.Filled.KeyboardArrowUp,
+                    navigationIconContentDescription = null
+                )
+            }
+        )
         Column(
             modifier = Modifier
-                .padding(paddingValues)
+                .padding(top = appBarSize)
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)
                 .padding(Paddings.large)
         ) {
             InnerViewCard(

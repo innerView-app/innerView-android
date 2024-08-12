@@ -1,14 +1,14 @@
 package com.dev.innerview.feature.edit
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -19,12 +19,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
+import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun EditRoute(
-    padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit,
     viewModel: EditViewModel = hiltViewModel(),
@@ -34,38 +34,36 @@ internal fun EditRoute(
     }
 
     EditScreen(
-        padding = padding,
         onBackClick = onBackClick
     )
 }
 
 @Composable
 private fun EditScreen(
-    padding: PaddingValues,
     onBackClick: () -> Unit
 ) {
-    Scaffold(
+    Box(
         modifier = Modifier
-            .padding(padding)
-            .fillMaxSize(),
-        topBar = {
-            InnerViewTopAppBar(
-                titleString = "편집",
-                navigationType = TopAppBarNavigationType.Back,
-                onNavigationClick = { onBackClick() },
-                actionButtons = {
-                    InnerViewAppBarIcon(
-                        imageVector = Icons.Filled.Done,
-                        navigationIconContentDescription = null
-                    )
-                }
-            )
-        }
-    ) { paddingValues ->
+            .systemBarsPadding()
+            .fillMaxSize()
+    ) {
+        InnerViewTopAppBar(
+            titleString = "편집",
+            navigationType = TopAppBarNavigationType.Back,
+            onNavigationClick = { onBackClick() },
+            actionButtons = {
+                InnerViewAppBarIcon(
+                    imageVector = Icons.Filled.Done,
+                    navigationIconContentDescription = null
+                )
+            }
+        )
         Box(
             modifier = Modifier
-                .padding(paddingValues)
-                .fillMaxSize(),
+                .systemBarsPadding()
+                .padding(top = appBarSize)
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
             Text(
@@ -82,7 +80,6 @@ private fun EditScreen(
 private fun EditScreenPreview() {
     InnerViewTheme {
         EditScreen(
-            padding = PaddingValues(),
             onBackClick = {}
         )
     }

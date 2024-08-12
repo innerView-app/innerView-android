@@ -37,7 +37,6 @@ fun NavGraphBuilder.homeNavGraph(
         val id = navBackStackEntry.toRoute<Route.InnerViewDetail>().id
         InnerViewDetailScreen(
             id = id,
-            padding = padding,
             onBackClick = onBackClick
         )
     }

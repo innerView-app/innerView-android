@@ -13,13 +13,11 @@ fun NavController.navigateEdit(navOptions: NavOptions) {
 }
 
 fun NavGraphBuilder.editNavGraph(
-    padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable<MainTabRoute.Edit> {
         EditRoute(
-            padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick
         )

@@ -34,7 +34,6 @@ internal fun MainNavHost(
             onShowErrorSnackBar = onShowErrorSnackBar
         )
         editNavGraph(
-            padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = { navigator.popBackStackIfNotHome() }
         )
