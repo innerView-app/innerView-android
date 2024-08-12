@@ -5,18 +5,40 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
-import com.dev.innerview.feature.home.HomeRoute
+import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.MainTabRoute
+import com.dev.innerview.core.navigation.Route
+import com.dev.innerview.feature.home.HomeRoute
+import com.dev.innerview.feature.home.InnerViewDetailScreen
 
 fun NavController.navigateHome(navOptions: NavOptions) {
     navigate(MainTabRoute.Home, navOptions)
 }
 
+fun NavController.navigateInnerViewDetail(id: String) {
+    navigate(Route.InnerViewDetail(id))
+}
+
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
-    onShowErrorSnackBar: (throwable: Throwable?) -> Unit
+    onBackClick: () -> Unit,
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onInnerViewClick: (String) -> Unit
 ) {
     composable<MainTabRoute.Home> {
-        HomeRoute(padding, onShowErrorSnackBar)
+        HomeRoute(
+            padding = padding,
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            onInnerViewClick = onInnerViewClick
+        )
+    }
+
+    composable<Route.InnerViewDetail> { navBackStackEntry ->
+        val id = navBackStackEntry.toRoute<Route.InnerViewDetail>().id
+        InnerViewDetailScreen(
+            id = id,
+            padding = padding,
+            onBackClick = onBackClick
+        )
     }
 }
