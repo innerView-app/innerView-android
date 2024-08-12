@@ -1,5 +1,7 @@
 package com.dev.innerview.feature.main.component
 
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
@@ -18,6 +20,8 @@ internal fun MainNavHost(
     NavHost(
         navController = navigator.navController,
         startDestination = navigator.startDestination,
+        enterTransition = { EnterTransition.None },
+        exitTransition = { ExitTransition.None }
     ) {
         homeNavGraph(
             padding = padding,
