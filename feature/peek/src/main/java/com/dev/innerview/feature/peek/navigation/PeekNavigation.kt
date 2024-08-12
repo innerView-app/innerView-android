@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.dev.innerview.feature.peek.PeekRoute
-import com.dev.innerview.navigation.MainTabRoute
+import com.dev.innerview.core.navigation.MainTabRoute
 
 fun NavController.navigatePeek(navOptions: NavOptions) {
     navigate(MainTabRoute.Peek, navOptions)

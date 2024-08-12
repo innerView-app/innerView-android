@@ -6,7 +6,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import com.dev.innerview.feature.peek.ProfileRoute
-import com.dev.innerview.navigation.MainTabRoute
+import com.dev.innerview.core.navigation.MainTabRoute
 
 fun NavController.navigateProfile(navOptions: NavOptions) {
     navigate(MainTabRoute.Profile, navOptions)

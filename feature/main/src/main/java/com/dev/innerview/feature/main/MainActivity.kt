@@ -18,19 +18,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dev.innerview.designsystem.component.InnerViewCard
-import com.dev.innerview.designsystem.component.InnerViewTopAppBar
-import com.dev.innerview.designsystem.component.TopAppBarNavigationType
-import com.dev.innerview.designsystem.theme.InnerViewTheme
-import com.dev.innerview.designsystem.theme.Paddings
+import com.dev.innerview.core.designsystem.component.InnerViewCard
+import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
+import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
+import com.dev.innerview.core.designsystem.theme.InnerViewTheme
+import com.dev.innerview.core.designsystem.theme.Paddings
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
+
+            val navigator: MainNavigator = rememberMainNavigator()
+
             InnerViewTheme {
-                Greeting()
+                MainScreen(
+                    navigator = navigator
+                )
             }
         }
     }

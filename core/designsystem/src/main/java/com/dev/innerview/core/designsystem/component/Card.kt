@@ -1,4 +1,4 @@
-package com.dev.innerview.designsystem.component
+package com.dev.innerview.core.designsystem.component
 
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dev.innerview.designsystem.theme.InnerViewTheme
+import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
 fun InnerViewCard(

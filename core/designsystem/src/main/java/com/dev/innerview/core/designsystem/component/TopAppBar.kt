@@ -1,5 +1,6 @@
-package com.dev.innerview.designsystem.component
+package com.dev.innerview.core.designsystem.component
 
+import android.R
 import android.content.res.Configuration
 import androidx.annotation.StringRes
 import androidx.compose.foundation.background
@@ -25,7 +26,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.dev.innerview.designsystem.theme.InnerViewTheme
+import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 val appBarSize = 48.dp
 
@@ -102,7 +103,7 @@ enum class TopAppBarNavigationType { Back, None }
 private fun InnerViewTopAppBarPreviewBack() {
     InnerViewTheme {
         InnerViewTopAppBar(
-            titleRes = android.R.string.untitled,
+            titleRes = R.string.untitled,
             navigationType = TopAppBarNavigationType.Back,
             navigationIconContentDescription = "Navigation icon"
         )
@@ -115,7 +116,7 @@ private fun InnerViewTopAppBarPreviewBack() {
 private fun InnerViewTopAppBarPreviewNone() {
     InnerViewTheme {
         InnerViewTopAppBar(
-            titleRes = android.R.string.untitled,
+            titleRes = R.string.untitled,
             navigationType = TopAppBarNavigationType.None,
             navigationIconContentDescription = "Navigation icon"
         )
