@@ -17,7 +17,7 @@ baselineprofile = "1.2.4"
 
 ## Compose
 androidxComposeBom = "2024.06.00"
-androidxComposeNavigation = "2.8.0-beta07"
+androidxComposeNavigation = "2.8.0-beta02"
 androidxComposeMaterial3 = "1.2.1"
 
 ## Kotlin Symbol Processing
