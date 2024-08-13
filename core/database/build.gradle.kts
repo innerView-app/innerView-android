@@ -1,5 +1,6 @@
 plugins {
     id("innerview.android.library")
+    id("innerview.android.realm")
 }
 
 android {
