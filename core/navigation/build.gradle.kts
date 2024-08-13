@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.dev.innerview.navigation"
+    namespace = "com.dev.innerview.core.navigation"
 }
 
 dependencies {
