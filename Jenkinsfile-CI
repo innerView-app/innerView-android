@@ -1,0 +1,53 @@
+pipeline {
+    agent {
+        docker {
+            image 'hailimlee/innerview-android-builder:latest'
+        }
+    }
+    environment {
+        GITHUB_TOKEN = credentials('hailim1997')
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+        stage('Build App') {
+            steps {
+                sh './gradlew assembleDebug'
+            }
+        }
+    }
+    post {
+        success {
+            script {
+                githubNotify context: 'Jenkins', status: 'SUCCESS'
+            }
+            echo 'App build completed successfully!'
+        }
+        failure {
+            script {
+                githubNotify context: 'Jenkins', status: 'FAILURE'
+            }
+            echo 'App build failed!'
+        }
+    }
+}
+
+def githubNotify(Map args) {
+    def context = args.context
+    def status = args.status
+
+    sh """
+    curl -H "Authorization: token ${GITHUB_TOKEN}" \
+        -X POST \
+        -d '{
+            "state": "${status.toLowerCase()}",
+            "context": "${context}",
+            "description": "Jenkins build ${status.toLowerCase()}",
+            "target_url": "${env.BUILD_URL}"
+        }' \
+        https://api.github.com/repos/<your-username>/<your-repo>/statuses/${env.GIT_COMMIT}
+    """
+}
