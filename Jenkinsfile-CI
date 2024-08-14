@@ -48,6 +48,6 @@ def githubNotify(Map args) {
             "description": "Jenkins build ${status.toLowerCase()}",
             "target_url": "${env.BUILD_URL}"
         }' \
-        https://api.github.com/repos/<your-username>/<your-repo>/statuses/${env.GIT_COMMIT}
+        https://api.github.com/repos/innerView-app/innerView-android/statuses/${env.GIT_COMMIT}
     """
 }
