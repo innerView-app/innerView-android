@@ -7,4 +7,8 @@ android {
 }
 
 dependencies {
+    implementation(project(":feature:home"))
+    implementation(project(":feature:peek"))
+    implementation(project(":feature:edit"))
+    implementation(project(":feature:profile"))
 }

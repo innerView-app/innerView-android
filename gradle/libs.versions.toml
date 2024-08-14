@@ -17,7 +17,7 @@ baselineprofile = "1.2.4"
 
 ## Compose
 androidxComposeBom = "2024.06.00"
-androidxComposeNavigation = "2.8.0-beta07"
+androidxComposeNavigation = "2.8.0-beta02"
 androidxComposeMaterial3 = "1.2.1"
 
 ## Kotlin Symbol Processing
@@ -35,6 +35,8 @@ retrofit = "2.11.0"
 
 ## Kotlin
 kotlin = "2.0.0"
+kotlinxSerializationJson = "1.7.0"
+kotlinxImmutable = "0.3.7"
 
 ## Coroutine
 turbine = "1.1.0"
@@ -81,6 +83,9 @@ hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-com
 okhttp-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp" }
 retrofit-core = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinxSerializationJson" }
+kotlinx-immutable = { group = "org.jetbrains.kotlinx", name = "kotlinx-collections-immutable", version.ref = "kotlinxImmutable" }
+
 coroutines-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "coroutine" }
 coroutines-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "coroutine" }
 coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "coroutine" }
@@ -95,6 +100,7 @@ material = { group = "com.google.android.material", name = "material", version.r
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 hilt = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }

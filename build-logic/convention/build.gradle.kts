@@ -49,5 +49,10 @@ gradlePlugin {
             id = "innerview.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
         }
+
+        register("androidKotlinSerialization") {
+            id = "innerview.android.kotlin.serialization"
+            implementationClass = "AndroidKotlinSerializationConventionPlugin"
+        }
     }
 }

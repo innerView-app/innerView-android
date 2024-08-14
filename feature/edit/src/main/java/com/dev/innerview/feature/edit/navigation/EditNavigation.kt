@@ -1,0 +1,25 @@
+package com.dev.innerview.feature.edit.navigation
+
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.NavOptions
+import androidx.navigation.compose.composable
+import com.dev.innerview.core.navigation.MainTabRoute
+import com.dev.innerview.feature.edit.EditRoute
+
+fun NavController.navigateEdit(navOptions: NavOptions) {
+    navigate(MainTabRoute.Edit, navOptions)
+}
+
+fun NavGraphBuilder.editNavGraph(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onBackClick: () -> Unit
+) {
+    composable<MainTabRoute.Edit> {
+        EditRoute(
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            onBackClick = onBackClick
+        )
+    }
+}

@@ -26,4 +26,6 @@ android {
 
 dependencies {
     implementation(project(":feature:main"))
+
+    implementation(project(":core:navigation"))
 }
