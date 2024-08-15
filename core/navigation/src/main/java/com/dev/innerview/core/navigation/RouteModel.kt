@@ -10,19 +10,19 @@ sealed interface Route {
     data object InnerViewQuestion : Route
 
     @Serializable
-    data object InterViewGroup : Route
+    data object InterviewGroup : Route
 
     @Serializable
     data object Player : Route
 
     @Serializable
-    data object Record : Route
+    data object Records : Route
 
     @Serializable
-    data object Camera : Route
+    data object Filming : Route
 
     @Serializable
-    data object InterViewSelect : Route
+    data object InterviewSelect : Route
 
     @Serializable
     data object Setting : Route
