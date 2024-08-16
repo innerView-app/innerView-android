@@ -4,10 +4,9 @@ plugins {
 }
 
 android {
-    namespace = "com.dev.innerview.core.data"
+    namespace = "com.dev.innerview.core.data_api"
 }
 
 dependencies {
     implementation(project(":core:model"))
-    implementation(project(":core:data-api"))
 }
