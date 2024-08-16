@@ -23,10 +23,8 @@ import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
-fun InnerViewDetailScreen(
-    id: String,
+fun InterviewGroupScreen(
     onBackClick: () -> Unit,
-    onInterviewGroupClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -34,7 +32,7 @@ fun InnerViewDetailScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = id,
+            titleString = "InterviewGroup",
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -61,7 +59,7 @@ fun InnerViewDetailScreen(
             contentAlignment = Alignment.Center
         ) {
             Text(
-                text = "innerViewDetail Screen",
+                text = "InterviewGroup Screen",
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -71,12 +69,10 @@ fun InnerViewDetailScreen(
 @Composable
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
-private fun InnerViewDetailScreenPreview() {
+private fun InterviewGroupScreenPreview() {
     InnerViewTheme {
-        InnerViewDetailScreen(
-            id = "test id",
-            onBackClick = {},
-            onInterviewGroupClick = {},
+        InterviewGroupScreen(
+            onBackClick = {}
         )
     }
 }
