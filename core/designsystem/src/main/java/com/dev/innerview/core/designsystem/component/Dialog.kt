@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -104,13 +105,44 @@ fun InnerViewDialog(
 private fun InnerViewDialogPreview() {
     InnerViewTheme {
         InnerViewDialog(
-            titleTextString = "이너뷰 타입 선택",
+            titleTextString = "이너뷰 생성",
             contentTextString = "1 year : 1년에 한 번 같은 질문으로 인터뷰\n" +
                     "1 month : 1달에 한 번 같은 질문으로 인터뷰\n" +
                     "1 week: 1주일에 한 번 같은 질문으로 인터뷰\n" +
                     "매일 : 매일 다른 질문으로 인터뷰",
             confirmTextString = "생성",
             dismissTextString = "취소"
-        )
+        ) {
+            InnerViewDialogTextField(
+                value = { "" },
+                onValueChange = { },
+                placeholderText = "이너뷰 제목을 입력하세요.",
+                labelText = "innerView title",
+                supportingText = "0/50"
+            )
+            InnerViewRadioButton(
+                textString = "1 year",
+                selected = { true },
+                onClick = {}
+            )
+            HorizontalDivider()
+            InnerViewRadioButton(
+                textString = "1 month",
+                selected = { false },
+                onClick = {}
+            )
+            HorizontalDivider()
+            InnerViewRadioButton(
+                textString = "1 week",
+                selected = { false },
+                onClick = {}
+            )
+            HorizontalDivider()
+            InnerViewRadioButton(
+                textString = "매일",
+                selected = { false },
+                onClick = {}
+            )
+        }
     }
 }
