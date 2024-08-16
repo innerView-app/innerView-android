@@ -80,7 +80,7 @@ fun InnerViewTopAppBar(
                     Spacer(modifier = Modifier.size(appBarSize))
                 }
                 Text(
-                    text = titleRes?.let { stringResource(id = titleRes) } ?: titleString,
+                    text = titleRes?.let { stringResource(id = it) } ?: titleString,
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
