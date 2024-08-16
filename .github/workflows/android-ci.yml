@@ -42,7 +42,7 @@ jobs:
         id: changes
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '^(core|feature)/')
-          MODULES=$(echo "$CHANGED_FILES" | sed -e 's|^([^/]+/[^/]+).*|\1|' | sed 's/\//:/g' | sort | uniq)
+          MODULES=$(echo "$CHANGED_FILES" | awk -F'/' '{print $1":"$2}' | sort | uniq)
           FILES=$(echo "$CHANGED_FILES" | grep -vE '/test/' | grep '\.kt$')
           FILES=$(echo "$FILES" | tr '\n' ' ')
           MODULES=$(echo "$MODULES" | tr '\n' ' ')
