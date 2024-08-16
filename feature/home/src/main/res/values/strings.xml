@@ -1,4 +1,5 @@
 <resources>
     <string name="feature_home_innerview_screen_title">innerView</string>
     <string name="feature_home_icon_description_upload">업로드</string>
+    <string name="feature_home_innerview_create">이너뷰 생성</string>
 </resources>
