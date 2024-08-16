@@ -14,6 +14,7 @@ import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.navigation.navigateEdit
 import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
+import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
@@ -55,6 +56,10 @@ internal class MainNavigator(
 
     fun navigateInterviewGroup() {
         navController.navigateInterviewGroup()
+    }
+
+    fun navigateInnerViewQuestion() {
+        navController.navigateInnerViewQuestion()
     }
 
     private fun popBackStack() {
