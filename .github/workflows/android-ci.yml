@@ -41,7 +41,7 @@ jobs:
       - name: Determine changed files and modules
         id: changes
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} ${{ github.head_ref }} | grep -E '^(core|feature)/')
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '^(core|feature)/')
           MODULES=$(echo "$CHANGED_FILES" | sed -e 's:/[^/]*$::' | sed 's/\//:/g' | sort | uniq)
           FILES=$(echo "$CHANGED_FILES" | grep -vE '/test/' | grep '\.kt$')
           echo "FILES=$FILES" >> $GITHUB_ENV
