@@ -32,7 +32,7 @@ fun InterviewGroupScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = "InterviewGroup",
+            title = "InterviewGroup",
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {

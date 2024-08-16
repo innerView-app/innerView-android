@@ -1,8 +1,6 @@
 package com.dev.innerview.core.designsystem.component
 
-import android.R
 import android.content.res.Configuration
-import androidx.annotation.StringRes
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -23,7 +21,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
@@ -50,8 +47,7 @@ fun InnerViewAppBarIcon(
 
 @Composable
 fun InnerViewTopAppBar(
-    @StringRes titleRes: Int? = null,
-    titleString: String = "",
+    title: String = "",
     navigationIconContentDescription: String? = null,
     navigationType: TopAppBarNavigationType = TopAppBarNavigationType.None,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
@@ -80,7 +76,7 @@ fun InnerViewTopAppBar(
                     Spacer(modifier = Modifier.size(appBarSize))
                 }
                 Text(
-                    text = titleRes?.let { stringResource(id = it) } ?: titleString,
+                    text = title,
                     style = MaterialTheme.typography.bodyLarge,
                 )
             }
@@ -103,7 +99,7 @@ enum class TopAppBarNavigationType { Back, None }
 private fun InnerViewTopAppBarPreviewBack() {
     InnerViewTheme {
         InnerViewTopAppBar(
-            titleRes = R.string.untitled,
+            title = "<Untitled>",
             navigationType = TopAppBarNavigationType.Back,
             navigationIconContentDescription = "Navigation icon"
         )
@@ -116,7 +112,7 @@ private fun InnerViewTopAppBarPreviewBack() {
 private fun InnerViewTopAppBarPreviewNone() {
     InnerViewTheme {
         InnerViewTopAppBar(
-            titleRes = R.string.untitled,
+            title = "<Untitled>",
             navigationType = TopAppBarNavigationType.None,
             navigationIconContentDescription = "Navigation icon"
         )

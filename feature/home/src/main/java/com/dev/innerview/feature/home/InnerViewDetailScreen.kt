@@ -35,7 +35,7 @@ fun InnerViewDetailScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = id,
+            title = id,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {

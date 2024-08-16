@@ -32,7 +32,7 @@ fun InnerViewQuestionScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = "InnerViewQuestionScreen",
+            title = "InnerViewQuestionScreen",
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
