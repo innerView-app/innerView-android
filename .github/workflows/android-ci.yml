@@ -38,8 +38,7 @@ jobs:
       - name: Test with Gradle
         run: |
           for module in $(ls -d feature/*/ core/*/); do
-            MODULE_NAME=$(basename $module)
-            ./gradlew :feature:$MODULE_NAME:testDebugUnitTest
+            ./gradlew :${module%/}:testDebugUnitTest
           done
 
       - name: Publish Test Results
