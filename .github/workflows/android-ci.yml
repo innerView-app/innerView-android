@@ -35,12 +35,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-gradle-
 
+      - name: Determine changed files and modules
+        id: changes
+        run: |
+          CHANGED_FILES=$(git diff --name-only ${{ github.base_ref }} ${{ github.head_ref }} | grep -E '^(core|feature)/')
+          MODULES=$(echo "$CHANGED_FILES" | sed -e 's:/[^/]*$::' | sed 's/\//:/g' | sort | uniq)
+          FILES=$(echo "$CHANGED_FILES" | grep -vE '/test/' | grep '\.kt$')
+          echo "FILES=$FILES" >> $GITHUB_ENV
+          echo "MODULES=$MODULES" >> $GITHUB_ENV
+
       - name: Test with Gradle
         run: |
-          for module in $(ls -d feature/*/ core/*/); do
-            MODULE_PATH=$(echo $module | sed 's/\//:/g')
-            ./gradlew :${MODULE_PATH}testDebugUnitTest
+          for module in $MODULES; do
+            ./gradlew :${module}:testDebugUnitTest
           done
+        env:
+          MODULES: ${{ env.MODULES }}
 
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
@@ -50,9 +60,10 @@ jobs:
             **/build/test-results/**/*.xml
 
       - name: Run KtLint
+        if: ${{ env.FILES != '' }}
         uses: ScaCap/action-ktlint@master
         with:
-          args: "app/**/*.kt core/**/*.kt feature/**/*.kt '!**/test/**' '!**/Test/**'"
+          args: "${{ env.FILES }} '!**/test/**' '!**/Test/**'"
           github_token: ${{ secrets.TOKEN }}
           reporter: github-pr-review
           fail_on_error: false
