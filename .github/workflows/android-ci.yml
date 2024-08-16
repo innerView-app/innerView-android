@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      LOCAL_PROPERTIES_CONTENTS: ${{ secrets.LOCAL_PROPERTIES }}
+      LOCAL_PROPERTIES: ${{ secrets.LOCAL_PROPERTIES }}
       GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
     steps:
@@ -51,7 +51,7 @@ jobs:
 
       - name: Create local.properties
         run: |
-          echo "$LOCAL_PROPERTIES_CONTENTS" > local.properties
+          echo "$LOCAL_PROPERTIES" > local.properties
 
       - name: Determine changed files and modules
         id: changes
