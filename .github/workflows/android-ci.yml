@@ -38,7 +38,8 @@ jobs:
       - name: Test with Gradle
         run: |
           for module in $(ls -d feature/*/ core/*/); do
-            ./gradlew :${module%/}:testDebugUnitTest
+            MODULE_PATH=$(echo $module | sed 's:/:_:g')
+            ./gradlew :${MODULE_PATH}testDebugUnitTest
           done
 
       - name: Publish Test Results
