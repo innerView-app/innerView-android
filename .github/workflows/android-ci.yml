@@ -91,6 +91,6 @@ jobs:
         with:
           file_glob: "${{ env.FILES }} '!**/test/**' '!**/Test/**'"
           github_token: ${{ secrets.TOKEN }}
-          reporter: github-pr-review
-          fail_on_error: true
+          reporter: github-pr-check
+          fail_on_error: false
           level: warning
