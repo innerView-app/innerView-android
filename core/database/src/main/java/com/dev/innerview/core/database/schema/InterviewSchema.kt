@@ -5,5 +5,5 @@ import io.realm.kotlin.types.EmbeddedRealmObject
 class InterviewSchema : EmbeddedRealmObject {
     var createdAt: String = ""
     var question: String = ""
-    var project: ProjectSchema = ProjectSchema()
+    var project: ProjectSchema? = null
 }

@@ -24,8 +24,10 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
 fun InnerViewDetailScreen(
-    id: String,
+    id: Int,
     onBackClick: () -> Unit,
+    onInterviewGroupClick: () -> Unit,
+    onInnerViewQuestionClick: () -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -33,13 +35,14 @@ fun InnerViewDetailScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = id,
+            title = id.toString(),
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.List,
-                    navigationIconContentDescription = null
+                    navigationIconContentDescription = null,
+                    onClick = { onInnerViewQuestionClick() }
                 )
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.Notifications,
@@ -73,8 +76,10 @@ fun InnerViewDetailScreen(
 private fun InnerViewDetailScreenPreview() {
     InnerViewTheme {
         InnerViewDetailScreen(
-            id = "test id",
-            onBackClick = {}
+            id = 0,
+            onBackClick = {},
+            onInterviewGroupClick = {},
+            onInnerViewQuestionClick = {}
         )
     }
 }

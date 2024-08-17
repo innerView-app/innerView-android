@@ -28,6 +28,8 @@ internal fun MainNavHost(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onInnerViewClick = { navigator.navigateInnerViewDetail(it) },
             onBackClick = { navigator.popBackStackIfNotHome() },
+            onInterviewGroupClick = { navigator.navigateInterviewGroup() },
+            onInnerViewQuestionClick = { navigator.navigateInnerViewQuestion() }
         )
         peekNavGraph(
             padding = padding,

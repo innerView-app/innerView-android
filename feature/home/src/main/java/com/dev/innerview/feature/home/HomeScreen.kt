@@ -2,38 +2,47 @@ package com.dev.innerview.feature.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
-import com.dev.innerview.core.designsystem.component.InnerViewCard
+import com.dev.innerview.core.designsystem.component.InnerViewFloatingActionButton
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.feature.home.component.InnerViewCreateDialog
+import com.dev.innerview.feature.home.component.InnerViewItem
+import com.dev.innerview.feature.home.model.HomeUiState
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onInnerViewClick: (String) -> Unit,
+    onInnerViewClick: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
@@ -41,83 +50,89 @@ internal fun HomeRoute(
     }
 
     HomeScreen(
+        viewModel = viewModel,
         padding = padding,
-        onInnerViewClick = onInnerViewClick
+        onInnerViewClick = onInnerViewClick,
     )
 }
 
+
 @Composable
 private fun HomeScreen(
+    viewModel: HomeViewModel,
     padding: PaddingValues,
-    onInnerViewClick: (String) -> Unit
+    onInnerViewClick: (Int) -> Unit,
 ) {
+    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+
     Box(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = "innerView",
+            title = stringResource(id = R.string.feature_home_innerview_screen_title),
             navigationType = TopAppBarNavigationType.None,
             actionButtons = {
                 InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.KeyboardArrowUp,
-                    navigationIconContentDescription = null
+                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_upload),
+                    navigationIconContentDescription = stringResource(R.string.feature_home_icon_description_upload)
                 )
             }
         )
-        Column(
+
+        if (homeUiState.isInnerViewCreateDialogVisible) {
+            InnerViewCreateDialog(
+                homeUiState = homeUiState,
+                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
+                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
+                onSelectType = { viewModel.updateDialogSelectedType(it) },
+                onDismissRequest = { viewModel.closeInnerViewCreateDialog() },
+                onConfirmRequest = { viewModel.addInnerView() }
+            )
+        }
+
+        Box(
             modifier = Modifier
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
-                .padding(Paddings.large)
         ) {
-            InnerViewCard(
+            InnerViewList(
+                homeUiState = homeUiState,
+                onInnerViewClick = onInnerViewClick
+            )
+            InnerViewFloatingActionButton(
                 modifier = Modifier
-                    .height(120.dp)
-                    .clickable { onInnerViewClick("Billie Eilish") }
-            ) {
-                Box(
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    Text(
-                        text = "Billie Eilish",
-                        style = MaterialTheme.typography.titleSmall,
-                        modifier = Modifier
-                            .align(Alignment.TopStart)
-                            .padding(
-                                start = Paddings.large,
-                                end = Paddings.large,
-                                top = Paddings.large
-                            )
-                    )
+                    .align(Alignment.BottomEnd)
+                    .padding(end = Paddings.large, bottom = Paddings.large),
+                iconImageVector = Icons.Filled.Add,
+                text = stringResource(R.string.feature_home_innerview_create),
+                onClick = { viewModel.openInnerViewCreateDialog() }
+            )
+        }
+    }
+}
 
-                    Text(
-                        text = "2017.10.18 ~ D+2443",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(
-                                start = Paddings.large,
-                                end = Paddings.large,
-                                bottom = Paddings.large
-                            )
-                    )
-
-                    Text(
-                        text = "1 year",
-                        style = MaterialTheme.typography.labelMedium,
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(
-                                start = Paddings.large,
-                                end = Paddings.large,
-                                bottom = Paddings.large
-                            )
-                    )
-                }
-            }
+@Composable
+private fun InnerViewList(
+    homeUiState: HomeUiState,
+    onInnerViewClick: (Int) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Paddings.large),
+        verticalArrangement = Arrangement.spacedBy(Paddings.large)
+    ) {
+        items(homeUiState.innerViews, key = { it.id }) { innerView ->
+            InnerViewItem(
+                innerView = innerView,
+                onInnerViewClick = onInnerViewClick
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.size(80.dp))
         }
     }
 }
@@ -127,6 +142,10 @@ private fun HomeScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun HomeScreenPreview() {
     InnerViewTheme {
-        HomeScreen(padding = PaddingValues(), onInnerViewClick = {})
+        HomeScreen(
+            viewModel = hiltViewModel(),
+            padding = PaddingValues(),
+            onInnerViewClick = {},
+        )
     }
 }

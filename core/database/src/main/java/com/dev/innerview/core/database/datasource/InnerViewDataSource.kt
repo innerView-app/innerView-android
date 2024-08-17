@@ -6,6 +6,8 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.query.find
 import kotlinx.coroutines.flow.map
+import java.time.ZoneOffset
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class InnerViewDataSource @Inject constructor(
@@ -29,15 +31,13 @@ class InnerViewDataSource @Inject constructor(
     suspend fun addInnerView(
         title: String,
         type: String,
-        createdAt: String,
     ) {
         val id = getNextPrimaryKey()
-
         val newInnerView = InnerViewSchema().apply {
             this._id = id
             this.title = title
             this.type = type
-            this.createdAt = createdAt
+            this.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
         }
 
         realm.write {

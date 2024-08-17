@@ -48,7 +48,7 @@ private fun EditScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            titleString = "편집",
+            title = "편집",
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
