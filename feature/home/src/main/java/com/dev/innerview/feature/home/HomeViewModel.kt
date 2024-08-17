@@ -43,9 +43,7 @@ class HomeViewModel @Inject constructor(
 
     fun addInnerView() {
         viewModelScope.launch {
-            if (_homeUiState.value.dialogInnerViewTitle.isEmpty()) {
-                _errorFlow.emit(Throwable())
-            } else {
+            if (_homeUiState.value.dialogInnerViewTitle.isNotEmpty()) {
                 addInnerViewUseCase(
                     _homeUiState.value.dialogInnerViewTitle,
                     _homeUiState.value.dialogSelectedType
