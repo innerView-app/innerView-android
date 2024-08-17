@@ -2,4 +2,17 @@
     <string name="feature_home_innerview_screen_title">innerView</string>
     <string name="feature_home_icon_description_upload">업로드</string>
     <string name="feature_home_innerview_create">이너뷰 생성</string>
+    <string name="feature_home_innerview_title">이너뷰 제목</string>
+    <string name="feature_home_innerview_type_description">1 year : 1년에 한 번 같은 질문으로 인터뷰\n1 month : 1달에 한 번 같은 질문으로 인터뷰\n1 week: 1주일에 한 번 같은 질문으로 인터뷰\n매일 : 매일 다른 질문으로 인터뷰</string>
+
+    <string name="feature_home_dialog_confirm">생성</string>
+    <string name="feature_home_dialog_dismiss">취소</string>
+
+    <string name="feature_home_innerview_type_year">1 year</string>
+    <string name="feature_home_innerview_type_month">1 month</string>
+    <string name="feature_home_innerview_type_week">1 week</string>
+    <string name="feature_home_innerview_type_day">매일</string>
+
+    <string name="feature_home_innerview_create_placeholder">이너뷰 제목을 입력하세요.</string>
+    <string name="feature_home_innerview_create_label">이너뷰 제목</string>
 </resources>

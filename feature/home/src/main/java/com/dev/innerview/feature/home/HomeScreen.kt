@@ -2,14 +2,17 @@ package com.dev.innerview.feature.home
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,6 +23,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
@@ -29,6 +33,8 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.feature.home.component.InnerViewCreateDialog
+import com.dev.innerview.feature.home.component.InnerViewItem
 import com.dev.innerview.feature.home.model.HomeUiState
 import kotlinx.coroutines.flow.collectLatest
 
@@ -36,30 +42,29 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onInnerViewClick: (String) -> Unit,
+    onInnerViewClick: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-
-    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-
     LaunchedEffect(true) {
         viewModel.errorFlow.collectLatest { throwable -> onShowErrorSnackBar(throwable) }
     }
 
     HomeScreen(
-        homeUiState = homeUiState,
+        viewModel = viewModel,
         padding = padding,
-        onInnerViewClick = onInnerViewClick
+        onInnerViewClick = onInnerViewClick,
     )
 }
 
 
 @Composable
 private fun HomeScreen(
-    homeUiState: HomeUiState,
+    viewModel: HomeViewModel,
     padding: PaddingValues,
-    onInnerViewClick: (String) -> Unit
+    onInnerViewClick: (Int) -> Unit,
 ) {
+    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+
     Box(
         modifier = Modifier
             .padding(padding)
@@ -76,38 +81,59 @@ private fun HomeScreen(
             }
         )
 
+        if (homeUiState.isInnerViewCreateDialogVisible) {
+            InnerViewCreateDialog(
+                homeUiState = homeUiState,
+                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
+                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
+                onSelectType = { viewModel.updateDialogSelectedType(it) },
+                onDismissRequest = { viewModel.closeInnerViewCreateDialog() },
+                onConfirmRequest = { viewModel.addInnerView() }
+            )
+        }
+
         Box(
             modifier = Modifier
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
         ) {
-            when (homeUiState) {
-                is HomeUiState.Loading -> Loading()
-                is HomeUiState.UiState -> {
-                    Column(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-
-                    }
-                    InnerViewFloatingActionButton(
-                        modifier = Modifier
-                            .align(Alignment.BottomEnd)
-                            .padding(end = Paddings.large, bottom = Paddings.large),
-                        iconImageVector = Icons.Filled.Add,
-                        text = stringResource(R.string.feature_home_innerview_create),
-                        onClick = {}
-                    )
-                }
-            }
+            InnerViewList(
+                homeUiState = homeUiState,
+                onInnerViewClick = onInnerViewClick
+            )
+            InnerViewFloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = Paddings.large, bottom = Paddings.large),
+                iconImageVector = Icons.Filled.Add,
+                text = stringResource(R.string.feature_home_innerview_create),
+                onClick = { viewModel.openInnerViewCreateDialog() }
+            )
         }
     }
 }
 
 @Composable
-private fun Loading() {
-    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        CircularProgressIndicator()
+private fun InnerViewList(
+    homeUiState: HomeUiState,
+    onInnerViewClick: (Int) -> Unit,
+) {
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(Paddings.large),
+        verticalArrangement = Arrangement.spacedBy(Paddings.large)
+    ) {
+        items(homeUiState.innerViews, key = { it.id }) { innerView ->
+            InnerViewItem(
+                innerView = innerView,
+                onInnerViewClick = onInnerViewClick
+            )
+        }
+        item {
+            Spacer(modifier = Modifier.size(80.dp))
+        }
     }
 }
 
@@ -117,9 +143,9 @@ private fun Loading() {
 private fun HomeScreenPreview() {
     InnerViewTheme {
         HomeScreen(
-            homeUiState = HomeUiState.UiState(),
+            viewModel = hiltViewModel(),
             padding = PaddingValues(),
-            onInnerViewClick = {}
+            onInnerViewClick = {},
         )
     }
 }
