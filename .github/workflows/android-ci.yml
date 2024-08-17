@@ -57,6 +57,12 @@ jobs:
         id: changes
         run: |
           CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '^(core|feature)/')
+          if [ -z "$CHANGED_FILES" ]; then
+            echo "No changed files found"
+            echo "FILES=" >> $GITHUB_ENV
+            echo "MODULES=" >> $GITHUB_ENV
+            exit 0
+          fi
           MODULES=$(echo "$CHANGED_FILES" | awk -F'/' '{print $1":"$2}' | sort | uniq)
           FILES=$(echo "$CHANGED_FILES" | grep -vE '/test/' | grep '\.kt$')
           FILES=$(echo "$FILES" | tr '\n' ' ')
