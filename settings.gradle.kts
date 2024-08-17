@@ -22,4 +22,13 @@ dependencyResolutionManagement {
 
 rootProject.name = "innerView"
 include(":app")
+
 include(":feature:main")
+include(":feature:home")
+include(":feature:peek")
+include(":feature:edit")
+include(":feature:profile")
+
+include(":core:designsystem")
+include(":core:navigation")
+include(":core:database")

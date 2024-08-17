@@ -10,6 +10,7 @@ java {
     sourceCompatibility = JavaVersion.VERSION_17
     targetCompatibility = JavaVersion.VERSION_17
 }
+
 tasks.withType<KotlinCompile>().configureEach {
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
@@ -44,6 +45,19 @@ gradlePlugin {
             implementationClass = "AndroidFeatureConventionPlugin"
         }
 
+        register("androidCompose") {
+            id = "innerview.android.compose"
+            implementationClass = "AndroidComposeConventionPlugin"
+        }
 
+        register("androidKotlinSerialization") {
+            id = "innerview.android.kotlin.serialization"
+            implementationClass = "AndroidKotlinSerializationConventionPlugin"
+        }
+
+        register("androidRealm") {
+            id = "innerview.android.realm"
+            implementationClass = "AndroidRealmConventionPlugin"
+        }
     }
 }
