@@ -56,8 +56,7 @@ jobs:
       - name: Determine changed files and modules
         id: changes
         run: |
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '^(core|feature)/')
-          echo "CHANGED_FILES: $CHANGED_FILES"
+          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} origin/${{ github.head_ref }} | grep -E '^(core|feature)/' || :)
           if [ -z "$CHANGED_FILES" ]; then
             echo "No changed files found"
             echo "FILES=" >> $GITHUB_ENV
