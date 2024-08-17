@@ -50,7 +50,7 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateInnerViewDetail(id: String) {
+    fun navigateInnerViewDetail(id: Int) {
         navController.navigateInnerViewDetail(id)
     }
 

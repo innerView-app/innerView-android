@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 sealed interface Route {
     @Serializable
-    data class InnerViewDetail(val id: String) : Route
+    data class InnerViewDetail(val id: Int) : Route
 
     @Serializable
     data object InnerViewQuestion : Route

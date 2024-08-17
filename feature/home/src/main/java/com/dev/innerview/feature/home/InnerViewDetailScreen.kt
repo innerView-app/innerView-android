@@ -24,7 +24,7 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
 fun InnerViewDetailScreen(
-    id: String,
+    id: Int,
     onBackClick: () -> Unit,
     onInterviewGroupClick: () -> Unit,
     onInnerViewQuestionClick: () -> Unit,
@@ -35,7 +35,7 @@ fun InnerViewDetailScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = id,
+            title = id.toString(),
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -76,7 +76,7 @@ fun InnerViewDetailScreen(
 private fun InnerViewDetailScreenPreview() {
     InnerViewTheme {
         InnerViewDetailScreen(
-            id = "test id",
+            id = 0,
             onBackClick = {},
             onInterviewGroupClick = {},
             onInnerViewQuestionClick = {}
