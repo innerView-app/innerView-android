@@ -1,9 +1,6 @@
-import com.dev.innerview.configureComposeAndroid
 import com.dev.innerview.configureKotlinAndroid
-import com.dev.innerview.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.dependencies
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -14,11 +11,6 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             }
 
             configureKotlinAndroid()
-            configureComposeAndroid()
-
-            dependencies {
-                add("implementation", libs.findLibrary("androidx.activity.compose").get())
-            }
         }
     }
 }
