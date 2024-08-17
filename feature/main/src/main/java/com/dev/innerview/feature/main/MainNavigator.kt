@@ -68,7 +68,6 @@ internal class MainNavigator(
 
     @Composable
     fun shouldShowBottomBar() = MainTab.containWithoutEdit { route ->
-        println(currentDestination?.route)
         currentDestination?.hasRoute(route::class) == true
     }
 }

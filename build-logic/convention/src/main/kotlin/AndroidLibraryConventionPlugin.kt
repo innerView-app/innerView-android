@@ -1,4 +1,5 @@
 import com.android.build.gradle.LibraryExtension
+import com.dev.innerview.configureCoroutineAndroid
 import com.dev.innerview.configureKotlinAndroid
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -15,6 +16,7 @@ class AndroidLibraryConventionPlugin : Plugin<Project> {
             }
 
             configureKotlinAndroid()
+            configureCoroutineAndroid()
 
             extensions.configure<LibraryExtension> {
                 // The resource prefix is derived from the module name,

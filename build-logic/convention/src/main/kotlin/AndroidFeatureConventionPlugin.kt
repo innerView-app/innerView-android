@@ -10,6 +10,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
                 apply("innerview.android.library")
                 apply("innerview.android.compose")
                 apply("innerview.android.hilt")
+                apply("innerview.android.realm")
             }
 
             dependencies {
@@ -26,6 +27,7 @@ class AndroidFeatureConventionPlugin : Plugin<Project> {
 
                 add("implementation", project(":core:designsystem"))
                 add("implementation", project(":core:navigation"))
+                add("implementation", project(":core:database"))
             }
         }
     }

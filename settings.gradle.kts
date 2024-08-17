@@ -31,3 +31,4 @@ include(":feature:profile")
 
 include(":core:designsystem")
 include(":core:navigation")
+include(":core:database")

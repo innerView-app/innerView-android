@@ -35,10 +35,10 @@ fun InnerViewAppBarIcon(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
     navigationIconContentDescription: String?,
-    onNavigationClick: () -> Unit = {}
+    onClick: () -> Unit = {}
 ) {
     IconButton(
-        onClick = onNavigationClick,
+        onClick = onClick,
         modifier = modifier.size(appBarSize)
     ) {
         Icon(
@@ -74,7 +74,7 @@ fun InnerViewTopAppBar(
                     InnerViewAppBarIcon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                         navigationIconContentDescription = navigationIconContentDescription,
-                        onNavigationClick = onNavigationClick
+                        onClick = onNavigationClick
                     )
                 } else {
                     Spacer(modifier = Modifier.size(appBarSize))

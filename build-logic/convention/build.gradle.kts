@@ -54,5 +54,10 @@ gradlePlugin {
             id = "innerview.android.kotlin.serialization"
             implementationClass = "AndroidKotlinSerializationConventionPlugin"
         }
+
+        register("androidRealm") {
+            id = "innerview.android.realm"
+            implementationClass = "AndroidRealmConventionPlugin"
+        }
     }
 }
