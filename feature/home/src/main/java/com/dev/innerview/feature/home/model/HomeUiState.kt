@@ -1,19 +1,15 @@
 package com.dev.innerview.feature.home.model
 
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.Stable
 import com.dev.innerview.core.model.InnerView
+import com.dev.innerview.core.model.InnerViewType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
-@Stable
-sealed interface HomeUiState {
-
-    @Immutable
-    data object Loading : HomeUiState
-
-    @Immutable
-    data class UiState(
-        val innerViews: ImmutableList<InnerView> = persistentListOf(),
-    ) : HomeUiState
-}
+@Immutable
+data class HomeUiState(
+    val innerViews: ImmutableList<InnerView> = persistentListOf(),
+    val isInnerViewCreateDialogVisible: Boolean = false,
+    val dialogInnerViewTitle: String = "",
+    val dialogSelectedType: InnerViewType = InnerViewType.YEAR
+)

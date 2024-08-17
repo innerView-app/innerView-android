@@ -6,6 +6,7 @@ import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class InnerViewRepositoryImpl @Inject constructor(
@@ -20,8 +21,12 @@ class InnerViewRepositoryImpl @Inject constructor(
                         id = innerViewSchema._id,
                         title = innerViewSchema.title,
                         type = InnerViewType.stringToInnerViewType(innerViewSchema.type)!!,
-                        createdAt = "innerViewSchema.createdAt",
+                        createdAt = ZonedDateTime.parse(innerViewSchema.createdAt),
                     )
                 }
             }
+
+    override suspend fun addInnerView(title: String, type: InnerViewType) {
+        innerViewDataSource.addInnerView(title, type.name)
+    }
 }
