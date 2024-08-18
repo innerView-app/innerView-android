@@ -3,6 +3,7 @@ package com.dev.innerview.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerViewUseCase
+import com.dev.innerview.core.domain.usecase.DeleteInnerViewUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.model.HomeUiState
@@ -23,7 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeViewModel @Inject constructor(
     getInnerViewUseCase: GetInnerViewUseCase,
-    private val addInnerViewUseCase: AddInnerViewUseCase
+    private val addInnerViewUseCase: AddInnerViewUseCase,
+    private val deleteInnerViewUseCase: DeleteInnerViewUseCase
 ) : ViewModel() {
 
     val maxInnerViewTitleLength = 40
@@ -66,8 +68,7 @@ class HomeViewModel @Inject constructor(
 
     fun deleteInnerView(id: Int) {
         viewModelScope.launch {
-            println("innerView: $id 삭제")
-            selectInnerViewDelete(id)
+            deleteInnerViewUseCase(id)
         }
     }
 
