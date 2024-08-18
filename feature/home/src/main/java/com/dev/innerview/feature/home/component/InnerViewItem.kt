@@ -1,7 +1,8 @@
 package com.dev.innerview.feature.home.component
 
 import android.content.res.Configuration
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,34 +17,42 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.component.InnerViewCard
+import com.dev.innerview.core.designsystem.component.InnerViewDialog
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
-import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.R
+import com.dev.innerview.feature.home.model.InnerViewItemUiState
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZoneOffset
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun InnerViewItem(
-    innerView: InnerView,
-    onInnerViewClick: (Int) -> Unit
+    innerViewItemState: InnerViewItemUiState,
+    onInnerViewClick: (Int) -> Unit,
+    onInnerViewLongClick: (Int) -> Unit,
+    onSelectInnerViewDelete: (Int) -> Unit,
+    onInnerViewDeleteRequest: (Int) -> Unit
 ) {
 
-    val createdAt = innerView.createdAt.withZoneSameInstant(ZoneId.systemDefault())
+    val createdAt = innerViewItemState.createdAt.withZoneSameInstant(ZoneId.systemDefault())
         .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
     val daysBetween =
-        Duration.between(innerView.createdAt, ZonedDateTime.now(ZoneOffset.UTC)).toDays()
+        Duration.between(innerViewItemState.createdAt, ZonedDateTime.now(ZoneOffset.UTC)).toDays()
 
     InnerViewCard(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { onInnerViewClick(innerView.id) }
+            .combinedClickable(
+                onClick = { onInnerViewClick(innerViewItemState.id) },
+                onLongClick = { onInnerViewLongClick(innerViewItemState.id) }
+            )
     ) {
         Box(
             modifier = Modifier
@@ -52,7 +61,7 @@ fun InnerViewItem(
         ) {
             Text(
                 modifier = Modifier.align(Alignment.TopStart),
-                text = innerView.title,
+                text = innerViewItemState.title,
                 style = MaterialTheme.typography.titleSmall,
                 maxLines = 2
             )
@@ -60,12 +69,11 @@ fun InnerViewItem(
             Text(
                 modifier = Modifier.align(Alignment.BottomStart),
                 text = "$createdAt ~ D+${daysBetween}",
-//                text = innerView.createdAt.toString(),
                 style = MaterialTheme.typography.labelMedium
             )
             Text(
                 modifier = Modifier.align(Alignment.BottomEnd),
-                text = when (innerView.type) {
+                text = when (innerViewItemState.type) {
                     InnerViewType.YEAR -> stringResource(id = R.string.feature_home_innerview_type_year)
                     InnerViewType.MONTH -> stringResource(id = R.string.feature_home_innerview_type_month)
                     InnerViewType.WEEK -> stringResource(id = R.string.feature_home_innerview_type_week)
@@ -73,7 +81,30 @@ fun InnerViewItem(
                 },
                 style = MaterialTheme.typography.labelSmall
             )
+            InnerViewDropdownMenu(
+                modifier = Modifier,
+                itemUiState = innerViewItemState,
+                onDeleteInnerView = { onSelectInnerViewDelete(innerViewItemState.id) },
+                onDismissRequest = { onInnerViewLongClick(innerViewItemState.id) }
+            )
         }
+    }
+
+    if (innerViewItemState.isInnerViewDeleteDialogVisible) {
+        InnerViewDialog(
+            titleText = stringResource(
+                R.string.feature_home_innerview_delete_dialog_title,
+                innerViewItemState.title
+            ),
+            contentText = stringResource(
+                R.string.feature_home_innerview_delete_dialog_content,
+                innerViewItemState.title
+            ),
+            confirmText = stringResource(R.string.feature_home_innerview_delete),
+            dismissText = stringResource(R.string.feature_home_dialog_dismiss),
+            onDismissRequest = { onSelectInnerViewDelete(innerViewItemState.id) },
+            onConfirmRequest = { onInnerViewDeleteRequest(innerViewItemState.id) }
+        )
     }
 }
 
@@ -84,11 +115,15 @@ private fun InnerViewContentPreview() {
     InnerViewTheme {
         InnerViewItem(
             onInnerViewClick = {},
-            innerView = InnerView(
+            onInnerViewLongClick = {},
+            onSelectInnerViewDelete = {},
+            onInnerViewDeleteRequest = {},
+            innerViewItemState = InnerViewItemUiState(
                 id = 0,
                 title = "innerView title",
                 type = InnerViewType.YEAR,
-                createdAt = ZonedDateTime.now(ZoneOffset.UTC)
+                createdAt = ZonedDateTime.now(ZoneOffset.UTC),
+                isInnerViewDeleteDialogVisible = true,
             )
         )
     }

@@ -64,6 +64,10 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun deleteInnerView(id: Int) {
+        viewModelScope.launch {
+            println("innerView: $id 삭제")
+            selectInnerViewDelete(id)
         }
     }
 
@@ -73,6 +77,38 @@ class HomeViewModel @Inject constructor(
                 isInnerViewCreateDialogVisible = !it.isInnerViewCreateDialogVisible,
                 dialogInnerViewTitle = "",
                 dialogSelectedType = InnerViewType.YEAR
+            )
+        }
+    }
+
+    fun selectInnerViewDelete(id: Int) {
+        _homeUiState.update {
+            it.copy(
+                innerViews = it.innerViews.map { itemUiState ->
+                    if (itemUiState.id == id) {
+                        itemUiState.copy(
+                            isInnerViewDeleteDialogVisible = !itemUiState.isInnerViewDeleteDialogVisible
+                        )
+                    } else {
+                        itemUiState
+                    }
+                }.toPersistentList()
+            )
+        }
+    }
+
+    fun selectInnerView(id: Int) {
+        _homeUiState.update {
+            it.copy(
+                innerViews = it.innerViews.map { itemUiState ->
+                    if (itemUiState.id == id) {
+                        itemUiState.copy(
+                            isDropdownMenuVisible = !itemUiState.isDropdownMenuVisible
+                        )
+                    } else {
+                        itemUiState
+                    }
+                }.toPersistentList()
             )
         }
     }

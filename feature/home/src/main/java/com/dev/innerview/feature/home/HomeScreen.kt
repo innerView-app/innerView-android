@@ -89,7 +89,10 @@ private fun HomeScreen(
         ) {
             InnerViewList(
                 homeUiState = homeUiState,
-                onInnerViewClick = onInnerViewClick
+                onInnerViewClick = onInnerViewClick,
+                onInnerViewLongClick = { viewModel.selectInnerView(it) },
+                onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) },
+                onInnerViewDeleteRequest = { viewModel.deleteInnerView(it) }
             )
             InnerViewFloatingActionButton(
                 modifier = Modifier
@@ -118,6 +121,9 @@ private fun HomeScreen(
 private fun InnerViewList(
     homeUiState: HomeUiState,
     onInnerViewClick: (Int) -> Unit,
+    onInnerViewLongClick: (Int) -> Unit,
+    onSelectInnerViewDelete: (Int) -> Unit,
+    onInnerViewDeleteRequest: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -127,8 +133,11 @@ private fun InnerViewList(
     ) {
         items(homeUiState.innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
-                innerView = innerView,
-                onInnerViewClick = onInnerViewClick
+                innerViewItemState = innerView,
+                onInnerViewClick = onInnerViewClick,
+                onInnerViewLongClick = onInnerViewLongClick,
+                onSelectInnerViewDelete = onSelectInnerViewDelete,
+                onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
         }
         item {
