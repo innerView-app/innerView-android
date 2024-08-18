@@ -6,6 +6,7 @@ import com.dev.innerview.core.domain.usecase.AddInnerViewUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.model.HomeUiState
+import com.dev.innerview.feature.home.model.InnerViewItemUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -13,6 +14,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -34,9 +36,18 @@ class HomeViewModel @Inject constructor(
 
     init {
         getInnerViewUseCase()
-            .onEach { innerViews ->
+            .map { innerViews ->
+                innerViews.map { innerView ->
+                    InnerViewItemUiState(
+                        id = innerView.id,
+                        title = innerView.title,
+                        type = innerView.type,
+                        createdAt = innerView.createdAt
+                    )
+                }
+            }.onEach { innerViewItemStates ->
                 _homeUiState.update {
-                    it.copy(innerViews = innerViews.toPersistentList())
+                    it.copy(innerViews = innerViewItemStates.toPersistentList())
                 }
             }.launchIn(viewModelScope)
     }

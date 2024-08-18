@@ -8,7 +8,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class HomeUiState(
-    val innerViews: ImmutableList<InnerView> = persistentListOf(),
+    val innerViews: ImmutableList<InnerViewItemUiState> = persistentListOf(),
     val isInnerViewCreateDialogVisible: Boolean = false,
     val dialogInnerViewTitle: String = "",
     val dialogSelectedType: InnerViewType = InnerViewType.YEAR
