@@ -98,7 +98,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun selectInnerView(id: Int) {
+    fun selectInnerViewDropdown(id: Int) {
         _homeUiState.update {
             it.copy(
                 innerViews = it.innerViews.map { itemUiState ->

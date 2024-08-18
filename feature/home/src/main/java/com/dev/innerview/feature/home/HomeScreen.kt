@@ -42,7 +42,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onInnerViewClick: (Int) -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     LaunchedEffect(true) {
@@ -52,7 +52,7 @@ internal fun HomeRoute(
     HomeScreen(
         viewModel = viewModel,
         padding = padding,
-        onInnerViewClick = onInnerViewClick,
+        navigateToInnerViewDetail = navigateToInnerViewDetail,
     )
 }
 
@@ -61,7 +61,7 @@ internal fun HomeRoute(
 private fun HomeScreen(
     viewModel: HomeViewModel,
     padding: PaddingValues,
-    onInnerViewClick: (Int) -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
 
@@ -89,8 +89,8 @@ private fun HomeScreen(
         ) {
             InnerViewList(
                 homeUiState = homeUiState,
-                onInnerViewClick = onInnerViewClick,
-                onInnerViewLongClick = { viewModel.selectInnerView(it) },
+                navigateToInnerViewDetail = navigateToInnerViewDetail,
+                onSelectInnerViewDropdown = { viewModel.selectInnerViewDropdown(it) },
                 onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) },
                 onInnerViewDeleteRequest = { viewModel.deleteInnerView(it) }
             )
@@ -120,8 +120,8 @@ private fun HomeScreen(
 @Composable
 private fun InnerViewList(
     homeUiState: HomeUiState,
-    onInnerViewClick: (Int) -> Unit,
-    onInnerViewLongClick: (Int) -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
+    onSelectInnerViewDropdown: (Int) -> Unit,
     onSelectInnerViewDelete: (Int) -> Unit,
     onInnerViewDeleteRequest: (Int) -> Unit
 ) {
@@ -134,8 +134,8 @@ private fun InnerViewList(
         items(homeUiState.innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
                 innerViewItemState = innerView,
-                onInnerViewClick = onInnerViewClick,
-                onInnerViewLongClick = onInnerViewLongClick,
+                onInnerViewClick = navigateToInnerViewDetail,
+                onInnerViewLongClick = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
@@ -154,7 +154,7 @@ private fun HomeScreenPreview() {
         HomeScreen(
             viewModel = hiltViewModel(),
             padding = PaddingValues(),
-            onInnerViewClick = {},
+            navigateToInnerViewDetail = {},
         )
     }
 }
