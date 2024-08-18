@@ -81,17 +81,6 @@ private fun HomeScreen(
             }
         )
 
-        if (homeUiState.isInnerViewCreateDialogVisible) {
-            InnerViewCreateDialog(
-                homeUiState = homeUiState,
-                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
-                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
-                onSelectType = { viewModel.updateDialogSelectedType(it) },
-                onDismissRequest = { viewModel.closeInnerViewCreateDialog() },
-                onConfirmRequest = { viewModel.addInnerView() }
-            )
-        }
-
         Box(
             modifier = Modifier
                 .padding(top = appBarSize)
@@ -108,7 +97,18 @@ private fun HomeScreen(
                     .padding(end = Paddings.large, bottom = Paddings.large),
                 iconImageVector = Icons.Filled.Add,
                 text = stringResource(R.string.feature_home_innerview_create),
-                onClick = { viewModel.openInnerViewCreateDialog() }
+                onClick = { viewModel.selectInnerViewCreate() }
+            )
+        }
+
+        if (homeUiState.isInnerViewCreateDialogVisible) {
+            InnerViewCreateDialog(
+                homeUiState = homeUiState,
+                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
+                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
+                onSelectType = { viewModel.updateDialogSelectedType(it) },
+                onDismissRequest = { viewModel.selectInnerViewCreate() },
+                onConfirmRequest = { viewModel.addInnerView() }
             )
         }
     }

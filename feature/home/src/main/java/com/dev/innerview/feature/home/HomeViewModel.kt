@@ -48,21 +48,18 @@ class HomeViewModel @Inject constructor(
                     _homeUiState.value.dialogInnerViewTitle,
                     _homeUiState.value.dialogSelectedType
                 )
-                closeInnerViewCreateDialog()
+                selectInnerViewCreate()
             }
         }
     }
 
-    fun openInnerViewCreateDialog() {
-        _homeUiState.update {
-            it.copy(isInnerViewCreateDialogVisible = true)
         }
     }
 
-    fun closeInnerViewCreateDialog() {
+    fun selectInnerViewCreate() {
         _homeUiState.update {
             it.copy(
-                isInnerViewCreateDialogVisible = false,
+                isInnerViewCreateDialogVisible = !it.isInnerViewCreateDialogVisible,
                 dialogInnerViewTitle = "",
                 dialogSelectedType = InnerViewType.YEAR
             )
