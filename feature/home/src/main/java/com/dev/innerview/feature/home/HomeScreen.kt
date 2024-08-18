@@ -33,9 +33,12 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.component.InnerViewCreateDialog
 import com.dev.innerview.feature.home.component.InnerViewItem
 import com.dev.innerview.feature.home.model.HomeUiState
+import com.dev.innerview.feature.home.model.InnerViewItemUiState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -45,26 +48,42 @@ internal fun HomeRoute(
     navigateToInnerViewDetail: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(true) {
         viewModel.errorFlow.collectLatest { throwable -> onShowErrorSnackBar(throwable) }
     }
 
     HomeScreen(
-        viewModel = viewModel,
+        homeUiState = homeUiState,
         padding = padding,
         navigateToInnerViewDetail = navigateToInnerViewDetail,
+        onInnerViewAddRequest = { viewModel.addInnerView() },
+        maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
+        updateDialogInnerViewTitle = { viewModel.updateDialogInnerViewTitle(it) },
+        updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
+        onInnerViewDeleteRequest = { viewModel.deleteInnerView(it) },
+        onSelectInnerViewDropdown = { viewModel.selectInnerViewDropdown(it) },
+        onSelectInnerViewCreate = { viewModel.selectInnerViewCreate() },
+        onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) }
     )
 }
 
 
 @Composable
 private fun HomeScreen(
-    viewModel: HomeViewModel,
+    homeUiState: HomeUiState,
     padding: PaddingValues,
     navigateToInnerViewDetail: (Int) -> Unit,
+    onInnerViewAddRequest: () -> Unit,
+    onInnerViewDeleteRequest: (Int) -> Unit,
+    maxInnerViewTitleLength: Int,
+    updateDialogInnerViewTitle: (String) -> Unit,
+    updateDialogSelectedType: (InnerViewType) -> Unit,
+    onSelectInnerViewDropdown: (Int) -> Unit,
+    onSelectInnerViewCreate: () -> Unit,
+    onSelectInnerViewDelete: (Int) -> Unit
 ) {
-    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-
     Box(
         modifier = Modifier
             .padding(padding)
@@ -89,10 +108,10 @@ private fun HomeScreen(
         ) {
             InnerViewList(
                 homeUiState = homeUiState,
-                navigateToInnerViewDetail = navigateToInnerViewDetail,
-                onSelectInnerViewDropdown = { viewModel.selectInnerViewDropdown(it) },
-                onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) },
-                onInnerViewDeleteRequest = { viewModel.deleteInnerView(it) }
+                onInnerViewClick = navigateToInnerViewDetail,
+                onSelectInnerViewDropdown = onSelectInnerViewDropdown,
+                onSelectInnerViewDelete = onSelectInnerViewDelete,
+                onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
             InnerViewFloatingActionButton(
                 modifier = Modifier
@@ -100,18 +119,18 @@ private fun HomeScreen(
                     .padding(end = Paddings.large, bottom = Paddings.large),
                 iconImageVector = Icons.Filled.Add,
                 text = stringResource(R.string.feature_home_innerview_create),
-                onClick = { viewModel.selectInnerViewCreate() }
+                onClick = onSelectInnerViewCreate
             )
         }
 
         if (homeUiState.isInnerViewCreateDialogVisible) {
             InnerViewCreateDialog(
                 homeUiState = homeUiState,
-                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
-                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
-                onSelectType = { viewModel.updateDialogSelectedType(it) },
-                onDismissRequest = { viewModel.selectInnerViewCreate() },
-                onConfirmRequest = { viewModel.addInnerView() }
+                maxInnerViewTitleLength = maxInnerViewTitleLength,
+                onTitleChange = updateDialogInnerViewTitle,
+                onSelectType = updateDialogSelectedType,
+                onDismissRequest = onSelectInnerViewCreate,
+                onConfirmRequest = onInnerViewAddRequest
             )
         }
     }
@@ -120,7 +139,7 @@ private fun HomeScreen(
 @Composable
 private fun InnerViewList(
     homeUiState: HomeUiState,
-    navigateToInnerViewDetail: (Int) -> Unit,
+    onInnerViewClick: (Int) -> Unit,
     onSelectInnerViewDropdown: (Int) -> Unit,
     onSelectInnerViewDelete: (Int) -> Unit,
     onInnerViewDeleteRequest: (Int) -> Unit
@@ -134,7 +153,7 @@ private fun InnerViewList(
         items(homeUiState.innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
                 innerViewItemState = innerView,
-                onInnerViewClick = navigateToInnerViewDetail,
+                onInnerViewClick = onInnerViewClick,
                 onInnerViewLongClick = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
@@ -152,9 +171,28 @@ private fun InnerViewList(
 private fun HomeScreenPreview() {
     InnerViewTheme {
         HomeScreen(
-            viewModel = hiltViewModel(),
+            homeUiState = HomeUiState(
+                innerViews = persistentListOf(
+                    InnerViewItemUiState(
+                        id = 1,
+                        title = "innerView title 1"
+                    ),
+                    InnerViewItemUiState(
+                        id = 2,
+                        title = "innerView title 2"
+                    )
+                )
+            ),
             padding = PaddingValues(),
             navigateToInnerViewDetail = {},
+            onInnerViewAddRequest = {},
+            maxInnerViewTitleLength = 0,
+            updateDialogInnerViewTitle = {},
+            updateDialogSelectedType = {},
+            onInnerViewDeleteRequest = {},
+            onSelectInnerViewDropdown = {},
+            onSelectInnerViewCreate = {},
+            onSelectInnerViewDelete = {}
         )
     }
 }
