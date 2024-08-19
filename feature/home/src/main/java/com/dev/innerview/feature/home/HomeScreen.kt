@@ -38,6 +38,7 @@ import com.dev.innerview.feature.home.component.InnerViewCreateDialog
 import com.dev.innerview.feature.home.component.InnerViewItem
 import com.dev.innerview.feature.home.model.HomeUiState
 import com.dev.innerview.feature.home.model.InnerViewItemUiState
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
@@ -107,7 +108,7 @@ private fun HomeScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             InnerViewList(
-                homeUiState = homeUiState,
+                innerViews = homeUiState.innerViews,
                 onInnerViewClick = navigateToInnerViewDetail,
                 onSelectInnerViewDropdown = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
@@ -138,7 +139,7 @@ private fun HomeScreen(
 
 @Composable
 private fun InnerViewList(
-    homeUiState: HomeUiState,
+    innerViews: ImmutableList<InnerViewItemUiState>,
     onInnerViewClick: (Int) -> Unit,
     onSelectInnerViewDropdown: (Int) -> Unit,
     onSelectInnerViewDelete: (Int) -> Unit,
@@ -150,7 +151,7 @@ private fun InnerViewList(
             .padding(Paddings.large),
         verticalArrangement = Arrangement.spacedBy(Paddings.large)
     ) {
-        items(homeUiState.innerViews, key = { it.id }) { innerView ->
+        items(innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
                 innerViewItemState = innerView,
                 onInnerViewClick = onInnerViewClick,
