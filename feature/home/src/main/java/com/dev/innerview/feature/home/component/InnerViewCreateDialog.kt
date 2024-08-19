@@ -46,7 +46,7 @@ fun InnerViewCreateDialog(
             }
             InnerViewRadioButton(
                 textString = typeText,
-                selected = { homeUiState.dialogSelectedType == type },
+                selected = homeUiState.dialogSelectedType == type,
                 onClick = { onSelectType(type) }
             )
             if (InnerViewType.entries.size - 1 > i) {

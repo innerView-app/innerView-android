@@ -116,25 +116,25 @@ private fun InnerViewDialogPreview() {
             )
             InnerViewRadioButton(
                 textString = "1 year",
-                selected = { true },
+                selected = true,
                 onClick = {}
             )
             HorizontalDivider()
             InnerViewRadioButton(
                 textString = "1 month",
-                selected = { false },
+                selected = false,
                 onClick = {}
             )
             HorizontalDivider()
             InnerViewRadioButton(
                 textString = "1 week",
-                selected = { false },
+                selected = false,
                 onClick = {}
             )
             HorizontalDivider()
             InnerViewRadioButton(
                 textString = "매일",
-                selected = { false },
+                selected = false,
                 onClick = {}
             )
         }
