@@ -8,3 +8,5 @@ build
 .externalNativeBuild
 .cxx
 local.properties
+mendable.jar
+index.html

@@ -41,7 +41,7 @@ fun NavGraphBuilder.homeNavGraph(
         HomeRoute(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            onInnerViewClick = onInnerViewClick
+            navigateToInnerViewDetail = onInnerViewClick
         )
     }
 

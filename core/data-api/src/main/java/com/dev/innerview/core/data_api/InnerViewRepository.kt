@@ -9,4 +9,6 @@ interface InnerViewRepository {
     fun getInnerViews(): Flow<List<InnerView>>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
+
+    suspend fun deleteInnerView(id: Int)
 }

@@ -33,38 +33,58 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.component.InnerViewCreateDialog
 import com.dev.innerview.feature.home.component.InnerViewItem
 import com.dev.innerview.feature.home.model.HomeUiState
+import com.dev.innerview.feature.home.model.InnerViewItemUiState
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onInnerViewClick: (Int) -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
+    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
+
     LaunchedEffect(true) {
         viewModel.errorFlow.collectLatest { throwable -> onShowErrorSnackBar(throwable) }
     }
 
     HomeScreen(
-        viewModel = viewModel,
+        homeUiState = homeUiState,
         padding = padding,
-        onInnerViewClick = onInnerViewClick,
+        navigateToInnerViewDetail = navigateToInnerViewDetail,
+        onInnerViewAddRequest = { viewModel.addInnerView() },
+        maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
+        updateDialogInnerViewTitle = { viewModel.updateDialogInnerViewTitle(it) },
+        updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
+        onInnerViewDeleteRequest = { viewModel.deleteInnerView(it) },
+        onSelectInnerViewDropdown = { viewModel.selectInnerViewDropdown(it) },
+        onSelectInnerViewCreate = { viewModel.selectInnerViewCreate() },
+        onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) }
     )
 }
 
 
 @Composable
 private fun HomeScreen(
-    viewModel: HomeViewModel,
+    homeUiState: HomeUiState,
     padding: PaddingValues,
-    onInnerViewClick: (Int) -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
+    onInnerViewAddRequest: () -> Unit,
+    onInnerViewDeleteRequest: (Int) -> Unit,
+    maxInnerViewTitleLength: Int,
+    updateDialogInnerViewTitle: (String) -> Unit,
+    updateDialogSelectedType: (InnerViewType) -> Unit,
+    onSelectInnerViewDropdown: (Int) -> Unit,
+    onSelectInnerViewCreate: () -> Unit,
+    onSelectInnerViewDelete: (Int) -> Unit
 ) {
-    val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
-
     Box(
         modifier = Modifier
             .padding(padding)
@@ -81,17 +101,6 @@ private fun HomeScreen(
             }
         )
 
-        if (homeUiState.isInnerViewCreateDialogVisible) {
-            InnerViewCreateDialog(
-                homeUiState = homeUiState,
-                maxInnerViewTitleLength = viewModel.maxInnerViewTitleLength,
-                onTitleChange = { viewModel.updateDialogInnerViewTitle(it) },
-                onSelectType = { viewModel.updateDialogSelectedType(it) },
-                onDismissRequest = { viewModel.closeInnerViewCreateDialog() },
-                onConfirmRequest = { viewModel.addInnerView() }
-            )
-        }
-
         Box(
             modifier = Modifier
                 .padding(top = appBarSize)
@@ -99,8 +108,11 @@ private fun HomeScreen(
                 .background(MaterialTheme.colorScheme.background)
         ) {
             InnerViewList(
-                homeUiState = homeUiState,
-                onInnerViewClick = onInnerViewClick
+                innerViews = homeUiState.innerViews,
+                onInnerViewClick = navigateToInnerViewDetail,
+                onSelectInnerViewDropdown = onSelectInnerViewDropdown,
+                onSelectInnerViewDelete = onSelectInnerViewDelete,
+                onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
             InnerViewFloatingActionButton(
                 modifier = Modifier
@@ -108,7 +120,18 @@ private fun HomeScreen(
                     .padding(end = Paddings.large, bottom = Paddings.large),
                 iconImageVector = Icons.Filled.Add,
                 text = stringResource(R.string.feature_home_innerview_create),
-                onClick = { viewModel.openInnerViewCreateDialog() }
+                onClick = onSelectInnerViewCreate
+            )
+        }
+
+        if (homeUiState.isInnerViewCreateDialogVisible) {
+            InnerViewCreateDialog(
+                homeUiState = homeUiState,
+                maxInnerViewTitleLength = maxInnerViewTitleLength,
+                onTitleChange = updateDialogInnerViewTitle,
+                onSelectType = updateDialogSelectedType,
+                onDismissRequest = onSelectInnerViewCreate,
+                onConfirmRequest = onInnerViewAddRequest
             )
         }
     }
@@ -116,8 +139,11 @@ private fun HomeScreen(
 
 @Composable
 private fun InnerViewList(
-    homeUiState: HomeUiState,
+    innerViews: ImmutableList<InnerViewItemUiState>,
     onInnerViewClick: (Int) -> Unit,
+    onSelectInnerViewDropdown: (Int) -> Unit,
+    onSelectInnerViewDelete: (Int) -> Unit,
+    onInnerViewDeleteRequest: (Int) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -125,10 +151,13 @@ private fun InnerViewList(
             .padding(Paddings.large),
         verticalArrangement = Arrangement.spacedBy(Paddings.large)
     ) {
-        items(homeUiState.innerViews, key = { it.id }) { innerView ->
+        items(innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
-                innerView = innerView,
-                onInnerViewClick = onInnerViewClick
+                innerViewItemState = innerView,
+                onInnerViewClick = onInnerViewClick,
+                onInnerViewLongClick = onSelectInnerViewDropdown,
+                onSelectInnerViewDelete = onSelectInnerViewDelete,
+                onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
         }
         item {
@@ -143,9 +172,28 @@ private fun InnerViewList(
 private fun HomeScreenPreview() {
     InnerViewTheme {
         HomeScreen(
-            viewModel = hiltViewModel(),
+            homeUiState = HomeUiState(
+                innerViews = persistentListOf(
+                    InnerViewItemUiState(
+                        id = 1,
+                        title = "innerView title 1"
+                    ),
+                    InnerViewItemUiState(
+                        id = 2,
+                        title = "innerView title 2"
+                    )
+                )
+            ),
             padding = PaddingValues(),
-            onInnerViewClick = {},
+            navigateToInnerViewDetail = {},
+            onInnerViewAddRequest = {},
+            maxInnerViewTitleLength = 0,
+            updateDialogInnerViewTitle = {},
+            updateDialogSelectedType = {},
+            onInnerViewDeleteRequest = {},
+            onSelectInnerViewDropdown = {},
+            onSelectInnerViewCreate = {},
+            onSelectInnerViewDelete = {}
         )
     }
 }

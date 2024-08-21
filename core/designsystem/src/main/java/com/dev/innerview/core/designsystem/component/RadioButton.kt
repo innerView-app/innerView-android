@@ -21,7 +21,7 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 @Composable
 fun InnerViewRadioButton(
     textString: String = "",
-    selected: () -> Boolean,
+    selected: Boolean,
     onClick: () -> Unit
 ) {
     Row(
@@ -29,7 +29,7 @@ fun InnerViewRadioButton(
             .fillMaxWidth()
             .height(48.dp)
             .selectable(
-                selected = selected(),
+                selected = selected,
                 onClick = { onClick() },
                 role = Role.RadioButton
             ),
@@ -41,7 +41,7 @@ fun InnerViewRadioButton(
             style = MaterialTheme.typography.bodySmall,
         )
         RadioButton(
-            selected = selected(),
+            selected = selected,
             onClick = null,
             colors = RadioButtonColors(
                 selectedColor = MaterialTheme.colorScheme.tertiary,
@@ -60,7 +60,7 @@ private fun InnerViewRadioButtonPreview() {
     InnerViewTheme {
         InnerViewRadioButton(
             textString = "1 year",
-            selected = { true },
+            selected = true,
             onClick = {}
         )
     }

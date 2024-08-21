@@ -24,8 +24,8 @@ fun InnerViewCreateDialog(
 ) {
     InnerViewDialog(
         titleText = stringResource(id = R.string.feature_home_innerview_create),
-        contentText = stringResource(id = R.string.feature_home_innerview_type_description),
-        confirmText = stringResource(id = R.string.feature_home_dialog_confirm),
+        contentText = stringResource(id = R.string.feature_home_innerview_create_dialog_content),
+        confirmText = stringResource(id = R.string.feature_home_innerview_create_dialog_confirm),
         dismissText = stringResource(id = R.string.feature_home_dialog_dismiss),
         onDismissRequest = { onDismissRequest() },
         onConfirmRequest = { onConfirmRequest() }
@@ -33,8 +33,8 @@ fun InnerViewCreateDialog(
         InnerViewDialogTextField(
             value = { homeUiState.dialogInnerViewTitle },
             onValueChange = { onTitleChange(it) },
-            placeholderText = stringResource(id = R.string.feature_home_innerview_create_placeholder),
-            labelText = stringResource(id = R.string.feature_home_innerview_create_label),
+            placeholderText = stringResource(id = R.string.feature_home_innerview_create_dialog_placeholder),
+            labelText = stringResource(id = R.string.feature_home_innerview_create_dialog_label),
             supportingText = "${homeUiState.dialogInnerViewTitle.length}/$maxInnerViewTitleLength"
         )
         InnerViewType.entries.forEachIndexed { i, type ->
@@ -46,7 +46,7 @@ fun InnerViewCreateDialog(
             }
             InnerViewRadioButton(
                 textString = typeText,
-                selected = { homeUiState.dialogSelectedType == type },
+                selected = homeUiState.dialogSelectedType == type,
                 onClick = { onSelectType(type) }
             )
             if (InnerViewType.entries.size - 1 > i) {

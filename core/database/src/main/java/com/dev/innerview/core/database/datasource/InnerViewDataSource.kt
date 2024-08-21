@@ -45,6 +45,13 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
+    suspend fun deleteInnerView(id: Int) {
+        realm.write {
+            val innerViewDelete = query<InnerViewSchema>("_id == $0", id).find().first()
+            delete(innerViewDelete)
+        }
+    }
+
     private fun getNextPrimaryKey(): Int {
         return realm.query<InnerViewSchema>().max("_id", Int::class).find { i ->
             if (i == null) {
