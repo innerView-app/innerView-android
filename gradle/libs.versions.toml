@@ -20,6 +20,9 @@ androidxComposeBom = "2024.06.00"
 androidxComposeNavigation = "2.8.0-beta02"
 androidxComposeMaterial3 = "1.2.1"
 
+## Coil
+coil = "2.5.0"
+
 ## Kotlin Symbol Processing
 ksp = "2.0.0-1.0.22"
 
@@ -97,6 +100,9 @@ coroutines-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-
 
 realm-library-base = { group = "io.realm.kotlin", name = "library-base", version.ref = "realmDB" }
 realm-library-sync = { group = "io.realm.kotlin", name = "library-sync", version.ref = "realmDB" }
+
+coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "androidxTestExt" }
