@@ -16,7 +16,7 @@ sealed interface Route {
     data object Player : Route
 
     @Serializable
-    data object Records : Route
+    data class Records(val id: Int) : Route
 
     @Serializable
     data object Filming : Route

@@ -18,6 +18,7 @@ import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
+import com.dev.innerview.feature.record.navigation.navigateRecord
 
 internal class MainNavigator(
     val navController: NavHostController,
@@ -60,6 +61,10 @@ internal class MainNavigator(
 
     fun navigateInnerViewQuestion() {
         navController.navigateInnerViewQuestion()
+    }
+
+    fun navigateRecord(id: Int) {
+        navController.navigateRecord(id)
     }
 
     private fun popBackStack() {

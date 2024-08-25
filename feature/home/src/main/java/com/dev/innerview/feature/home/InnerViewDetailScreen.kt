@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.List
 import androidx.compose.material.icons.filled.Notifications
@@ -15,12 +16,15 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
+import com.dev.innerview.core.designsystem.component.InnerViewFloatingActionButton
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
+import com.dev.innerview.core.designsystem.theme.Paddings
 
 @Composable
 fun InnerViewDetailScreen(
@@ -28,6 +32,7 @@ fun InnerViewDetailScreen(
     onBackClick: () -> Unit,
     onInterviewGroupClick: () -> Unit,
     onInnerViewQuestionClick: () -> Unit,
+    onRecordClick: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -66,6 +71,15 @@ fun InnerViewDetailScreen(
                 text = "innerViewDetail Screen",
                 style = MaterialTheme.typography.titleMedium
             )
+
+            InnerViewFloatingActionButton(
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(end = Paddings.large, bottom = Paddings.large),
+                iconImageVector = Icons.Filled.Add,
+                text = "인터뷰 시작",
+                onClick = { onRecordClick(id) }
+            )
         }
     }
 }
@@ -79,7 +93,8 @@ private fun InnerViewDetailScreenPreview() {
             id = 0,
             onBackClick = {},
             onInterviewGroupClick = {},
-            onInnerViewQuestionClick = {}
+            onInnerViewQuestionClick = {},
+            onRecordClick = {}
         )
     }
 }
