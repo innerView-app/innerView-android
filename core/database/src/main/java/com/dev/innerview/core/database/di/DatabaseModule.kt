@@ -3,7 +3,7 @@ package com.dev.innerview.core.database.di
 import com.dev.innerview.core.database.schema.InnerViewSchema
 import com.dev.innerview.core.database.schema.InterviewGroupSchema
 import com.dev.innerview.core.database.schema.InterviewSchema
-import com.dev.innerview.core.database.schema.ProjectSchema
+import com.dev.innerview.core.database.schema.InnerProjectSchema
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -25,7 +25,7 @@ object DatabaseModule {
                     InnerViewSchema::class,
                     InterviewGroupSchema::class,
                     InterviewSchema::class,
-                    ProjectSchema::class
+                    InnerProjectSchema::class
                 )
             ).name("innerview.realm")
             .schemaVersion(1)
