@@ -5,4 +5,5 @@
     <string name="feature_record_question_add_dialog_dismiss">취소</string>
     <string name="feature_record_question_add_dialog_placeholder">답변할 질문을 직접 입력해주세요.</string>
     <string name="feature_record_exception_duplicate_question">똑같은 내용의 질문이 존재합니다.</string>
+    <string name="feature_record_interview_complete">인터뷰 완료</string>
 </resources>

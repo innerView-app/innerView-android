@@ -3,6 +3,7 @@ package com.dev.innerview.feature.record
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddQuestionUseCase
+import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewUseCase
 import com.dev.innerview.feature.record.model.RecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,7 +22,8 @@ import javax.inject.Inject
 @HiltViewModel
 class RecordViewModel @Inject constructor(
     private val getInterviewUseCase: GetInterviewUseCase,
-    private val addQuestionUseCase: AddQuestionUseCase
+    private val addQuestionUseCase: AddQuestionUseCase,
+    private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -63,6 +65,12 @@ class RecordViewModel @Inject constructor(
                 _errorFlow.emit(IllegalArgumentException())
             }
             selectQuestionAdd()
+        }
+    }
+
+    fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+        viewModelScope.launch {
+            completeInterviewGroupUseCase(innerViewId, interviewGroupId)
         }
     }
 

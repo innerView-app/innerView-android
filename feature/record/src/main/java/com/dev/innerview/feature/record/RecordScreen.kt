@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -23,13 +24,17 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewCard
+import com.dev.innerview.core.designsystem.component.InnerViewFloatingActionButton
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.InterviewCard
 import com.dev.innerview.core.designsystem.component.OutlinedText
@@ -94,7 +99,11 @@ internal fun RecordScreen(
         updateCustomQuestion = { viewModel.updateCustomQuestion(it) },
         updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
         addQuestion = { viewModel.addQuestion(innerViewId, interviewGroupId) },
-        navigateToFilming = navigateToFilming
+        navigateToFilming = navigateToFilming,
+        completeInterviewGroup = {
+            viewModel.completeInterviewGroup(innerViewId, interviewGroupId)
+            onBackClick()
+        }
     )
 }
 
@@ -110,6 +119,7 @@ private fun RecordContent(
     updateCustomQuestion: (String) -> Unit,
     updateDialogSelectedType: (Int) -> Unit,
     addQuestion: () -> Unit,
+    completeInterviewGroup: () -> Unit,
     navigateToFilming: (String, Int, String) -> Unit,
 ) {
     Box(
@@ -139,6 +149,17 @@ private fun RecordContent(
                 selectQuestionAdd = selectQuestionAdd,
                 navigateToFilming = navigateToFilming
             )
+
+            if (recordUiState.interviews.all { it.thumbnailVideoPath != null }) {
+                InnerViewFloatingActionButton(
+                    modifier = Modifier
+                        .align(Alignment.BottomEnd)
+                        .padding(end = Paddings.large, bottom = Paddings.large),
+                    iconImageVector = ImageVector.vectorResource(id = R.drawable.ic_archive),
+                    text = stringResource(R.string.feature_record_interview_complete),
+                    onClick = { completeInterviewGroup() }
+                )
+            }
         }
 
         if (recordUiState.isQuestionAddDialogVisible) {
@@ -213,6 +234,8 @@ private fun InterviewList(
                     )
                 }
             }
+
+            Spacer(modifier = Modifier.height(80.dp))
         }
     }
 }
@@ -257,6 +280,7 @@ private fun RecordContentPreview() {
             updateCustomQuestion = {},
             updateDialogSelectedType = {},
             addQuestion = {},
+            completeInterviewGroup = {},
             navigateToFilming = { _, _, _ -> }
         )
     }
