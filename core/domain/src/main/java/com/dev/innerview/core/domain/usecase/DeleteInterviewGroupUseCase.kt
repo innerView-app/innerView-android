@@ -6,6 +6,6 @@ import javax.inject.Inject
 class DeleteInterviewGroupUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
-    suspend operator fun invoke(innerViewId: String, interviewGroupId: String) =
+    suspend operator fun invoke(innerViewId: String, interviewGroupId: Int) =
         innerViewRepository.deleteInterviewGroup(innerViewId, interviewGroupId)
 }

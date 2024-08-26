@@ -66,8 +66,6 @@ class InnerViewDataSource @Inject constructor(
     }
 
     suspend fun addInterviewGroup(innerViewId: String) {
-        val createAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
-        val id = sha256(innerViewId + createAt)
         realm.write {
 
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
@@ -84,8 +82,8 @@ class InnerViewDataSource @Inject constructor(
             }
 
             val newInterviewGroupSchema = InterviewGroupSchema().apply {
-                this.id = id
-                this.createdAt = createAt
+                this.id = innerView.interviewGroups.size + 1
+                this.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
                 this.recordState = "RECODING"
                 this.interviews = interviews
             }
@@ -96,7 +94,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun deleteInterviewGroup(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
     ) {
         realm.write {
             val interviewGroup = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
@@ -112,7 +110,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun addQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         realm.write {
@@ -129,7 +127,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun deleteQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         realm.write {
@@ -147,7 +145,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun addInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String,
     ) {
         realm.write {
@@ -168,7 +166,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun deleteInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String,
     ) {
         realm.write {
@@ -183,7 +181,7 @@ class InnerViewDataSource @Inject constructor(
 
     suspend fun completeInterviewGroup(
         innerViewId: String,
-        interviewGroupId: String
+        interviewGroupId: Int
     ) {
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()

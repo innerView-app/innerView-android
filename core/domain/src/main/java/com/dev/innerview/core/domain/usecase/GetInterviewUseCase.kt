@@ -8,6 +8,6 @@ import javax.inject.Inject
 class GetInterviewUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
-    operator fun invoke(innerViewId: String, interviewGroupId: String): Flow<List<Interview>> =
+    operator fun invoke(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>> =
         innerViewRepository.getInterviews(innerViewId, interviewGroupId)
 }

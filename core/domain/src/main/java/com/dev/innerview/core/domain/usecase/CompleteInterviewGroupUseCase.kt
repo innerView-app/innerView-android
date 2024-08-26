@@ -7,6 +7,6 @@ class CompleteInterviewGroupUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
     suspend operator fun invoke(
-        innerViewId: String, interviewGroupId: String
+        innerViewId: String, interviewGroupId: Int
     ) = innerViewRepository.completeInterviewGroup(innerViewId, interviewGroupId)
 }

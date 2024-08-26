@@ -12,7 +12,7 @@ interface InnerViewRepository {
 
     fun getInterviewGroups(innerViewId: String): Flow<List<InterviewGroup>>
 
-    fun getInterviews(innerViewId: String, interviewGroupId: String): Flow<List<Interview>>
+    fun getInterviews(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 
@@ -22,35 +22,35 @@ interface InnerViewRepository {
 
     suspend fun deleteInterviewGroup(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
     )
 
     suspend fun addQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     )
 
     suspend fun deleteQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     )
 
     suspend fun addInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String,
     )
 
     suspend fun deleteInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String,
     )
 
     suspend fun completeInterviewGroup(
         innerViewId: String,
-        interviewGroupId: String
+        interviewGroupId: Int
     )
 }

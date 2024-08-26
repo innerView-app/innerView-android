@@ -47,7 +47,7 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override fun getInterviews(
         innerViewId: String,
-        interviewGroupId: String
+        interviewGroupId: Int
     ): Flow<List<Interview>> =
         innerViewDataSource.innerViewData
             .map { innerViewList ->
@@ -76,13 +76,13 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.addInterviewGroup(innerViewId)
     }
 
-    override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: String) {
+    override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         innerViewDataSource.deleteInterviewGroup(innerViewId, interviewGroupId)
     }
 
     override suspend fun addQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         innerViewDataSource.addQuestion(innerViewId, interviewGroupId, question)
@@ -90,7 +90,7 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override suspend fun deleteQuestion(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         innerViewDataSource.deleteQuestion(innerViewId, interviewGroupId, question)
@@ -98,7 +98,7 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override suspend fun addInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         innerViewDataSource.addInnerProject(innerViewId, interviewGroupId, question)
@@ -106,13 +106,13 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override suspend fun deleteInnerProject(
         innerViewId: String,
-        interviewGroupId: String,
+        interviewGroupId: Int,
         question: String
     ) {
         innerViewDataSource.deleteInnerProject(innerViewId, interviewGroupId, question)
     }
 
-    override suspend fun completeInterviewGroup(innerViewId: String, interviewGroupId: String) {
+    override suspend fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         innerViewDataSource.completeInterviewGroup(innerViewId, interviewGroupId)
     }
 }
