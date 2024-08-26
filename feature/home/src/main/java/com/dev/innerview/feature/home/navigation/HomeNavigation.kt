@@ -33,16 +33,16 @@ fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    onInnerViewClick: (Int) -> Unit,
-    onInterviewGroupClick: () -> Unit,
-    onInnerViewQuestionClick: () -> Unit,
+    navigateToInnerViewDetail: (Int) -> Unit,
+    navigateToInnerViewQuestion: () -> Unit,
+    navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (Int) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            navigateToInnerViewDetail = onInnerViewClick
+            navigateToInnerViewDetail = navigateToInnerViewDetail
         )
     }
 
@@ -51,9 +51,9 @@ fun NavGraphBuilder.homeNavGraph(
         InnerViewDetailScreen(
             id = id,
             onBackClick = onBackClick,
-            onInterviewGroupClick = onInterviewGroupClick,
-            onInnerViewQuestionClick = onInnerViewQuestionClick,
-            onRecordClick = { navigateToRecord(it) }
+            navigateToInterviewGroup = navigateToInterviewGroup,
+            navigateToInnerViewQuestion = navigateToInnerViewQuestion,
+            navigateToRecord = { navigateToRecord(it) }
         )
     }
 

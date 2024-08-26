@@ -16,7 +16,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
 import com.dev.innerview.core.designsystem.component.InnerViewFloatingActionButton
@@ -30,9 +29,9 @@ import com.dev.innerview.core.designsystem.theme.Paddings
 fun InnerViewDetailScreen(
     id: Int,
     onBackClick: () -> Unit,
-    onInterviewGroupClick: () -> Unit,
-    onInnerViewQuestionClick: () -> Unit,
-    onRecordClick: (Int) -> Unit
+    navigateToInterviewGroup: () -> Unit,
+    navigateToInnerViewQuestion: () -> Unit,
+    navigateToRecord: (Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -47,7 +46,7 @@ fun InnerViewDetailScreen(
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.List,
                     navigationIconContentDescription = null,
-                    onClick = { onInnerViewQuestionClick() }
+                    onClick = { navigateToInnerViewQuestion() }
                 )
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.Notifications,
@@ -78,7 +77,7 @@ fun InnerViewDetailScreen(
                     .padding(end = Paddings.large, bottom = Paddings.large),
                 iconImageVector = Icons.Filled.Add,
                 text = "인터뷰 시작",
-                onClick = { onRecordClick(id) }
+                onClick = { navigateToRecord(id) }
             )
         }
     }
@@ -92,9 +91,9 @@ private fun InnerViewDetailScreenPreview() {
         InnerViewDetailScreen(
             id = 0,
             onBackClick = {},
-            onInterviewGroupClick = {},
-            onInnerViewQuestionClick = {},
-            onRecordClick = {}
+            navigateToInterviewGroup = {},
+            navigateToInnerViewQuestion = {},
+            navigateToRecord = {}
         )
     }
 }
