@@ -6,7 +6,7 @@ import java.time.ZonedDateTime
 
 @Immutable
 data class InnerViewItemUiState(
-    val id: Int = 0,
+    val id: String = "",
     val title: String = "",
     val type: InnerViewType = InnerViewType.YEAR,
     val createdAt: ZonedDateTime = ZonedDateTime.now(),

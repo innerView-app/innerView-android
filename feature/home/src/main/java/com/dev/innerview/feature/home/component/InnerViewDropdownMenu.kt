@@ -15,8 +15,8 @@ import com.dev.innerview.feature.home.model.InnerViewItemUiState
 fun InnerViewDropdownMenu(
     modifier: Modifier = Modifier,
     itemUiState: InnerViewItemUiState,
-    onDeleteInnerView: (Int) -> Unit,
-    onDismissRequest: (Int) -> Unit
+    onDeleteInnerView: (String) -> Unit,
+    onDismissRequest: (String) -> Unit
 ) {
     DropdownMenu(
         modifier = modifier.background(MaterialTheme.colorScheme.background),

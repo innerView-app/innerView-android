@@ -10,5 +10,5 @@ interface InnerViewRepository {
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 
-    suspend fun deleteInnerView(id: Int)
+    suspend fun deleteInnerView(id: String)
 }

@@ -23,7 +23,7 @@ import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
-fun InnerViewQuestionScreen(
+internal fun InnerViewQuestionScreen(
     onBackClick: () -> Unit,
 ) {
     Box(

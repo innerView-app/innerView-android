@@ -33,10 +33,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun InnerViewItem(
     innerViewItemState: InnerViewItemUiState,
-    onInnerViewClick: (Int) -> Unit,
-    onInnerViewLongClick: (Int) -> Unit,
-    onSelectInnerViewDelete: (Int) -> Unit,
-    onInnerViewDeleteRequest: (Int) -> Unit
+    onInnerViewClick: (String) -> Unit,
+    onInnerViewLongClick: (String) -> Unit,
+    onSelectInnerViewDelete: (String) -> Unit,
+    onInnerViewDeleteRequest: (String) -> Unit
 ) {
 
     val createdAt = innerViewItemState.createdAt.withZoneSameInstant(ZoneId.systemDefault())
@@ -119,7 +119,7 @@ private fun InnerViewContentPreview() {
             onSelectInnerViewDelete = {},
             onInnerViewDeleteRequest = {},
             innerViewItemState = InnerViewItemUiState(
-                id = 0,
+                id = "",
                 title = "innerView title",
                 type = InnerViewType.YEAR,
                 createdAt = ZonedDateTime.now(ZoneOffset.UTC),

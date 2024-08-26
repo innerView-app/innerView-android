@@ -26,12 +26,12 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 
 @Composable
-fun InnerViewDetailScreen(
-    id: Int,
+internal fun InnerViewDetailScreen(
+    id: String,
     onBackClick: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: () -> Unit,
-    navigateToRecord: (Int) -> Unit
+    navigateToRecord: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -39,7 +39,7 @@ fun InnerViewDetailScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = id.toString(),
+            title = id,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -89,7 +89,7 @@ fun InnerViewDetailScreen(
 private fun InnerViewDetailScreenPreview() {
     InnerViewTheme {
         InnerViewDetailScreen(
-            id = 0,
+            id = "",
             onBackClick = {},
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},

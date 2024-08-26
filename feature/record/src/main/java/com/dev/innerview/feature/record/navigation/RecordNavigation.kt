@@ -8,7 +8,7 @@ import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.RecordScreen
 
-fun NavController.navigateRecord(id: Int) {
+fun NavController.navigateRecord(id: String) {
     navigate(Route.Records(id))
 }
 
@@ -23,7 +23,8 @@ fun NavGraphBuilder.recordNavGraph(
         RecordScreen(
             id = id,
             padding = padding,
-            onBackClick = onBackClick
+            onBackClick = onBackClick,
+            onShowErrorSnackBar = onShowErrorSnackBar
         )
     }
 }

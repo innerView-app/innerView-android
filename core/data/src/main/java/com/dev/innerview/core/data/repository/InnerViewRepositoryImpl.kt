@@ -30,7 +30,7 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.addInnerView(title, type.name)
     }
 
-    override suspend fun deleteInnerView(id: Int) {
+    override suspend fun deleteInnerView(id: String) {
         innerViewDataSource.deleteInnerView(id)
     }
 }

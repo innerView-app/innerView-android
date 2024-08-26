@@ -17,7 +17,7 @@ fun NavController.navigateHome(navOptions: NavOptions) {
     navigate(MainTabRoute.Home, navOptions)
 }
 
-fun NavController.navigateInnerViewDetail(id: Int) {
+fun NavController.navigateInnerViewDetail(id: String) {
     navigate(Route.InnerViewDetail(id))
 }
 
@@ -33,10 +33,10 @@ fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToInnerViewDetail: (Int) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     navigateToInnerViewQuestion: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (Int) -> Unit
+    navigateToRecord: (String) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(

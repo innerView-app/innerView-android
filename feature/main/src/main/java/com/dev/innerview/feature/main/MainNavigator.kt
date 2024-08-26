@@ -51,7 +51,7 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateInnerViewDetail(id: Int) {
+    fun navigateInnerViewDetail(id: String) {
         navController.navigateInnerViewDetail(id)
     }
 
@@ -63,7 +63,7 @@ internal class MainNavigator(
         navController.navigateInnerViewQuestion()
     }
 
-    fun navigateRecord(id: Int) {
+    fun navigateRecord(id: String) {
         navController.navigateRecord(id)
     }
 

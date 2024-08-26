@@ -28,6 +28,8 @@ object DatabaseModule {
                     ProjectSchema::class
                 )
             ).name("innerview.realm")
+            .schemaVersion(1)
+            .deleteRealmIfMigrationNeeded() // develop only
             .build()
 
         return Realm.open(config)

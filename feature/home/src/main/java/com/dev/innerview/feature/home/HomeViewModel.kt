@@ -66,7 +66,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun deleteInnerView(id: Int) {
+    fun deleteInnerView(id: String) {
         viewModelScope.launch {
             deleteInnerViewUseCase(id)
         }
@@ -82,7 +82,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun selectInnerViewDelete(id: Int) {
+    fun selectInnerViewDelete(id: String) {
         _homeUiState.update {
             it.copy(
                 innerViews = it.innerViews.map { itemUiState ->
@@ -98,7 +98,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun selectInnerViewDropdown(id: Int) {
+    fun selectInnerViewDropdown(id: String) {
         _homeUiState.update {
             it.copy(
                 innerViews = it.innerViews.map { itemUiState ->
