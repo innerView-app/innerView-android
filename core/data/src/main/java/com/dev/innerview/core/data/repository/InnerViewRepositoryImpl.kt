@@ -33,15 +33,27 @@ class InnerViewRepositoryImpl @Inject constructor(
     override fun getInterviewGroups(innerViewId: String): Flow<List<InterviewGroup>> =
         innerViewDataSource.innerViewData
             .map { innerViewList ->
-                innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups?.map { interviewGroupSchema ->
+                val interviewGroups =
+                    innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups
+
+                interviewGroups?.map { interviewGroupSchema ->
+
+                    val videoPaths =
+                        interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
+                    val thumbnailVideoPath = if (videoPaths.isNotEmpty()) {
+                        videoPaths.first()
+                    } else {
+                        null
+                    }
+
                     InterviewGroup(
                         id = interviewGroupSchema.id,
                         createdAt = ZonedDateTime.parse(interviewGroupSchema.createdAt),
-                        recordState = RecordState.stringToInnerViewType(interviewGroupSchema.recordState),
+                        recordState = RecordState.stringToRecordState(interviewGroupSchema.recordState),
                         questionCount = interviewGroupSchema.interviews.size,
-                        thumbnailVideoPath = interviewGroupSchema.interviews.firstOrNull()?.innerProject?.videoPath
+                        thumbnailVideoPath = thumbnailVideoPath
                     )
-                } ?: listOf()
+                }?.sortedByDescending { it.createdAt } ?: listOf()
             }
 
     override fun getInterviews(
@@ -50,9 +62,14 @@ class InnerViewRepositoryImpl @Inject constructor(
     ): Flow<List<Interview>> =
         innerViewDataSource.innerViewData
             .map { innerViewList ->
+
                 val interviewGroups =
                     innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups
-                interviewGroups?.first { it.id == interviewGroupId }?.interviews?.map { interviewSchema ->
+
+                val interviews =
+                    interviewGroups?.firstOrNull { it.id == interviewGroupId }?.interviews
+
+                interviews?.map { interviewSchema ->
                     Interview(
                         createdAt = interviewSchema.createdAt?.let { ZonedDateTime.parse(it) },
                         question = interviewSchema.question,
