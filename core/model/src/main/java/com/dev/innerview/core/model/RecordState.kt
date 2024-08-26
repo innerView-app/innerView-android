@@ -5,7 +5,7 @@ enum class RecordState {
     COMPLETE;
 
     companion object {
-        fun stringToInnerViewType(value: String?): RecordState {
+        fun stringToRecordState(value: String?): RecordState {
             return entries.find { it.name == value } ?: RECODING
         }
     }
