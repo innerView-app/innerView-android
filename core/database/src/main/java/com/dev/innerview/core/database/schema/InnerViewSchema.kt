@@ -11,5 +11,6 @@ class InnerViewSchema : RealmObject {
     var title: String = ""
     var type: String = ""
     var createdAt: String = ""
+    var questions: RealmList<String> = realmListOf()
     var interviewGroups: RealmList<InterviewGroupSchema> = realmListOf()
 }
