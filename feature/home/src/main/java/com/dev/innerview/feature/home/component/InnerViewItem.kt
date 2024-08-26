@@ -34,7 +34,7 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun InnerViewItem(
     innerViewItemState: InnerViewItemUiState,
-    onInnerViewClick: (String) -> Unit,
+    onInnerViewClick: (String, String) -> Unit,
     onInnerViewLongClick: (String) -> Unit,
     onSelectInnerViewDelete: (String) -> Unit,
     onInnerViewDeleteRequest: (String) -> Unit
@@ -51,7 +51,7 @@ fun InnerViewItem(
             .fillMaxWidth()
             .height(80.dp)
             .combinedClickable(
-                onClick = { onInnerViewClick(innerViewItemState.id) },
+                onClick = { onInnerViewClick(innerViewItemState.id, innerViewItemState.title) },
                 onLongClick = { onInnerViewLongClick(innerViewItemState.id) }
             )
     ) {
@@ -116,7 +116,7 @@ fun InnerViewItem(
 private fun InnerViewContentPreview() {
     InnerViewTheme {
         InnerViewItem(
-            onInnerViewClick = {},
+            onInnerViewClick = { _, _ -> },
             onInnerViewLongClick = {},
             onSelectInnerViewDelete = {},
             onInnerViewDeleteRequest = {},

@@ -17,8 +17,8 @@ fun NavController.navigateHome(navOptions: NavOptions) {
     navigate(MainTabRoute.Home, navOptions)
 }
 
-fun NavController.navigateInnerViewDetail(id: String) {
-    navigate(Route.InnerViewDetail(id))
+fun NavController.navigateInnerViewDetail(id: String, title: String) {
+    navigate(Route.InnerViewDetail(id, title))
 }
 
 fun NavController.navigateInterviewGroup() {
@@ -33,7 +33,7 @@ fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToInnerViewDetail: (String) -> Unit,
+    navigateToInnerViewDetail: (String, String) -> Unit,
     navigateToInnerViewQuestion: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String) -> Unit
@@ -47,9 +47,10 @@ fun NavGraphBuilder.homeNavGraph(
     }
 
     composable<Route.InnerViewDetail> { navBackStackEntry ->
-        val id = navBackStackEntry.toRoute<Route.InnerViewDetail>().id
+        val (id, title) = navBackStackEntry.toRoute<Route.InnerViewDetail>()
         InnerViewDetailScreen(
             id = id,
+            title = title,
             onBackClick = onBackClick,
             navigateToInterviewGroup = navigateToInterviewGroup,
             navigateToInnerViewQuestion = navigateToInnerViewQuestion,
