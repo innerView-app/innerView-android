@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.component.InnerViewCard
@@ -63,7 +64,8 @@ fun InnerViewItem(
                 modifier = Modifier.align(Alignment.TopStart),
                 text = innerViewItemState.title,
                 style = MaterialTheme.typography.titleSmall,
-                maxLines = 2
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
@@ -123,7 +125,7 @@ private fun InnerViewContentPreview() {
                 title = "innerView title",
                 type = InnerViewType.YEAR,
                 createdAt = ZonedDateTime.now(ZoneOffset.UTC),
-                isInnerViewDeleteDialogVisible = true,
+                isInnerViewDeleteDialogVisible = false,
             )
         )
     }
