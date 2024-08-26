@@ -75,7 +75,7 @@ fun InterviewGroupCard(
 fun InterviewCard(
     modifier: Modifier = Modifier,
     color: Color = MaterialTheme.colorScheme.secondaryContainer,
-    filePath: String,
+    filePath: String?,
     interviewDescription: String? = null,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
@@ -96,7 +96,7 @@ fun InterviewCard(
             ) {
                 VideoThumbnail(
                     modifier = Modifier,
-                    filePath = filePath,
+                    filePath = "$filePath",
                     contentScale = ContentScale.FillWidth,
                     contentDescription = interviewDescription
                 )
