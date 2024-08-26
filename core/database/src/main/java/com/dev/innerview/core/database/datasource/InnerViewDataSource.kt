@@ -116,12 +116,19 @@ class InnerViewDataSource @Inject constructor(
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
-            innerView.interviewGroups.first { it.id == interviewGroupId }.interviews.add(
-                InterviewSchema().apply {
-                    this.question = question
-                    this.isRequired = false
-                }
-            )
+            val interviews =
+                innerView.interviewGroups.first { it.id == interviewGroupId }.interviews
+
+            if (interviews.map { it.question }.contains(question)) {
+                throw IllegalArgumentException()
+            } else {
+                interviews.add(
+                    InterviewSchema().apply {
+                        this.question = question
+                        this.isRequired = false
+                    }
+                )
+            }
         }
     }
 
