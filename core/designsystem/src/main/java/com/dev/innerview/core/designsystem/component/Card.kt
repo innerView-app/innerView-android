@@ -96,7 +96,7 @@ fun InterviewCard(
             ) {
                 VideoThumbnail(
                     modifier = Modifier,
-                    filePath = "$filePath",
+                    filePath = "interviews/$filePath",
                     contentScale = ContentScale.FillWidth,
                     contentDescription = interviewDescription
                 )
