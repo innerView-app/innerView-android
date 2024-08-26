@@ -34,7 +34,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun RecordScreen(
-    id: String,
+    innerViewId: String,
+    interviewGroupId: Int,
+    title: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,

@@ -36,7 +36,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToInnerViewDetail: (String, String) -> Unit,
     navigateToInnerViewQuestion: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String) -> Unit
+    navigateToRecord: (String, Int, String) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -54,7 +54,7 @@ fun NavGraphBuilder.homeNavGraph(
             onBackClick = onBackClick,
             navigateToInterviewGroup = navigateToInterviewGroup,
             navigateToInnerViewQuestion = navigateToInnerViewQuestion,
-            navigateToRecord = { navigateToRecord(it) }
+            navigateToRecord = navigateToRecord
         )
     }
 

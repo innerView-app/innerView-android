@@ -32,7 +32,7 @@ internal fun InnerViewDetailScreen(
     onBackClick: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: () -> Unit,
-    navigateToRecord: (String) -> Unit
+    navigateToRecord: (String, Int, String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -78,7 +78,7 @@ internal fun InnerViewDetailScreen(
                     .padding(end = Paddings.large, bottom = Paddings.large),
                 iconImageVector = Icons.Filled.Add,
                 text = "인터뷰 시작",
-                onClick = { navigateToRecord(id) }
+                onClick = { navigateToRecord(id, Int.MAX_VALUE, title) }
             )
         }
     }
@@ -95,7 +95,7 @@ private fun InnerViewDetailScreenPreview() {
             onBackClick = {},
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},
-            navigateToRecord = {}
+            navigateToRecord = { _, _, _ -> }
         )
     }
 }

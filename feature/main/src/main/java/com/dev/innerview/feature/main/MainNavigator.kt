@@ -63,8 +63,8 @@ internal class MainNavigator(
         navController.navigateInnerViewQuestion()
     }
 
-    fun navigateRecord(id: String) {
-        navController.navigateRecord(id)
+    fun navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {
+        navController.navigateRecord(innerViewId, interviewGroupId, title)
     }
 
     private fun popBackStack() {

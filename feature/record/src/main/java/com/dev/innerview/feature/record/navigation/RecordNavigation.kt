@@ -8,8 +8,8 @@ import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.RecordScreen
 
-fun NavController.navigateRecord(id: String) {
-    navigate(Route.Records(id))
+fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {
+    navigate(Route.Records(innerViewId, interviewGroupId, title))
 }
 
 fun NavGraphBuilder.recordNavGraph(
@@ -19,9 +19,11 @@ fun NavGraphBuilder.recordNavGraph(
 ) {
 
     composable<Route.Records> { navBackStackEntry ->
-        val id = navBackStackEntry.toRoute<Route.Records>().id
+        val (innerViewId, interviewGroupId, title) = navBackStackEntry.toRoute<Route.Records>()
         RecordScreen(
-            id = id,
+            innerViewId = innerViewId,
+            interviewGroupId = interviewGroupId,
+            title = title,
             padding = padding,
             onBackClick = onBackClick,
             onShowErrorSnackBar = onShowErrorSnackBar
