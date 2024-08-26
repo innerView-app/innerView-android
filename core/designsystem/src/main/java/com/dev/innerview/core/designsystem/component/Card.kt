@@ -48,7 +48,7 @@ fun InnerViewCard(
 @Composable
 fun InterviewGroupCard(
     modifier: Modifier = Modifier,
-    filePath: String,
+    filePath: String?,
     interviewDescription: String? = null,
     content: @Composable BoxScope.() -> Unit = {}
 ) {
