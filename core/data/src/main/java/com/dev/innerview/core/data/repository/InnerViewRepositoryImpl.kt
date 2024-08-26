@@ -54,10 +54,10 @@ class InnerViewRepositoryImpl @Inject constructor(
                     innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups
                 interviewGroups?.first { it.id == interviewGroupId }?.interviews?.map { interviewSchema ->
                     Interview(
-                        createdAt = ZonedDateTime.parse(interviewSchema.createdAt),
+                        createdAt = interviewSchema.createdAt?.let { ZonedDateTime.parse(it) },
                         question = interviewSchema.question,
                         isRequired = interviewSchema.isRequired,
-                        recordState = RecordState.stringToInnerViewType(interviewSchema.innerProject?.recordState),
+                        isRecordComplete = interviewSchema.innerProject != null,
                         thumbnailVideoPath = interviewSchema.innerProject?.videoPath
                     )
                 } ?: listOf()
