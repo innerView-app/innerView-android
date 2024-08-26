@@ -49,7 +49,7 @@ fun NavGraphBuilder.homeNavGraph(
     composable<Route.InnerViewDetail> { navBackStackEntry ->
         val (id, title) = navBackStackEntry.toRoute<Route.InnerViewDetail>()
         InnerViewDetailScreen(
-            id = id,
+            innerViewId = id,
             title = title,
             onBackClick = onBackClick,
             navigateToInterviewGroup = navigateToInterviewGroup,

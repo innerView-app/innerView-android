@@ -19,6 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.component.InnerViewCard
 import com.dev.innerview.core.designsystem.component.InnerViewDialog
+import com.dev.innerview.core.designsystem.component.InnerViewDropdownMenu
+import com.dev.innerview.core.designsystem.component.InnerViewDropdownMenuItem
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
@@ -138,8 +140,7 @@ private fun InnerViewContentPreview() {
                 title = "innerView title",
                 type = InnerViewType.YEAR,
                 createdAt = ZonedDateTime.now(ZoneOffset.UTC),
-                isInnerViewDeleteDialogVisible = false,
-                isDropdownMenuVisible = true
+                isInnerViewDeleteDialogVisible = true
             )
         )
     }

@@ -109,7 +109,7 @@ private fun HomeScreen(
         ) {
             InnerViewList(
                 innerViews = homeUiState.innerViews,
-                onInnerViewClick = navigateToInnerViewDetail,
+                navigateToInnerViewDetail = navigateToInnerViewDetail,
                 onSelectInnerViewDropdown = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
@@ -140,7 +140,7 @@ private fun HomeScreen(
 @Composable
 private fun InnerViewList(
     innerViews: ImmutableList<InnerViewItemUiState>,
-    onInnerViewClick: (String, String) -> Unit,
+    navigateToInnerViewDetail: (String, String) -> Unit,
     onSelectInnerViewDropdown: (String) -> Unit,
     onSelectInnerViewDelete: (String) -> Unit,
     onInnerViewDeleteRequest: (String) -> Unit
@@ -154,8 +154,8 @@ private fun InnerViewList(
         items(innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
                 innerViewItemState = innerView,
-                onInnerViewClick = onInnerViewClick,
-                onInnerViewLongClick = onSelectInnerViewDropdown,
+                navigateToInnerViewDetail = navigateToInnerViewDetail,
+                onSelectInnerViewDropdown = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
