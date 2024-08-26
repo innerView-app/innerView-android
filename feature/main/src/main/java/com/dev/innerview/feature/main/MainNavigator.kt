@@ -18,6 +18,7 @@ import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
+import com.dev.innerview.feature.record.navigation.navigateFilming
 import com.dev.innerview.feature.record.navigation.navigateRecord
 
 internal class MainNavigator(
@@ -65,6 +66,10 @@ internal class MainNavigator(
 
     fun navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {
         navController.navigateRecord(innerViewId, interviewGroupId, title)
+    }
+
+    fun navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {
+        navController.navigateFilming(innerViewId, interviewGroupId, question)
     }
 
     private fun popBackStack() {

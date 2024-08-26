@@ -53,6 +53,7 @@ internal fun RecordScreen(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    navigateToFilming: (String, Int, String) -> Unit,
     viewModel: RecordViewModel = hiltViewModel()
 ) {
 
@@ -92,7 +93,8 @@ internal fun RecordScreen(
         selectQuestionAdd = { viewModel.selectQuestionAdd() },
         updateCustomQuestion = { viewModel.updateCustomQuestion(it) },
         updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
-        addQuestion = { viewModel.addQuestion(innerViewId, interviewGroupId) }
+        addQuestion = { viewModel.addQuestion(innerViewId, interviewGroupId) },
+        navigateToFilming = navigateToFilming
     )
 }
 
@@ -107,7 +109,8 @@ private fun RecordContent(
     selectQuestionAdd: () -> Unit,
     updateCustomQuestion: (String) -> Unit,
     updateDialogSelectedType: (Int) -> Unit,
-    addQuestion: () -> Unit
+    addQuestion: () -> Unit,
+    navigateToFilming: (String, Int, String) -> Unit,
 ) {
     Box(
         modifier = Modifier
@@ -133,7 +136,8 @@ private fun RecordContent(
                 innerViewId = innerViewId,
                 interviewGroupId = interviewGroupId,
                 interviews = recordUiState.interviews,
-                selectQuestionAdd = selectQuestionAdd
+                selectQuestionAdd = selectQuestionAdd,
+                navigateToFilming = navigateToFilming
             )
         }
 
@@ -155,6 +159,7 @@ private fun InterviewList(
     interviewGroupId: Int,
     interviews: ImmutableList<Interview>,
     selectQuestionAdd: () -> Unit,
+    navigateToFilming: (String, Int, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -167,7 +172,8 @@ private fun InterviewList(
             InterviewCard(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(80.dp),
+                    .height(80.dp)
+                    .clickable { navigateToFilming(innerViewId, interviewGroupId, it.question) },
                 filePath = it.thumbnailVideoPath
             ) {
                 OutlinedText(
@@ -250,7 +256,8 @@ private fun RecordContentPreview() {
             selectQuestionAdd = {},
             updateCustomQuestion = {},
             updateDialogSelectedType = {},
-            addQuestion = {}
+            addQuestion = {},
+            navigateToFilming = { _, _, _ -> }
         )
     }
 }

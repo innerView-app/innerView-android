@@ -24,7 +24,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun FilmingScreen(
-    id: Int,
+    innerViewId: String,
+    interviewGroupId: Int,
+    question: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
@@ -36,15 +38,19 @@ internal fun FilmingScreen(
     }
 
     FilmingContent(
+        question = question,
         padding = padding,
         onBackClick = onBackClick,
+        addInnerProject = { viewModel.addInnerProject(innerViewId, interviewGroupId, question) }
     )
 }
 
 @Composable
 private fun FilmingContent(
+    question: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
+    addInnerProject: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -52,7 +58,7 @@ private fun FilmingContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = "Filming",
+            title = question,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = onBackClick,
         )
@@ -64,10 +70,10 @@ private fun FilmingContent(
             contentAlignment = Alignment.Center
         ) {
 
-            InnerViewFloatingActionButton(iconImageVector = Icons.Filled.Add) {
-
-            }
-
+            InnerViewFloatingActionButton(
+                iconImageVector = Icons.Filled.Add,
+                onClick = addInnerProject
+            )
         }
     }
 }
@@ -78,8 +84,10 @@ private fun FilmingContent(
 private fun FilmingContentPreview() {
     InnerViewTheme {
         FilmingContent(
+            question = "question",
             padding = PaddingValues(),
-            onBackClick = {}
+            onBackClick = {},
+            addInnerProject = {}
         )
     }
 }

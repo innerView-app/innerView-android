@@ -59,7 +59,14 @@ internal fun MainNavHost(
         recordNavGraph(
             padding = padding,
             onBackClick = { navigator.popBackStackIfNotHome() },
-            onShowErrorSnackBar = onShowErrorSnackBar
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToFilming = { innerViewId, interviewGroupId, question ->
+                navigator.navigateFilming(
+                    innerViewId,
+                    interviewGroupId,
+                    question
+                )
+            }
         )
     }
 }

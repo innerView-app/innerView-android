@@ -2,6 +2,8 @@ package com.dev.innerview.feature.home.component
 
 import android.content.res.Configuration
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,10 +47,14 @@ fun InnerViewCreateDialog(
                 InnerViewType.DAY -> stringResource(id = R.string.feature_home_innerview_type_day)
             }
             InnerViewRadioButton(
-                textString = typeText,
                 selected = homeUiState.dialogSelectedType == type,
                 onClick = { onSelectType(type) }
-            )
+            ) {
+                Text(
+                    text = typeText,
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             if (InnerViewType.entries.size - 1 > i) {
                 HorizontalDivider()
             }
