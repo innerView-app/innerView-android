@@ -1,2 +1,8 @@
 <resources>
+    <string name="feature_record_question_add_dialog_title">질문 선택</string>
+    <string name="feature_record_question_add_dialog_content">답변할 질문을 선택해주세요.\n기존 질문과 똑같은 질문은 추가할 수 없습니다.</string>
+    <string name="feature_record_question_add_dialog_confirm">추가</string>
+    <string name="feature_record_question_add_dialog_dismiss">취소</string>
+    <string name="feature_record_question_add_dialog_placeholder">답변할 질문을 직접 입력해주세요.</string>
+    <string name="feature_record_exception_duplicate_question">똑같은 내용의 질문이 존재합니다.</string>
 </resources>
