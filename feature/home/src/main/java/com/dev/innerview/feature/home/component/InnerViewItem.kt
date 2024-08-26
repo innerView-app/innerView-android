@@ -34,8 +34,8 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun InnerViewItem(
     innerViewItemState: InnerViewItemUiState,
-    onInnerViewClick: (String, String) -> Unit,
-    onInnerViewLongClick: (String) -> Unit,
+    navigateToInnerViewDetail: (String, String) -> Unit,
+    onSelectInnerViewDropdown: (String) -> Unit,
     onSelectInnerViewDelete: (String) -> Unit,
     onInnerViewDeleteRequest: (String) -> Unit
 ) {
@@ -51,8 +51,13 @@ fun InnerViewItem(
             .fillMaxWidth()
             .height(80.dp)
             .combinedClickable(
-                onClick = { onInnerViewClick(innerViewItemState.id, innerViewItemState.title) },
-                onLongClick = { onInnerViewLongClick(innerViewItemState.id) }
+                onClick = {
+                    navigateToInnerViewDetail(
+                        innerViewItemState.id,
+                        innerViewItemState.title
+                    )
+                },
+                onLongClick = { onSelectInnerViewDropdown(innerViewItemState.id) }
             )
     ) {
         Box(
@@ -85,10 +90,18 @@ fun InnerViewItem(
             )
             InnerViewDropdownMenu(
                 modifier = Modifier,
-                itemUiState = innerViewItemState,
-                onDeleteInnerView = { onSelectInnerViewDelete(innerViewItemState.id) },
-                onDismissRequest = { onInnerViewLongClick(innerViewItemState.id) }
-            )
+                expanded = innerViewItemState.isDropdownMenuVisible,
+                onDismissRequest = { onSelectInnerViewDropdown(innerViewItemState.id) }
+            ) {
+                InnerViewDropdownMenuItem(
+                    text = stringResource(R.string.feature_home_innerview_delete),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        color = MaterialTheme.colorScheme.error
+                    ),
+                    onClick = { onSelectInnerViewDelete(innerViewItemState.id) },
+                    onDismissRequest = { onSelectInnerViewDropdown(innerViewItemState.id) }
+                )
+            }
         }
     }
 
@@ -116,8 +129,8 @@ fun InnerViewItem(
 private fun InnerViewContentPreview() {
     InnerViewTheme {
         InnerViewItem(
-            onInnerViewClick = { _, _ -> },
-            onInnerViewLongClick = {},
+            navigateToInnerViewDetail = { _, _ -> },
+            onSelectInnerViewDropdown = {},
             onSelectInnerViewDelete = {},
             onInnerViewDeleteRequest = {},
             innerViewItemState = InnerViewItemUiState(
@@ -126,6 +139,7 @@ private fun InnerViewContentPreview() {
                 type = InnerViewType.YEAR,
                 createdAt = ZonedDateTime.now(ZoneOffset.UTC),
                 isInnerViewDeleteDialogVisible = false,
+                isDropdownMenuVisible = true
             )
         )
     }
