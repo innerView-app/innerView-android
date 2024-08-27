@@ -61,8 +61,8 @@ class RecordViewModel @Inject constructor(
                         it.selectableQuestions[it.selectedQuestion]
                     }
                 )
-            }.onFailure {
-                _errorFlow.emit(IllegalArgumentException())
+            }.onFailure { throwable ->
+                _errorFlow.emit(throwable)
             }
             selectQuestionAdd()
         }
