@@ -1,9 +1,23 @@
 <resources>
+    <string name="feature_record_interview_complete">인터뷰 완료</string>
+    <string name="feature_record_answer_required">* 답변 필수</string>
+
+    <string name="feature_record_dialog_delete_confirm">삭제</string>
+    <string name="feature_record_dialog_dismiss">취소</string>
+    <string name="feature_record_dialog_add_confirm">추가</string>
+
     <string name="feature_record_question_add_dialog_title">질문 선택</string>
     <string name="feature_record_question_add_dialog_content">답변할 질문을 선택해주세요.\n기존 질문과 똑같은 질문은 추가할 수 없습니다.</string>
-    <string name="feature_record_question_add_dialog_confirm">추가</string>
-    <string name="feature_record_question_add_dialog_dismiss">취소</string>
+
     <string name="feature_record_question_add_dialog_placeholder">답변할 질문을 직접 입력해주세요.</string>
     <string name="feature_record_exception_duplicate_question">똑같은 내용의 질문이 존재합니다.</string>
-    <string name="feature_record_interview_complete">인터뷰 완료</string>
+
+    <string name="feature_record_innerproject_delete_dialog_title">영상 삭제</string>
+    <string name="feature_record_innerproject_delete_dialog_content">모든 질문에 답변 영상을 촬영해야만 인터뷰를 종료할 수 있습니다.\n촬영된 영상을 제거하시겠습니까?</string>
+
+    <string name="feature_record_question_delete_dialog_title">질문 삭제</string>
+    <string name="feature_record_question_delete_dialog_content">질문을 삭제하면 이미 촬영된 영상, 편집 내용도 모두 사라집니다.\n질문을 삭제하시겠습니까?</string>
+    <string name="feature_record_description">이전 회차에서 답변한 질문은 필수로 답변해야 하며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
+
+
 </resources>

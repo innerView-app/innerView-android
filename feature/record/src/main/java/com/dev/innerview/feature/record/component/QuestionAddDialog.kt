@@ -29,14 +29,12 @@ fun QuestionAddDialog(
     InnerViewDialog(
         titleText = stringResource(R.string.feature_record_question_add_dialog_title),
         contentText = stringResource(R.string.feature_record_question_add_dialog_content),
-        confirmText = stringResource(R.string.feature_record_question_add_dialog_confirm),
-        dismissText = stringResource(R.string.feature_record_question_add_dialog_dismiss),
+        confirmText = stringResource(R.string.feature_record_dialog_add_confirm),
+        dismissText = stringResource(R.string.feature_record_dialog_dismiss),
         onDismissRequest = { onDismissRequest() },
         onConfirmRequest = { onConfirmRequest() }
     ) {
-
         recordUiState.selectableQuestions.forEachIndexed { i, question ->
-
             InnerViewRadioButton(
                 selected = recordUiState.selectedQuestion == i,
                 onClick = { onSelectType(i) }
