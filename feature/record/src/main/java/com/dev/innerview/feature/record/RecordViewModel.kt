@@ -4,7 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddQuestionUseCase
 import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
+import com.dev.innerview.core.domain.usecase.DeleteInnerProjectUseCase
+import com.dev.innerview.core.domain.usecase.DeleteQuestionUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewUseCase
+import com.dev.innerview.feature.record.model.InterviewItemUiState
 import com.dev.innerview.feature.record.model.RecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.persistentListOf
@@ -14,6 +17,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,7 +27,9 @@ import javax.inject.Inject
 class RecordViewModel @Inject constructor(
     private val getInterviewUseCase: GetInterviewUseCase,
     private val addQuestionUseCase: AddQuestionUseCase,
-    private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase
+    private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase,
+    private val deleteQuestionUseCase: DeleteQuestionUseCase,
+    private val deleteInnerProjectUseCase: DeleteInnerProjectUseCase,
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -34,9 +40,11 @@ class RecordViewModel @Inject constructor(
 
     fun fetchInnerView(innerViewId: String, interviewGroupId: Int) {
         getInterviewUseCase(innerViewId, interviewGroupId)
-            .onEach { interviews ->
+            .map { interviews ->
+                interviews.map { InterviewItemUiState(interview = it) }
+            }.onEach { interviewItemStates ->
                 _recordUiState.update {
-                    it.copy(interviews = interviews.toPersistentList())
+                    it.copy(interviews = interviewItemStates.toPersistentList())
                 }
             }.launchIn(viewModelScope)
     }
@@ -68,6 +76,18 @@ class RecordViewModel @Inject constructor(
         }
     }
 
+    fun deleteQuestion(innerViewId: String, interviewGroupId: Int, question: String) {
+        viewModelScope.launch {
+            deleteQuestionUseCase(innerViewId, interviewGroupId, question)
+        }
+    }
+
+    fun deleteInnerProject(innerViewId: String, interviewGroupId: Int, question: String) {
+        viewModelScope.launch {
+            deleteInnerProjectUseCase(innerViewId, interviewGroupId, question)
+        }
+    }
+
     fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         viewModelScope.launch {
             completeInterviewGroupUseCase(innerViewId, interviewGroupId)
@@ -87,6 +107,54 @@ class RecordViewModel @Inject constructor(
     fun updateDialogSelectedType(i: Int) {
         _recordUiState.update {
             it.copy(selectedQuestion = i)
+        }
+    }
+
+    fun selectQuestionDelete(question: String) {
+        _recordUiState.update {
+            it.copy(
+                interviews = it.interviews.map { itemUiState ->
+                    if (itemUiState.interview.question == question && !itemUiState.interview.isRequired) {
+                        itemUiState.copy(
+                            isQuestionDeleteDialogVisible = !itemUiState.isQuestionDeleteDialogVisible
+                        )
+                    } else {
+                        itemUiState
+                    }
+                }.toPersistentList()
+            )
+        }
+    }
+
+    fun selectInnerProjectDelete(question: String) {
+        _recordUiState.update {
+            it.copy(
+                interviews = it.interviews.map { itemUiState ->
+                    if (itemUiState.interview.question == question) {
+                        itemUiState.copy(
+                            isInnerProjectDeleteDialogVisible = !itemUiState.isInnerProjectDeleteDialogVisible
+                        )
+                    } else {
+                        itemUiState
+                    }
+                }.toPersistentList()
+            )
+        }
+    }
+
+    fun selectInterviewDropdown(question: String) {
+        _recordUiState.update {
+            it.copy(
+                interviews = it.interviews.map { itemUiState ->
+                    if (itemUiState.interview.question == question && (itemUiState.interview.isRecordComplete || !itemUiState.interview.isRequired)) {
+                        itemUiState.copy(
+                            isDropdownMenuVisible = !itemUiState.isDropdownMenuVisible
+                        )
+                    } else {
+                        itemUiState
+                    }
+                }.toPersistentList()
+            )
         }
     }
 }
