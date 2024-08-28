@@ -28,13 +28,8 @@ internal fun MainNavHost(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = { navigator.popBackStackIfNotHome() },
-            navigateToInnerViewDetail = { id, title ->
-                navigator.navigateInnerViewDetail(
-                    id,
-                    title
-                )
-            },
-            navigateToInnerViewQuestion = { navigator.navigateInnerViewQuestion() },
+            navigateToInnerViewDetail = { id -> navigator.navigateInnerViewDetail(id) },
+            navigateToInnerViewQuestion = { id -> navigator.navigateInnerViewQuestion(id) },
             navigateToInterviewGroup = { navigator.navigateInterviewGroup() },
             navigateToRecord = { innerViewId, interviewGroupId, title ->
                 navigator.navigateRecord(

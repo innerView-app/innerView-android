@@ -46,7 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToInnerViewDetail: (String, String) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -75,7 +75,7 @@ internal fun HomeRoute(
 private fun HomeScreen(
     homeUiState: HomeUiState,
     padding: PaddingValues,
-    navigateToInnerViewDetail: (String, String) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     onInnerViewAddRequest: () -> Unit,
     onInnerViewDeleteRequest: (String) -> Unit,
     maxInnerViewTitleLength: Int,
@@ -140,7 +140,7 @@ private fun HomeScreen(
 @Composable
 private fun InnerViewList(
     innerViews: ImmutableList<InnerViewItemUiState>,
-    navigateToInnerViewDetail: (String, String) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     onSelectInnerViewDropdown: (String) -> Unit,
     onSelectInnerViewDelete: (String) -> Unit,
     onInnerViewDeleteRequest: (String) -> Unit
@@ -185,7 +185,7 @@ private fun HomeScreenPreview() {
                 )
             ),
             padding = PaddingValues(),
-            navigateToInnerViewDetail = { _, _ -> },
+            navigateToInnerViewDetail = { _ -> },
             onInnerViewAddRequest = {},
             maxInnerViewTitleLength = 0,
             updateDialogInnerViewTitle = {},

@@ -52,16 +52,16 @@ internal class MainNavigator(
         }
     }
 
-    fun navigateInnerViewDetail(id: String, title: String) {
-        navController.navigateInnerViewDetail(id, title)
+    fun navigateInnerViewDetail(id: String) {
+        navController.navigateInnerViewDetail(id)
     }
 
     fun navigateInterviewGroup() {
         navController.navigateInterviewGroup()
     }
 
-    fun navigateInnerViewQuestion() {
-        navController.navigateInnerViewQuestion()
+    fun navigateInnerViewQuestion(id: String) {
+        navController.navigateInnerViewQuestion(id)
     }
 
     fun navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {

@@ -54,17 +54,16 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun InnerViewDetailScreen(
     innerViewId: String,
-    title: String,
     onBackClick: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToInnerViewQuestion: () -> Unit,
+    navigateToInnerViewQuestion: (String) -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
 
     val innerViewDetailUiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(innerViewId, title) {
+    LaunchedEffect(innerViewId) {
         viewModel.fetchInnerView(innerViewId)
     }
 
@@ -83,10 +82,9 @@ internal fun InnerViewDetailScreen(
 @Composable
 private fun InnerViewDetailContent(
     innerViewId: String,
-    title: String,
     innerViewDetailUiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
-    navigateToInnerViewQuestion: () -> Unit,
+    navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
     addInterviewGroup:() -> Unit
@@ -104,7 +102,7 @@ private fun InnerViewDetailContent(
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.List,
                     navigationIconContentDescription = null,
-                    onClick = { navigateToInnerViewQuestion() }
+                    onClick = { navigateToInnerViewQuestion(innerViewId) }
                 )
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.Notifications,
