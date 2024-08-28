@@ -160,18 +160,33 @@ private fun InterviewGroupList(
     reactivateDate: LocalDate,
     isActivated: Boolean,
 ) {
+    val lazyGridState = rememberLazyGridState()
+    val lastScrolledForward by remember {
+        derivedStateOf {
+            lazyGridState.lastScrolledForward
+        }
+    }
+
+    val animatedHeight by animateDpAsState(
+        targetValue = if (lastScrolledForward) 0.dp else 60.dp,
+        label = "collapsing animation"
+    )
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(Paddings.large)
     ) {
-        Box(modifier = Modifier
-            .fillMaxWidth()
-            .height(60.dp)) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(animatedHeight)
+        ) {
+            val reactivateAt = reactivateDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "언제 이후로 할 수 있습니다.",
+                text = if (isActivated) "새로운 인터뷰를 촬영할 수 있습니다."
+                else "$reactivateAt 에 새로운 인터뷰를 촬영할 수 있습니다.",
                 style = MaterialTheme.typography.labelMedium
             )
         }
@@ -179,9 +194,10 @@ private fun InterviewGroupList(
         LazyVerticalGrid(
             modifier = Modifier
                 .fillMaxSize(),
+            state = lazyGridState,
             columns = GridCells.Fixed(2),
             verticalArrangement = Arrangement.spacedBy(Paddings.medium),
-            horizontalArrangement = Arrangement.spacedBy(Paddings.medium)
+            horizontalArrangement = Arrangement.spacedBy(Paddings.medium),
         ) {
             items(interviewGroups, key = { it.id }) {
 
