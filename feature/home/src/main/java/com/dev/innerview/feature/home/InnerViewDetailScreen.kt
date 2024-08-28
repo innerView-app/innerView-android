@@ -1,6 +1,7 @@
 package com.dev.innerview.feature.home
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,6 +17,7 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.KeyboardArrowUp
@@ -25,7 +27,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -47,6 +51,7 @@ import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -69,7 +74,6 @@ internal fun InnerViewDetailScreen(
 
     InnerViewDetailContent(
         innerViewId = innerViewId,
-        title = title,
         innerViewDetailUiState = innerViewDetailUiState,
         onBackClick = onBackClick,
         navigateToInterviewGroup = navigateToInterviewGroup,
@@ -87,7 +91,7 @@ private fun InnerViewDetailContent(
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
-    addInterviewGroup:() -> Unit
+    addInterviewGroup: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -95,7 +99,7 @@ private fun InnerViewDetailContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = title,
+            title = innerViewDetailUiState.title,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -124,12 +128,15 @@ private fun InnerViewDetailContent(
         ) {
             InterviewGroupList(
                 innerViewId = innerViewId,
-                title = title,
+                title = innerViewDetailUiState.title,
                 interviewGroups = innerViewDetailUiState.interviewGroups,
                 navigateToInterviewGroup = navigateToInterviewGroup,
                 navigateToRecord = navigateToRecord,
+                reactivateDate = innerViewDetailUiState.reactivateAt,
+                isActivated = innerViewDetailUiState.isActivated
             )
 
+            //if(innerViewDetailUiState.isActivated) {
             InnerViewFloatingActionButton(
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
@@ -138,6 +145,7 @@ private fun InnerViewDetailContent(
                 text = "인터뷰 시작",
                 onClick = { addInterviewGroup() }
             )
+            //}
         }
     }
 }
@@ -149,6 +157,8 @@ private fun InterviewGroupList(
     interviewGroups: ImmutableList<InterviewGroup>,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
+    reactivateDate: LocalDate,
+    isActivated: Boolean,
 ) {
 
     Column(
@@ -173,7 +183,6 @@ private fun InterviewGroupList(
             verticalArrangement = Arrangement.spacedBy(Paddings.medium),
             horizontalArrangement = Arrangement.spacedBy(Paddings.medium)
         ) {
-
             items(interviewGroups, key = { it.id }) {
 
                 val createAt = it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
@@ -239,8 +248,8 @@ private fun InnerViewDetailContentPreview() {
     InnerViewTheme {
         InnerViewDetailContent(
             innerViewId = "",
-            title = "title",
             innerViewDetailUiState = InnerViewDetailUiState(
+                title = "title",
                 interviewGroups = persistentListOf(
                     InterviewGroup(
                         id = 1,
