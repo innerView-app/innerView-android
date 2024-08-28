@@ -1,16 +1,16 @@
 package com.dev.innerview.core.data_api
 
 import com.dev.innerview.core.model.InnerView
+import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
-import com.dev.innerview.core.model.InterviewGroup
 import kotlinx.coroutines.flow.Flow
 
 interface InnerViewRepository {
 
     fun getInnerViews(): Flow<List<InnerView>>
 
-    fun getInterviewGroups(innerViewId: String): Flow<List<InterviewGroup>>
+    fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent>
 
     fun getInterviews(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>>
 

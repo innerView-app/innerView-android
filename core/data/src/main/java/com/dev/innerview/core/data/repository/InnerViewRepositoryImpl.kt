@@ -3,6 +3,7 @@ package com.dev.innerview.core.data.repository
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
 import com.dev.innerview.core.model.InnerView
+import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewGroup
@@ -30,41 +31,47 @@ class InnerViewRepositoryImpl @Inject constructor(
                 }
             }
 
-    override fun getInterviewGroups(innerViewId: String): Flow<List<InterviewGroup>> =
-        innerViewDataSource.innerViewData
-            .map { innerViewList ->
-                val interviewGroups =
-                    innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups
+    override fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent> =
+        innerViewDataSource.getInnerViewById(innerViewId)
+            .map { innerView ->
+                val interviewGroups = innerView?.interviewGroups
+                    ?.map { interviewGroupSchema ->
+                        val videoPaths =
+                            interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
+                        val thumbnailVideoPath = videoPaths.firstOrNull()
 
-                interviewGroups?.map { interviewGroupSchema ->
+                        InterviewGroup(
+                            id = interviewGroupSchema.id,
+                            createdAt = ZonedDateTime.parse(interviewGroupSchema.createdAt),
+                            recordState = RecordState.stringToRecordState(interviewGroupSchema.recordState),
+                            questionCount = interviewGroupSchema.interviews.size,
+                            thumbnailVideoPath = thumbnailVideoPath
+                        )
+                    }?.sortedByDescending { it.createdAt } ?: listOf()
 
-                    val videoPaths =
-                        interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
-                    val thumbnailVideoPath = if (videoPaths.isNotEmpty()) {
-                        videoPaths.first()
-                    } else {
-                        null
-                    }
-
-                    InterviewGroup(
-                        id = interviewGroupSchema.id,
-                        createdAt = ZonedDateTime.parse(interviewGroupSchema.createdAt),
-                        recordState = RecordState.stringToRecordState(interviewGroupSchema.recordState),
-                        questionCount = interviewGroupSchema.interviews.size,
-                        thumbnailVideoPath = thumbnailVideoPath
-                    )
-                }?.sortedByDescending { it.createdAt } ?: listOf()
+                InnerViewContent(
+                    innerView?.let {
+                        InnerView(
+                            id = innerViewId,
+                            title = it.title,
+                            type = InnerViewType.stringToInnerViewType(it.type),
+                            createdAt = ZonedDateTime.parse(it.createdAt),
+                            questions = it.questions
+                        )
+                    },
+                    interviewGroups
+                )
             }
 
     override fun getInterviews(
         innerViewId: String,
         interviewGroupId: Int
     ): Flow<List<Interview>> =
-        innerViewDataSource.innerViewData
-            .map { innerViewList ->
+        innerViewDataSource.getInnerViewById(innerViewId)
+            .map { innerView ->
 
                 val interviewGroups =
-                    innerViewList.firstOrNull { it._id == innerViewId }?.interviewGroups
+                    innerView?.interviewGroups
 
                 val interviews =
                     interviewGroups?.firstOrNull { it.id == interviewGroupId }?.interviews
