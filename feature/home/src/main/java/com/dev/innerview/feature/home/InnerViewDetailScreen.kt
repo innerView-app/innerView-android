@@ -249,9 +249,10 @@ private fun InterviewGroupList(
                     }
                 }
             }
-
-            item {
-                Spacer(modifier = Modifier.height(80.dp))
+            repeat(interviewGroups.size % 2 + 1) {
+                item {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
             }
         }
     }
