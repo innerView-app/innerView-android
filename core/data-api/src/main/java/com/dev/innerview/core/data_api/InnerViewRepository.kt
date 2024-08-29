@@ -3,7 +3,7 @@ package com.dev.innerview.core.data_api
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
-import com.dev.innerview.core.model.Interview
+import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 
 interface InnerViewRepository {
@@ -12,7 +12,7 @@ interface InnerViewRepository {
 
     fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent>
 
-    fun getInterviews(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>>
+    fun getInterviewGroupContentById(innerViewId: String, interviewGroupId: Int): Flow<InterviewGroupContent>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 

@@ -1,16 +1,14 @@
 package com.dev.innerview.core.data.repository
 
+import com.dev.innerview.core.data.mapper.toData
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
-import com.dev.innerview.core.model.Interview
-import com.dev.innerview.core.model.InterviewGroup
-import com.dev.innerview.core.model.RecordState
+import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class InnerViewRepositoryImpl @Inject constructor(
@@ -19,15 +17,9 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override fun getInnerViews(): Flow<List<InnerView>> =
         innerViewDataSource.innerViewData
-            .map { innerViewList ->
-                innerViewList.map { innerViewSchema ->
-                    InnerView(
-                        id = innerViewSchema._id,
-                        title = innerViewSchema.title,
-                        type = InnerViewType.stringToInnerViewType(innerViewSchema.type),
-                        createdAt = ZonedDateTime.parse(innerViewSchema.createdAt),
-                        questions = innerViewSchema.questions
-                    )
+            .map { innerViews ->
+                innerViews.map { innerView ->
+                    innerView.toData()
                 }
             }
 
@@ -35,54 +27,32 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.getInnerViewById(innerViewId)
             .map { innerView ->
                 val interviewGroups = innerView.interviewGroups
-                    .map { interviewGroupSchema ->
-                        val videoPaths =
-                            interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
-                        val thumbnailVideoPath = videoPaths.firstOrNull()
-
-                        InterviewGroup(
-                            id = interviewGroupSchema.id,
-                            createdAt = ZonedDateTime.parse(interviewGroupSchema.createdAt),
-                            recordState = RecordState.stringToRecordState(interviewGroupSchema.recordState),
-                            questionCount = interviewGroupSchema.interviews.size,
-                            thumbnailVideoPath = thumbnailVideoPath
-                        )
-                    }.sortedByDescending { it.createdAt }
 
                 InnerViewContent(
-                    InnerView(
-                        id = innerViewId,
-                        title = innerView.title,
-                        type = InnerViewType.stringToInnerViewType(innerView.type),
-                        createdAt = ZonedDateTime.parse(innerView.createdAt),
-                        questions = innerView.questions
-                    ),
-                    interviewGroups
+                    innerView = innerView.toData(),
+                    interviewGroups = interviewGroups.map { it.toData() }
+                        .sortedByDescending { it.createdAt }
                 )
             }
 
-    override fun getInterviews(
+    override fun getInterviewGroupContentById(
         innerViewId: String,
         interviewGroupId: Int
-    ): Flow<List<Interview>> =
+    ): Flow<InterviewGroupContent> =
         innerViewDataSource.getInnerViewById(innerViewId)
             .map { innerView ->
 
                 val interviewGroups =
-                    innerView.interviewGroups
+                    innerView.interviewGroups.firstOrNull { it.id == interviewGroupId }
+                        ?: throw IllegalArgumentException()
 
-                val interviews =
-                    interviewGroups.firstOrNull { it.id == interviewGroupId }?.interviews
-
-                interviews?.map { interviewSchema ->
-                    Interview(
-                        createdAt = interviewSchema.createdAt?.let { ZonedDateTime.parse(it) },
-                        question = interviewSchema.question,
-                        isRequired = interviewSchema.isRequired,
-                        isRecordComplete = interviewSchema.innerProject != null,
-                        thumbnailVideoPath = interviewSchema.innerProject?.videoPath
-                    )
-                } ?: listOf()
+                InterviewGroupContent(
+                    innerView = innerView.toData(),
+                    interviewGroup = interviewGroups.toData(),
+                    interviews = interviewGroups.interviews.map { interviewSchema ->
+                        interviewSchema.toData()
+                    }
+                )
             }
 
 

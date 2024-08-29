@@ -6,7 +6,7 @@ import com.dev.innerview.core.domain.usecase.AddQuestionUseCase
 import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
 import com.dev.innerview.core.domain.usecase.DeleteInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.DeleteQuestionUseCase
-import com.dev.innerview.core.domain.usecase.GetInterviewUseCase
+import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.feature.record.model.InterviewItemUiState
 import com.dev.innerview.feature.record.model.RecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,7 +17,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -25,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecordViewModel @Inject constructor(
-    private val getInterviewUseCase: GetInterviewUseCase,
+    private val getInterviewGroupContentUseCase: GetInterviewGroupContentUseCase,
     private val addQuestionUseCase: AddQuestionUseCase,
     private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase,
     private val deleteQuestionUseCase: DeleteQuestionUseCase,
@@ -39,12 +38,17 @@ class RecordViewModel @Inject constructor(
     val recordUiState = _recordUiState.asStateFlow()
 
     fun fetchInnerView(innerViewId: String, interviewGroupId: Int) {
-        getInterviewUseCase(innerViewId, interviewGroupId)
-            .map { interviews ->
-                interviews.map { InterviewItemUiState(interview = it) }
-            }.onEach { interviewItemStates ->
+        getInterviewGroupContentUseCase(innerViewId, interviewGroupId)
+            .onEach { interviewGroupContent ->
                 _recordUiState.update {
-                    it.copy(interviews = interviewItemStates.toPersistentList())
+                    it.copy(
+                        title = interviewGroupContent.innerView.title,
+                        type = interviewGroupContent.innerView.type,
+                        groupCreatedAt = interviewGroupContent.interviewGroup.createdAt,
+                        interviews = interviewGroupContent.interviews.map { interview ->
+                            InterviewItemUiState(interview = interview)
+                        }.toPersistentList()
+                    )
                 }
             }.launchIn(viewModelScope)
     }
