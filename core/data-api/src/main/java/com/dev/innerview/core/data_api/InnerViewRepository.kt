@@ -18,7 +18,7 @@ interface InnerViewRepository {
 
     suspend fun deleteInnerView(id: String)
 
-    suspend fun addInterviewGroup(innerViewId: String)
+    suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true)
 
     suspend fun deleteInterviewGroup(
         innerViewId: String,

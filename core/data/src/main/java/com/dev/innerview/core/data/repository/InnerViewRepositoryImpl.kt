@@ -64,8 +64,8 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.deleteInnerView(id)
     }
 
-    override suspend fun addInterviewGroup(innerViewId: String) {
-        innerViewDataSource.addInterviewGroup(innerViewId)
+    override suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean) {
+        innerViewDataSource.addInterviewGroup(innerViewId, addPrevQuestions)
     }
 
     override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: Int) {

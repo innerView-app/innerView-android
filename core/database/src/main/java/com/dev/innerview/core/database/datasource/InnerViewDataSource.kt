@@ -73,12 +73,12 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
-    suspend fun addInterviewGroup(innerViewId: String) {
+    suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true) {
         realm.write {
 
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
-            val interviews = if (innerView.interviewGroups.isEmpty()) {
+            val interviews = if (!addPrevQuestions || innerView.interviewGroups.isEmpty()) {
                 realmListOf()
             } else {
                 innerView.interviewGroups.last().interviews.map { prevInterview ->
