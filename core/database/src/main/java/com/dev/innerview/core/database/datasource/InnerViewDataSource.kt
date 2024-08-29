@@ -209,7 +209,9 @@ class InnerViewDataSource @Inject constructor(
                     .filter { !it.isRequired }
                     .map { it.question }
                     .forEach { question ->
-                        innerView.questions.add(question)
+                        if (!innerView.questions.contains(question)) {
+                            innerView.questions.add(question)
+                        }
                     }
 
                 interviewGroup.recordState = "COMPLETE"
