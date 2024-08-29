@@ -9,7 +9,6 @@ import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import java.security.MessageDigest
 import java.time.ZoneOffset
@@ -34,14 +33,12 @@ class InnerViewDataSource @Inject constructor(
             result.list.toList()
         }
 
-    fun getInnerViewById(id: String): Flow<InnerViewSchema?> {
-        return flowOf(
-            realm
-                .query<InnerViewSchema>("_id == $0", id)
-                .find()
-                .firstOrNull()
-        )
-    }
+    fun getInnerViewById(id: String): Flow<InnerViewSchema> = realm
+        .query<InnerViewSchema>("_id == $0", id)
+        .asFlow()
+        .map { result ->
+            result.list.firstOrNull() ?: throw IllegalArgumentException()
+        }
 
     suspend fun addInnerView(
         title: String,

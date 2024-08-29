@@ -34,8 +34,8 @@ class InnerViewRepositoryImpl @Inject constructor(
     override fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent> =
         innerViewDataSource.getInnerViewById(innerViewId)
             .map { innerView ->
-                val interviewGroups = innerView?.interviewGroups
-                    ?.map { interviewGroupSchema ->
+                val interviewGroups = innerView.interviewGroups
+                    .map { interviewGroupSchema ->
                         val videoPaths =
                             interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
                         val thumbnailVideoPath = videoPaths.firstOrNull()
@@ -47,18 +47,16 @@ class InnerViewRepositoryImpl @Inject constructor(
                             questionCount = interviewGroupSchema.interviews.size,
                             thumbnailVideoPath = thumbnailVideoPath
                         )
-                    }?.sortedByDescending { it.createdAt } ?: listOf()
+                    }.sortedByDescending { it.createdAt }
 
                 InnerViewContent(
-                    innerView?.let {
-                        InnerView(
-                            id = innerViewId,
-                            title = it.title,
-                            type = InnerViewType.stringToInnerViewType(it.type),
-                            createdAt = ZonedDateTime.parse(it.createdAt),
-                            questions = it.questions
-                        )
-                    },
+                    InnerView(
+                        id = innerViewId,
+                        title = innerView.title,
+                        type = InnerViewType.stringToInnerViewType(innerView.type),
+                        createdAt = ZonedDateTime.parse(innerView.createdAt),
+                        questions = innerView.questions
+                    ),
                     interviewGroups
                 )
             }
@@ -71,10 +69,10 @@ class InnerViewRepositoryImpl @Inject constructor(
             .map { innerView ->
 
                 val interviewGroups =
-                    innerView?.interviewGroups
+                    innerView.interviewGroups
 
                 val interviews =
-                    interviewGroups?.firstOrNull { it.id == interviewGroupId }?.interviews
+                    interviewGroups.firstOrNull { it.id == interviewGroupId }?.interviews
 
                 interviews?.map { interviewSchema ->
                     Interview(

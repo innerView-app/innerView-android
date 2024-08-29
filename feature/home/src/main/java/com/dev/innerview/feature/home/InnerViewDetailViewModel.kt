@@ -38,11 +38,11 @@ class InnerViewDetailViewModel @Inject constructor(
             .onEach { innerViewContent ->
                 val reactivateAt = findReactivateDate(
                     innerViewContent.interviewGroups,
-                    innerViewContent.innerView?.type ?: InnerViewType.YEAR
+                    innerViewContent.innerView.type
                 )
                 _innerViewDetailUiState.update {
                     it.copy(
-                        title = innerViewContent.innerView?.title ?: "",
+                        title = innerViewContent.innerView.title,
                         interviewGroups = innerViewContent.interviewGroups.toPersistentList(),
                         reactivateAt = reactivateAt,
                         isActivated = !LocalDate.now().isBefore(reactivateAt)
