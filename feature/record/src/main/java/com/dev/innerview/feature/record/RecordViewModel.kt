@@ -44,7 +44,6 @@ class RecordViewModel @Inject constructor(
                     it.copy(
                         title = interviewGroupContent.innerView.title,
                         type = interviewGroupContent.innerView.type,
-                        groupCreatedAt = interviewGroupContent.interviewGroup.createdAt,
                         interviews = interviewGroupContent.interviews.map { interview ->
                             InterviewItemUiState(interview = interview)
                         }.toPersistentList()

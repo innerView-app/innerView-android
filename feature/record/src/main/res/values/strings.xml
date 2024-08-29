@@ -1,5 +1,6 @@
 <resources>
     <string name="feature_record_interview_complete">인터뷰 완료</string>
+    <string name="feature_record_add_question">질문 추가</string>
     <string name="feature_record_answer_required">* 답변 필수</string>
 
     <string name="feature_record_dialog_delete_confirm">삭제</string>
@@ -17,7 +18,6 @@
 
     <string name="feature_record_question_delete_dialog_title">질문 삭제</string>
     <string name="feature_record_question_delete_dialog_content">질문을 삭제하면 이미 촬영된 영상, 편집 내용도 모두 사라집니다.\n질문을 삭제하시겠습니까?</string>
-    <string name="feature_record_description">이전 회차에서 답변한 질문은 필수로 답변해야 하며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
-
-
+    <string name="feature_record_innerview_repeat_description">반복 타입의 이너뷰의 경우\n이전 회차에서 답변한 질문은 필수로 답변해야 하며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
+    <string name="feature_record_innerview_everyday_description">매일 타입의 이너뷰의 경우\n매번 원하는 질문을 선택하여 답변할 수 있으며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
 </resources>

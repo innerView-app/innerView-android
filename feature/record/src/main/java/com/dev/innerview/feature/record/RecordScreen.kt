@@ -42,6 +42,7 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
 import com.dev.innerview.feature.record.component.InterviewItem
 import com.dev.innerview.feature.record.component.QuestionAddDialog
@@ -50,8 +51,6 @@ import com.dev.innerview.feature.record.model.RecordUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
-import java.time.ZoneId
-import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun RecordScreen(
@@ -134,12 +133,8 @@ private fun RecordContent(
             .fillMaxSize()
     ) {
 
-        val groupCreatedAt =
-            recordUiState.groupCreatedAt.withZoneSameInstant(ZoneId.systemDefault())
-                .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-
         InnerViewTopAppBar(
-            title = "${recordUiState.title} : $groupCreatedAt",
+            title = recordUiState.title,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = onBackClick,
         )
@@ -153,6 +148,7 @@ private fun RecordContent(
         ) {
 
             InterviewList(
+                innerViewType = recordUiState.type,
                 interviews = recordUiState.interviews,
                 navigateToFilming = navigateToFilming,
                 onSelectInterviewDropdown = onSelectInterviewDropdown,
@@ -171,7 +167,7 @@ private fun RecordContent(
             ) {
                 InnerViewFloatingActionButton(
                     iconImageVector = Icons.Filled.Add,
-                    text = "질문 추가",
+                    text = stringResource(R.string.feature_record_add_question),
                     onClick = { selectQuestionAdd() }
                 )
                 AnimatedVisibility(
@@ -202,6 +198,7 @@ private fun RecordContent(
 
 @Composable
 private fun InterviewList(
+    innerViewType: InnerViewType,
     interviews: ImmutableList<InterviewItemUiState>,
     navigateToFilming: (String) -> Unit,
     onSelectInterviewDropdown: (String) -> Unit,
@@ -222,9 +219,14 @@ private fun InterviewList(
                     .fillMaxWidth()
                     .height(60.dp)
             ) {
+                val description = when (innerViewType) {
+                    InnerViewType.DAY -> stringResource(R.string.feature_record_innerview_everyday_description)
+                    else -> stringResource(R.string.feature_record_innerview_repeat_description)
+                }
+
                 Text(
                     modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.feature_record_description),
+                    text = description,
                     textAlign = TextAlign.Center,
                     style = MaterialTheme.typography.labelMedium.copy(
                         lineHeight = 18.sp
