@@ -9,8 +9,8 @@ import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.FilmingScreen
 import com.dev.innerview.feature.record.RecordScreen
 
-fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {
-    navigate(Route.Records(innerViewId, interviewGroupId, title))
+fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int) {
+    navigate(Route.Records(innerViewId, interviewGroupId))
 }
 
 fun NavController.navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {
@@ -25,11 +25,10 @@ fun NavGraphBuilder.recordNavGraph(
 ) {
 
     composable<Route.Records> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId, title) = navBackStackEntry.toRoute<Route.Records>()
+        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.Records>()
         RecordScreen(
             innerViewId = innerViewId,
             interviewGroupId = interviewGroupId,
-            title = title,
             padding = padding,
             onBackClick = onBackClick,
             onShowErrorSnackBar = onShowErrorSnackBar,

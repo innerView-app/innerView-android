@@ -50,12 +50,13 @@ import com.dev.innerview.feature.record.model.RecordUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun RecordScreen(
     innerViewId: String,
     interviewGroupId: Int,
-    title: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
@@ -85,12 +86,11 @@ internal fun RecordScreen(
         }
     }
 
-    LaunchedEffect(innerViewId, interviewGroupId, title) {
+    LaunchedEffect(innerViewId, interviewGroupId) {
         viewModel.fetchInnerView(innerViewId, interviewGroupId)
     }
 
     RecordContent(
-        title = title,
         recordUiState = recordUiState,
         padding = padding,
         onBackClick = onBackClick,
@@ -113,7 +113,6 @@ internal fun RecordScreen(
 
 @Composable
 private fun RecordContent(
-    title: String,
     recordUiState: RecordUiState,
     padding: PaddingValues,
     onBackClick: () -> Unit,
@@ -135,8 +134,12 @@ private fun RecordContent(
             .fillMaxSize()
     ) {
 
+        val groupCreatedAt =
+            recordUiState.groupCreatedAt.withZoneSameInstant(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+
         InnerViewTopAppBar(
-            title = title,
+            title = "${recordUiState.title} : $groupCreatedAt",
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = onBackClick,
         )
@@ -254,7 +257,6 @@ private fun InterviewList(
 private fun RecordContentPreview() {
     InnerViewTheme {
         RecordContent(
-            title = "title",
             recordUiState = RecordUiState(
                 interviews = persistentListOf(
                     InterviewItemUiState(
