@@ -2,6 +2,7 @@
     <string name="feature_record_interview_complete">인터뷰 완료</string>
     <string name="feature_record_add_question">질문 추가</string>
     <string name="feature_record_answer_required">* 답변 필수</string>
+    <string name="feature_record_refresh_icon_description">질문 새로고침</string>
 
     <string name="feature_record_dialog_delete_confirm">삭제</string>
     <string name="feature_record_dialog_dismiss">취소</string>

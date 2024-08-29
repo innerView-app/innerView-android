@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class RecordUiState(
     val title: String = "",
     val type: InnerViewType = InnerViewType.YEAR,
+    val pervQuestions: ImmutableList<String> = persistentListOf(),
     val interviews: ImmutableList<InterviewItemUiState> = persistentListOf(),
     val isQuestionAddDialogVisible: Boolean = false,
     val selectableQuestions: ImmutableList<String> = persistentListOf("", "", "", ""),

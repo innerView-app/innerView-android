@@ -7,10 +7,12 @@ import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
 import com.dev.innerview.core.domain.usecase.DeleteInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.DeleteQuestionUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
+import com.dev.innerview.core.domain.usecase.GetRecommendQuestionsByTypeUseCase
+import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.record.model.InterviewItemUiState
 import com.dev.innerview.feature.record.model.RecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -29,7 +31,11 @@ class RecordViewModel @Inject constructor(
     private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase,
     private val deleteQuestionUseCase: DeleteQuestionUseCase,
     private val deleteInnerProjectUseCase: DeleteInnerProjectUseCase,
+    private val getRecommendQuestionsByTypeUseCase: GetRecommendQuestionsByTypeUseCase
 ) : ViewModel() {
+
+    private val recommendQuestionCount = 3
+    private val recommendPrevQuestionCount = 1
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
@@ -44,6 +50,7 @@ class RecordViewModel @Inject constructor(
                     it.copy(
                         title = interviewGroupContent.innerView.title,
                         type = interviewGroupContent.innerView.type,
+                        pervQuestions = interviewGroupContent.innerView.questions.toPersistentList(),
                         interviews = interviewGroupContent.interviews.map { interview ->
                             InterviewItemUiState(interview = interview)
                         }.toPersistentList()
@@ -56,7 +63,7 @@ class RecordViewModel @Inject constructor(
         _recordUiState.update {
             it.copy(
                 isQuestionAddDialogVisible = !it.isQuestionAddDialogVisible,
-                selectableQuestions = persistentListOf("1", "2", "3", ""),
+                selectableQuestions = getRecommendQuestions(),
                 selectedQuestion = 0
             )
         }
@@ -158,6 +165,46 @@ class RecordViewModel @Inject constructor(
                     }
                 }.toPersistentList()
             )
+        }
+    }
+
+    fun updateRecommendQuestions() {
+        _recordUiState.update {
+            it.copy(
+                selectableQuestions = getRecommendQuestions()
+            )
+        }
+    }
+
+    private fun getRecommendQuestions(): ImmutableList<String> {
+
+        val recommendQuestions =
+            getRecommendQuestionsByTypeUseCase(_recordUiState.value.type).shuffled()
+        val prevQuestions = _recordUiState.value.pervQuestions
+        val currentQuestions =
+            _recordUiState.value.interviews.map { it.interview.question }.toPersistentList()
+
+        return when (_recordUiState.value.type) {
+            InnerViewType.DAY -> {
+                val selectablePrevQuestions =
+                    (prevQuestions - currentQuestions).shuffled().take(recommendPrevQuestionCount)
+
+                val selectableQuestions =
+                    (recommendQuestions - prevQuestions - currentQuestions)
+                        .take(recommendQuestionCount - selectablePrevQuestions.size)
+
+                (selectablePrevQuestions + selectableQuestions)
+                    .plus("")
+                    .toPersistentList()
+            }
+
+            else -> {
+                val selectableQuestions = recommendQuestions - prevQuestions - currentQuestions
+
+                selectableQuestions.take(recommendQuestionCount)
+                    .plus("")
+                    .toPersistentList()
+            }
         }
     }
 }

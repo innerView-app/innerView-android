@@ -106,7 +106,8 @@ internal fun RecordScreen(
         onSelectQuestionDelete = { viewModel.selectQuestionDelete(it) },
         onSelectInnerProjectDelete = { viewModel.selectInnerProjectDelete(it) },
         deleteQuestion = { viewModel.deleteQuestion(innerViewId, interviewGroupId, it) },
-        deleteInnerProject = { viewModel.deleteInnerProject(innerViewId, interviewGroupId, it) }
+        deleteInnerProject = { viewModel.deleteInnerProject(innerViewId, interviewGroupId, it) },
+        onRefreshQuestion = { viewModel.updateRecommendQuestions() }
     )
 }
 
@@ -126,6 +127,7 @@ private fun RecordContent(
     onSelectInnerProjectDelete: (String) -> Unit,
     deleteQuestion: (String) -> Unit,
     deleteInnerProject: (String) -> Unit,
+    onRefreshQuestion: () -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -190,7 +192,8 @@ private fun RecordContent(
                 onCustomQuestionChange = updateCustomQuestion,
                 onSelectType = updateDialogSelectedType,
                 onDismissRequest = { selectQuestionAdd() },
-                onConfirmRequest = { addQuestion() }
+                onConfirmRequest = { addQuestion() },
+                onRefreshQuestion = onRefreshQuestion
             )
         }
     }
@@ -291,6 +294,7 @@ private fun RecordContentPreview() {
             onSelectInnerProjectDelete = {},
             deleteQuestion = {},
             deleteInnerProject = {},
+            onRefreshQuestion = {}
         )
     }
 }
