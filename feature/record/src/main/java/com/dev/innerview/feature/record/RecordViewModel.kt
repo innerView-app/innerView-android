@@ -10,6 +10,7 @@ import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.core.domain.usecase.GetRecommendQuestionsByTypeUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.record.model.InterviewItemUiState
+import com.dev.innerview.feature.record.model.RecordUiEvent
 import com.dev.innerview.feature.record.model.RecordUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.ImmutableList
@@ -40,10 +41,13 @@ class RecordViewModel @Inject constructor(
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
 
+    private val _uiEventFlow = MutableSharedFlow<RecordUiEvent>()
+    val uiEventFlow get() = _uiEventFlow.asSharedFlow()
+
     private val _recordUiState = MutableStateFlow(RecordUiState())
     val recordUiState = _recordUiState.asStateFlow()
 
-    fun fetchInnerView(innerViewId: String, interviewGroupId: Int) {
+    fun fetchInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         getInterviewGroupContentUseCase(innerViewId, interviewGroupId)
             .onEach { interviewGroupContent ->
                 _recordUiState.update {
@@ -101,6 +105,7 @@ class RecordViewModel @Inject constructor(
     fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         viewModelScope.launch {
             completeInterviewGroupUseCase(innerViewId, interviewGroupId)
+            _uiEventFlow.emit(RecordUiEvent.NavigateToBack)
         }
     }
 

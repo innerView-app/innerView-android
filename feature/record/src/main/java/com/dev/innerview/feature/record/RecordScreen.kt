@@ -47,6 +47,7 @@ import com.dev.innerview.core.model.Interview
 import com.dev.innerview.feature.record.component.InterviewItem
 import com.dev.innerview.feature.record.component.QuestionAddDialog
 import com.dev.innerview.feature.record.model.InterviewItemUiState
+import com.dev.innerview.feature.record.model.RecordUiEvent
 import com.dev.innerview.feature.record.model.RecordUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -67,7 +68,7 @@ internal fun RecordScreen(
 
     val localContextResource = LocalContext.current.resources
 
-    LaunchedEffect(true) {
+    LaunchedEffect(Unit) {
         viewModel.errorFlow.collectLatest { throwable ->
             when (throwable) {
                 is IllegalArgumentException -> {
@@ -85,8 +86,22 @@ internal fun RecordScreen(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is RecordUiEvent.NavigateToBack -> {
+                    onBackClick()
+                }
+
+                is RecordUiEvent.NavigateToFilming -> {
+                    navigateToFilming(innerViewId, interviewGroupId, event.question)
+                }
+            }
+        }
+    }
+
     LaunchedEffect(innerViewId, interviewGroupId) {
-        viewModel.fetchInnerView(innerViewId, interviewGroupId)
+        viewModel.fetchInterviewGroup(innerViewId, interviewGroupId)
     }
 
     RecordContent(
@@ -98,10 +113,7 @@ internal fun RecordScreen(
         updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
         addQuestion = { viewModel.addQuestion(innerViewId, interviewGroupId) },
         navigateToFilming = { navigateToFilming(innerViewId, interviewGroupId, it) },
-        completeInterviewGroup = {
-            viewModel.completeInterviewGroup(innerViewId, interviewGroupId)
-            onBackClick()
-        },
+        completeInterviewGroup = { viewModel.completeInterviewGroup(innerViewId, interviewGroupId) },
         onSelectInterviewDropdown = { viewModel.selectInterviewDropdown(it) },
         onSelectQuestionDelete = { viewModel.selectQuestionDelete(it) },
         onSelectInnerProjectDelete = { viewModel.selectInnerProjectDelete(it) },
