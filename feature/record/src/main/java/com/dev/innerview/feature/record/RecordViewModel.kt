@@ -85,8 +85,13 @@ class RecordViewModel @Inject constructor(
                 )
             }.onFailure { throwable ->
                 _errorFlow.emit(throwable)
+                selectQuestionAdd()
+            }.onSuccess {
+                val question =
+                    _recordUiState.value.selectableQuestions[_recordUiState.value.selectedQuestion]
+                _uiEventFlow.emit(RecordUiEvent.NavigateToFilming(question))
+                selectQuestionAdd()
             }
-            selectQuestionAdd()
         }
     }
 
