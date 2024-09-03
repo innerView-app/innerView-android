@@ -212,6 +212,8 @@ private fun InterviewGroupList(
                                 RecordState.RECODING -> navigateToRecord(innerViewId, it.id)
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                else -> {}
                             }
                         },
                     filePath = it.thumbnailVideoPath
