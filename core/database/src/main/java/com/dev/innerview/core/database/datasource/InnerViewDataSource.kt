@@ -162,6 +162,7 @@ class InnerViewDataSource @Inject constructor(
         innerViewId: String,
         interviewGroupId: Int,
         question: String,
+        videoPath: String
     ) {
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
@@ -174,7 +175,7 @@ class InnerViewDataSource @Inject constructor(
                 this.innerViewId = innerViewId
                 this.interviewGroupId = interviewGroupId
                 this.recordState = "RECODING"
-                this.videoPath = "input.mp4"
+                this.videoPath = videoPath
             }
         }
     }

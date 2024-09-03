@@ -91,9 +91,10 @@ class InnerViewRepositoryImpl @Inject constructor(
     override suspend fun addInnerProject(
         innerViewId: String,
         interviewGroupId: Int,
-        question: String
+        question: String,
+        videoPath: String
     ) {
-        innerViewDataSource.addInnerProject(innerViewId, interviewGroupId, question)
+        innerViewDataSource.addInnerProject(innerViewId, interviewGroupId, question, videoPath)
     }
 
     override suspend fun deleteInnerProject(
