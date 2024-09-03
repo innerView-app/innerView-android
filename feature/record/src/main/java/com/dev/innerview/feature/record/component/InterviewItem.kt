@@ -31,6 +31,7 @@ import com.dev.innerview.feature.record.model.InterviewItemUiState
 fun InterviewItem(
     interviewItemUiState: InterviewItemUiState,
     navigateToFilming: (String) -> Unit,
+    navigationToEdit: (String) -> Unit,
     onSelectInterviewDropdown: (String) -> Unit,
     onSelectQuestionDelete: (String) -> Unit,
     onSelectInnerProjectDelete: (String) -> Unit,
@@ -42,7 +43,13 @@ fun InterviewItem(
             .fillMaxWidth()
             .height(80.dp)
             .combinedClickable(
-                onClick = { navigateToFilming(interviewItemUiState.interview.question) },
+                onClick = {
+                    if (interviewItemUiState.interview.isRecordComplete) {
+                        navigationToEdit(interviewItemUiState.interview.question)
+                    } else {
+                        navigateToFilming(interviewItemUiState.interview.question)
+                    }
+                },
                 onLongClick = { onSelectInterviewDropdown(interviewItemUiState.interview.question) }
             ),
         interviewDescription = interviewItemUiState.interview.question,
@@ -136,6 +143,7 @@ private fun InterviewItemPreview() {
                 isInnerProjectDeleteDialogVisible = false
             ),
             navigateToFilming = {},
+            navigationToEdit = {},
             onSelectInterviewDropdown = {},
             onSelectQuestionDelete = {},
             onSelectInnerProjectDelete = {},

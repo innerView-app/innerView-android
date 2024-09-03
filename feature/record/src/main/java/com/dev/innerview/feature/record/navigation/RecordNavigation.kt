@@ -33,7 +33,8 @@ fun NavGraphBuilder.recordNavGraph(
             padding = padding,
             onBackClick = onBackClick,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            navigateToFilming = navigateToFilming
+            navigateToFilming = navigateToFilming,
+            navigationToEdit = navigateToEdit
         )
     }
 

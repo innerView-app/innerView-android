@@ -18,7 +18,7 @@ fun NavController.navigateEditWithArgs(
     interviewGroupId: Int,
     question: String
 ) {
-    popBackStack()
+    popBackStack<Route.Records>(inclusive = false)
     navigate(Route.EditWithArgs(innerViewId, interviewGroupId, question))
 }
 
