@@ -2,6 +2,7 @@ package com.dev.innerview.feature.record.model
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.Stable
+import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.RecordState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -12,7 +13,8 @@ data class FilmingUiState(
     val isPermissionDialogVisible: Boolean = false,
     val outputFileName: String = "sample.mp4",
     val recordingState: RecordingState = RecordingState(),
-    val interviews: ImmutableList<InterviewItemUiState> = persistentListOf(),
+    val interviews: ImmutableList<Interview> = persistentListOf(),
+    val isSheetOpen: Boolean = false
 )
 
 @Stable

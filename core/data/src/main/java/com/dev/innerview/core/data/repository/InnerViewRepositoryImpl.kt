@@ -6,6 +6,7 @@ import com.dev.innerview.core.database.datasource.InnerViewDataSource
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
+import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -55,6 +56,15 @@ class InnerViewRepositoryImpl @Inject constructor(
                 )
             }
 
+    override fun getInterviewByQuestion(
+        innerViewId: String,
+        question: String
+    ): Flow<List<Interview>> =
+        innerViewDataSource.getInnerViewById(innerViewId)
+            .map { innerView ->
+                innerView.interviewGroups.flatMap { it.interviews }
+                    .filter { it.question == question }.map { it.toData() }
+            }
 
     override suspend fun addInnerView(title: String, type: InnerViewType) {
         innerViewDataSource.addInnerView(title, type.name)

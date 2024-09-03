@@ -3,18 +3,20 @@ package com.dev.innerview.feature.record
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
+import com.dev.innerview.core.domain.usecase.GetInterviewByQuestionUseCase
 import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.record.model.FilmingUiEvent
-import com.dev.innerview.feature.record.model.RecordingState
-import com.dev.innerview.feature.record.model.PermissionState
 import com.dev.innerview.feature.record.model.FilmingUiState
-import com.dev.innerview.feature.record.model.RecordUiEvent
-import com.dev.innerview.feature.record.model.RecordUiState
+import com.dev.innerview.feature.record.model.PermissionState
+import com.dev.innerview.feature.record.model.RecordingState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.security.MessageDigest
@@ -22,7 +24,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilmingViewModel @Inject constructor(
-    private val addInnerProjectUseCase: AddInnerProjectUseCase
+    private val addInnerProjectUseCase: AddInnerProjectUseCase,
+    private val getInterviewByQuestionUseCase: GetInterviewByQuestionUseCase
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -35,11 +38,15 @@ class FilmingViewModel @Inject constructor(
     val filmingUiState = _filmingUiState.asStateFlow()
 
     fun fetchFilmingUiState(innerViewId: String, interviewGroupId: Int, question: String) {
-        _filmingUiState.update {
-            it.copy(
-                outputFileName = sha256(innerViewId + interviewGroupId + question) + ".mp4"
-            )
-        }
+        getInterviewByQuestionUseCase(innerViewId, question)
+            .onEach { interviews ->
+                _filmingUiState.update {
+                    it.copy(
+                        outputFileName = sha256(innerViewId + interviewGroupId + question) + ".mp4",
+                        interviews = interviews.toPersistentList()
+                    )
+                }
+            }.launchIn(viewModelScope)
     }
 
     fun addInnerProject(innerViewId: String, interviewGroupId: Int, question: String) {
@@ -69,6 +76,14 @@ class FilmingViewModel @Inject constructor(
         _filmingUiState.update {
             it.copy(
                 isPermissionDialogVisible = !it.isPermissionDialogVisible
+            )
+        }
+    }
+
+    fun selectBottomSheet() {
+        _filmingUiState.update {
+            it.copy(
+                isSheetOpen = !it.isSheetOpen
             )
         }
     }
