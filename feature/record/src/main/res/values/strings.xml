@@ -5,6 +5,7 @@
     <string name="feature_record_refresh_icon_description">질문 새로고침</string>
 
     <string name="feature_record_dialog_delete_confirm">삭제</string>
+    <string name="feature_record_dialog_confirm">취소</string>
     <string name="feature_record_dialog_dismiss">취소</string>
     <string name="feature_record_dialog_add_confirm">추가</string>
 
@@ -21,4 +22,14 @@
     <string name="feature_record_question_delete_dialog_content">질문을 삭제하면 이미 촬영된 영상, 편집 내용도 모두 사라집니다.\n질문을 삭제하시겠습니까?</string>
     <string name="feature_record_innerview_repeat_description">반복 타입의 이너뷰의 경우\n이전 회차에서 답변한 질문은 필수로 답변해야 하며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
     <string name="feature_record_innerview_everyday_description">매일 타입의 이너뷰의 경우\n매번 원하는 질문을 선택하여 답변할 수 있으며\n모든 질문에 답변을 완료해야 인터뷰를 완료할 수 있습니다.</string>
+
+    <string name="feature_record_permission_dialog_title">권한 설정</string>
+    <string name="feature_record_permission_dialog_content">카메라, 마이크 권한이 필요합니다.\n권한을 허용하시겠습니까?</string>
+    <string name="feature_record_permission_denied_text">카메라, 마이크 권한이 필요합니다.\n[설정] → [애플리케이션 정보] → [권한] 에서 허용해주세요.\n클릭하면 바로 설정으로 이동합니다.</string>
+
+    <string name="feature_record_reset_icon_description">녹화 초기화</string>
+    <string name="feature_record_complete_icon_description">녹화 완료</string>
+    <string name="feature_record_camera_switch_icon_description">카메라 전환</string>
+    <string name="feature_record_flash_on_icon_description">플래쉬 ON</string>
+    <string name="feature_record_flash_off_icon_description">플래쉬 OFF</string>
 </resources>
