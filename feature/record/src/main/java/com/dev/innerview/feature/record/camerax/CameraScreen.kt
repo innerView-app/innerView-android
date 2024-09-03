@@ -81,8 +81,8 @@ internal fun CameraScreen(
     var recording by remember { mutableStateOf<Recording?>(null) }
     var userCancelled by remember { mutableStateOf(false) }
 
-    val outputFile by remember {
-        mutableStateOf(File(context.filesDir, "interviews/$outputFileName"))
+    val tempFile by remember {
+        mutableStateOf(File(context.filesDir, "interviews/temp.mp4"))
     }
 
     Box(
@@ -120,7 +120,7 @@ internal fun CameraScreen(
             recordState = recordingState.recordState,
             onRecordStart = {
                 recording = controller?.startRecording(
-                    FileOutputOptions.Builder(outputFile).build(),
+                    FileOutputOptions.Builder(tempFile).build(),
                     AudioConfig.create(true),
                     ContextCompat.getMainExecutor(context)
                 ) { event ->
@@ -142,10 +142,13 @@ internal fun CameraScreen(
                             if (event.hasError()) {
                                 println("비디오 저장 실패: ${event.error}")
                             } else if (userCancelled) {
-                                outputFile.delete()
+                                tempFile.delete()
                                 userCancelled = false
                                 println("비디오 저장 취소")
                             } else {
+                                val outputFile =
+                                    File(context.filesDir, "interviews/$outputFileName")
+                                tempFile.renameTo(outputFile)
                                 println("비디오 저장 완료: ${outputFile.absolutePath}")
                                 addInnerProject()
                             }
