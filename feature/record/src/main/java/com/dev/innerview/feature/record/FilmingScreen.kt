@@ -56,7 +56,7 @@ internal fun FilmingScreen(
     question: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
-    navigationToEdit: () -> Unit,
+    navigationToEdit: (String, Int, String) -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     viewModel: FilmingViewModel = hiltViewModel()
 ) {
@@ -118,7 +118,7 @@ internal fun FilmingScreen(
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
                 FilmingUiEvent.NavigateToEdit -> {
-                    onBackClick()
+                    navigationToEdit(innerViewId, interviewGroupId, question)
                 }
             }
         }

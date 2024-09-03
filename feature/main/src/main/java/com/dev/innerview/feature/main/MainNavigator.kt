@@ -12,6 +12,7 @@ import androidx.navigation.navOptions
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.navigation.navigateEdit
+import com.dev.innerview.feature.edit.navigation.navigateEditWithArgs
 import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
 import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
@@ -70,6 +71,10 @@ internal class MainNavigator(
 
     fun navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {
         navController.navigateFilming(innerViewId, interviewGroupId, question)
+    }
+
+    fun navigateEditWithArgs(innerViewId: String, interviewGroupId: Int, question: String) {
+        navController.navigateEditWithArgs(innerViewId, interviewGroupId, question)
     }
 
     private fun popBackStack() {

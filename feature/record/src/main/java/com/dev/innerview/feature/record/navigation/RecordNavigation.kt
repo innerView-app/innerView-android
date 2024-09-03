@@ -21,7 +21,8 @@ fun NavGraphBuilder.recordNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToFilming: (String, Int, String) -> Unit
+    navigateToFilming: (String, Int, String) -> Unit,
+    navigateToEdit: (String, Int, String) -> Unit
 ) {
 
     composable<Route.Records> { navBackStackEntry ->
@@ -44,6 +45,7 @@ fun NavGraphBuilder.recordNavGraph(
             question = question,
             padding = padding,
             onBackClick = onBackClick,
+            navigationToEdit = navigateToEdit,
             onShowErrorSnackBar = onShowErrorSnackBar
         )
     }

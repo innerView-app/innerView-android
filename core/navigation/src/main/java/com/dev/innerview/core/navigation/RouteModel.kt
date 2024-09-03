@@ -19,7 +19,15 @@ sealed interface Route {
     data class Records(val innerViewId: String, val interviewGroupId: Int) : Route
 
     @Serializable
-    data class Filming(val innerViewId: String, val interviewGroupId: Int, val question: String) : Route
+    data class Filming(val innerViewId: String, val interviewGroupId: Int, val question: String) :
+        Route
+
+    @Serializable
+    data class EditWithArgs(
+        val innerViewId: String,
+        val interviewGroupId: Int,
+        val question: String
+    ) : Route
 
     @Serializable
     data object InterviewSelect : Route
