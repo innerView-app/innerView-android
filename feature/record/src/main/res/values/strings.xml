@@ -29,7 +29,9 @@
 
     <string name="feature_record_reset_icon_description">녹화 초기화</string>
     <string name="feature_record_complete_icon_description">녹화 완료</string>
+    <string name="feature_record_prev_interview_icon_description">이전 답변 확인</string>
     <string name="feature_record_camera_switch_icon_description">카메라 전환</string>
     <string name="feature_record_flash_on_icon_description">플래쉬 ON</string>
     <string name="feature_record_flash_off_icon_description">플래쉬 OFF</string>
+    <string name="feature_record_empty_prev_interview">해당 질문으로 답변한 과거 인터뷰가 없습니다.</string>
 </resources>

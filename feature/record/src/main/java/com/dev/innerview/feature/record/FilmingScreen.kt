@@ -17,8 +17,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -44,6 +46,7 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.feature.record.camerax.CameraScreen
+import com.dev.innerview.feature.record.component.PrevInterviewBottomSheet
 import com.dev.innerview.feature.record.model.FilmingUiEvent
 import com.dev.innerview.feature.record.model.FilmingUiState
 import com.dev.innerview.feature.record.model.PermissionState
@@ -136,6 +139,7 @@ internal fun FilmingScreen(
         resumeRecording = viewModel::resumeRecording,
         updateRecordingState = viewModel::updateRecordingState,
         updateFlashState = viewModel::updateFlashState,
+        selectBottomSheet = viewModel::selectBottomSheet,
         onGoToAppSettings = { context.openAppSettings() }
     )
 
@@ -154,6 +158,7 @@ internal fun FilmingScreen(
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun FilmingContent(
     filmingUiState: FilmingUiState,
@@ -167,8 +172,22 @@ private fun FilmingContent(
     resumeRecording: () -> Unit,
     updateFlashState: (Boolean) -> Unit,
     updateRecordingState: (Long, Long) -> Unit,
+    selectBottomSheet: () -> Unit,
     addInnerProject: () -> Unit
 ) {
+
+    val sheetState = rememberModalBottomSheetState()
+
+    if (filmingUiState.isSheetOpen) {
+        PrevInterviewBottomSheet(
+            filmingUiState = filmingUiState,
+            question = question,
+            sheetState = sheetState,
+            onDismissRequest = selectBottomSheet,
+            onItemClick = {}
+        )
+    }
+
     Box(
         modifier = Modifier
             .padding(padding)
@@ -215,6 +234,7 @@ private fun FilmingContent(
                         resumeRecording = resumeRecording,
                         updateFlashState = updateFlashState,
                         updateRecordingState = updateRecordingState,
+                        selectBottomSheet = selectBottomSheet,
                         addInnerProject = addInnerProject
                     )
                 }
@@ -249,6 +269,7 @@ private fun FilmingContentPreview() {
             pauseRecording = {},
             resumeRecording = {},
             updateFlashState = {},
+            selectBottomSheet = {},
             updateRecordingState = { _, _ -> },
         )
     }

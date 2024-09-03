@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
+import androidx.compose.material.icons.filled.VideoLibrary
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -63,6 +64,7 @@ internal fun CameraScreen(
     resumeRecording: () -> Unit,
     updateFlashState: (Boolean) -> Unit,
     updateRecordingState: (Long, Long) -> Unit,
+    selectBottomSheet: () -> Unit,
     addInnerProject: () -> Unit
 ) {
     val context = LocalContext.current
@@ -210,6 +212,14 @@ internal fun CameraScreen(
             exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
         ) {
             CameraOptionMultiButton {
+
+                CameraOptionSingleButton(
+                    imageVector = Icons.Filled.VideoLibrary,
+                    iconDescription = stringResource(R.string.feature_record_prev_interview_icon_description),
+                    isScrim = false,
+                    onClick = { selectBottomSheet() }
+                )
+
                 CameraOptionSingleButton(
                     imageVector = Icons.Filled.Cameraswitch,
                     iconDescription = stringResource(R.string.feature_record_camera_switch_icon_description),
@@ -274,6 +284,7 @@ private fun CameraScreenPreview() {
             resumeRecording = {},
             updateFlashState = {},
             updateRecordingState = { _, _ -> },
+            selectBottomSheet = {},
             addInnerProject = {}
         )
     }
