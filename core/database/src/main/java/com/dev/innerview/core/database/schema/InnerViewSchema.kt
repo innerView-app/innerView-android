@@ -7,9 +7,10 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 
 class InnerViewSchema : RealmObject {
     @PrimaryKey
-    var _id: Int = 0
+    var _id: String = ""
     var title: String = ""
     var type: String = ""
     var createdAt: String = ""
+    var questions: RealmList<String> = realmListOf()
     var interviewGroups: RealmList<InterviewGroupSchema> = realmListOf()
 }

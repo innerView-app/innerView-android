@@ -6,6 +6,6 @@ import javax.inject.Inject
 class DeleteInnerViewUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
-    suspend operator fun invoke(id: Int) =
+    suspend operator fun invoke(id: String) =
         innerViewRepository.deleteInnerView(id)
 }

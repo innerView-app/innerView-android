@@ -4,6 +4,7 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -68,25 +69,35 @@ fun InnerViewDialog(
                 )
                 Spacer(modifier = Modifier.size(16.dp))
                 content?.let { it() }
-                Spacer(modifier = Modifier.size(16.dp))
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = Paddings.large),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
                 ) {
-                    Text(
-                        modifier = Modifier.clickable { onDismissRequest() },
-                        text = dismissText,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                    Text(
+                    Box(
                         modifier = Modifier
-                            .padding(start = 32.dp)
-                            .clickable { onConfirmRequest() },
-                        text = confirmText,
-                        style = MaterialTheme.typography.labelMedium
-                    )
+                            .padding(end = Paddings.large)
+                            .size(width = 48.dp, height = 32.dp)
+                            .clickable { onDismissRequest() }
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = dismissText,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
+
+                    Box(
+                        modifier = Modifier
+                            .size(width = 48.dp, height = 32.dp)
+                            .clickable { onConfirmRequest() }
+                    ) {
+                        Text(
+                            modifier = Modifier.align(Alignment.Center),
+                            text = confirmText,
+                            style = MaterialTheme.typography.labelMedium
+                        )
+                    }
                 }
             }
         }
@@ -115,28 +126,44 @@ private fun InnerViewDialogPreview() {
                 supportingText = "0/50"
             )
             InnerViewRadioButton(
-                textString = "1 year",
                 selected = true,
                 onClick = {}
-            )
+            ) {
+                Text(
+                    text = "1 year",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             HorizontalDivider()
             InnerViewRadioButton(
-                textString = "1 month",
                 selected = false,
                 onClick = {}
-            )
+            ) {
+                Text(
+                    text = "1 month",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             HorizontalDivider()
             InnerViewRadioButton(
-                textString = "1 week",
                 selected = false,
                 onClick = {}
-            )
+            ) {
+                Text(
+                    text = "1 week",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
             HorizontalDivider()
             InnerViewRadioButton(
-                textString = "매일",
                 selected = false,
                 onClick = {}
-            )
+            ) {
+                Text(
+                    text = "매일",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
         }
     }
 }

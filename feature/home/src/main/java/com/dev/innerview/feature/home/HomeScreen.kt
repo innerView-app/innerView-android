@@ -46,7 +46,7 @@ import kotlinx.coroutines.flow.collectLatest
 internal fun HomeRoute(
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToInnerViewDetail: (Int) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     val homeUiState by viewModel.homeUiState.collectAsStateWithLifecycle()
@@ -75,15 +75,15 @@ internal fun HomeRoute(
 private fun HomeScreen(
     homeUiState: HomeUiState,
     padding: PaddingValues,
-    navigateToInnerViewDetail: (Int) -> Unit,
+    navigateToInnerViewDetail: (String) -> Unit,
     onInnerViewAddRequest: () -> Unit,
-    onInnerViewDeleteRequest: (Int) -> Unit,
+    onInnerViewDeleteRequest: (String) -> Unit,
     maxInnerViewTitleLength: Int,
     updateDialogInnerViewTitle: (String) -> Unit,
     updateDialogSelectedType: (InnerViewType) -> Unit,
-    onSelectInnerViewDropdown: (Int) -> Unit,
+    onSelectInnerViewDropdown: (String) -> Unit,
     onSelectInnerViewCreate: () -> Unit,
-    onSelectInnerViewDelete: (Int) -> Unit
+    onSelectInnerViewDelete: (String) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -109,7 +109,7 @@ private fun HomeScreen(
         ) {
             InnerViewList(
                 innerViews = homeUiState.innerViews,
-                onInnerViewClick = navigateToInnerViewDetail,
+                navigateToInnerViewDetail = navigateToInnerViewDetail,
                 onSelectInnerViewDropdown = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
@@ -140,10 +140,10 @@ private fun HomeScreen(
 @Composable
 private fun InnerViewList(
     innerViews: ImmutableList<InnerViewItemUiState>,
-    onInnerViewClick: (Int) -> Unit,
-    onSelectInnerViewDropdown: (Int) -> Unit,
-    onSelectInnerViewDelete: (Int) -> Unit,
-    onInnerViewDeleteRequest: (Int) -> Unit
+    navigateToInnerViewDetail: (String) -> Unit,
+    onSelectInnerViewDropdown: (String) -> Unit,
+    onSelectInnerViewDelete: (String) -> Unit,
+    onInnerViewDeleteRequest: (String) -> Unit
 ) {
     LazyColumn(
         modifier = Modifier
@@ -154,8 +154,8 @@ private fun InnerViewList(
         items(innerViews, key = { it.id }) { innerView ->
             InnerViewItem(
                 innerViewItemState = innerView,
-                onInnerViewClick = onInnerViewClick,
-                onInnerViewLongClick = onSelectInnerViewDropdown,
+                navigateToInnerViewDetail = navigateToInnerViewDetail,
+                onSelectInnerViewDropdown = onSelectInnerViewDropdown,
                 onSelectInnerViewDelete = onSelectInnerViewDelete,
                 onInnerViewDeleteRequest = onInnerViewDeleteRequest
             )
@@ -175,17 +175,17 @@ private fun HomeScreenPreview() {
             homeUiState = HomeUiState(
                 innerViews = persistentListOf(
                     InnerViewItemUiState(
-                        id = 1,
+                        id = "1",
                         title = "innerView title 1"
                     ),
                     InnerViewItemUiState(
-                        id = 2,
+                        id = "2",
                         title = "innerView title 2"
                     )
                 )
             ),
             padding = PaddingValues(),
-            navigateToInnerViewDetail = {},
+            navigateToInnerViewDetail = { _ -> },
             onInnerViewAddRequest = {},
             maxInnerViewTitleLength = 0,
             updateDialogInnerViewTitle = {},

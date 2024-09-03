@@ -7,8 +7,8 @@ enum class InnerViewType {
     DAY;
 
     companion object {
-        fun stringToInnerViewType(value: String): InnerViewType? {
-            return entries.find { it.name == value }
+        fun stringToInnerViewType(value: String): InnerViewType {
+            return entries.find { it.name == value } ?: YEAR
         }
     }
 }

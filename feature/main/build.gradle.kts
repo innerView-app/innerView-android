@@ -11,4 +11,5 @@ dependencies {
     implementation(project(":feature:peek"))
     implementation(project(":feature:edit"))
     implementation(project(":feature:profile"))
+    implementation(project(":feature:record"))
 }

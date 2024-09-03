@@ -3,13 +3,13 @@ package com.dev.innerview.core.designsystem.component
 import android.content.res.Configuration
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonColors
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,9 +20,9 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 
 @Composable
 fun InnerViewRadioButton(
-    textString: String = "",
     selected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    content: @Composable RowScope.() -> Unit
 ) {
     Row(
         Modifier
@@ -36,10 +36,7 @@ fun InnerViewRadioButton(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = textString,
-            style = MaterialTheme.typography.bodySmall,
-        )
+        content()
         RadioButton(
             selected = selected,
             onClick = null,
@@ -59,9 +56,14 @@ fun InnerViewRadioButton(
 private fun InnerViewRadioButtonPreview() {
     InnerViewTheme {
         InnerViewRadioButton(
-            textString = "1 year",
             selected = true,
             onClick = {}
-        )
+        ) {
+            InnerViewDialogTextField(
+                value = { "recordUiState" },
+                onValueChange = { },
+                placeholderText = "place holder",
+            )
+        }
     }
 }

@@ -14,10 +14,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.component.InnerViewCard
 import com.dev.innerview.core.designsystem.component.InnerViewDialog
+import com.dev.innerview.core.designsystem.component.InnerViewDropdownMenu
+import com.dev.innerview.core.designsystem.component.InnerViewDropdownMenuItem
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
@@ -33,10 +36,10 @@ import java.time.format.DateTimeFormatter
 @Composable
 fun InnerViewItem(
     innerViewItemState: InnerViewItemUiState,
-    onInnerViewClick: (Int) -> Unit,
-    onInnerViewLongClick: (Int) -> Unit,
-    onSelectInnerViewDelete: (Int) -> Unit,
-    onInnerViewDeleteRequest: (Int) -> Unit
+    navigateToInnerViewDetail: (String) -> Unit,
+    onSelectInnerViewDropdown: (String) -> Unit,
+    onSelectInnerViewDelete: (String) -> Unit,
+    onInnerViewDeleteRequest: (String) -> Unit
 ) {
 
     val createdAt = innerViewItemState.createdAt.withZoneSameInstant(ZoneId.systemDefault())
@@ -50,8 +53,10 @@ fun InnerViewItem(
             .fillMaxWidth()
             .height(80.dp)
             .combinedClickable(
-                onClick = { onInnerViewClick(innerViewItemState.id) },
-                onLongClick = { onInnerViewLongClick(innerViewItemState.id) }
+                onClick = {
+                    navigateToInnerViewDetail(innerViewItemState.id)
+                },
+                onLongClick = { onSelectInnerViewDropdown(innerViewItemState.id) }
             )
     ) {
         Box(
@@ -63,7 +68,8 @@ fun InnerViewItem(
                 modifier = Modifier.align(Alignment.TopStart),
                 text = innerViewItemState.title,
                 style = MaterialTheme.typography.titleSmall,
-                maxLines = 2
+                maxLines = 2,
+                overflow = TextOverflow.Ellipsis
             )
 
             Text(
@@ -83,10 +89,18 @@ fun InnerViewItem(
             )
             InnerViewDropdownMenu(
                 modifier = Modifier,
-                itemUiState = innerViewItemState,
-                onDeleteInnerView = { onSelectInnerViewDelete(innerViewItemState.id) },
-                onDismissRequest = { onInnerViewLongClick(innerViewItemState.id) }
-            )
+                expanded = innerViewItemState.isDropdownMenuVisible,
+                onDismissRequest = { onSelectInnerViewDropdown(innerViewItemState.id) }
+            ) {
+                InnerViewDropdownMenuItem(
+                    text = stringResource(R.string.feature_home_innerview_delete),
+                    style = MaterialTheme.typography.labelLarge.copy(
+                        color = MaterialTheme.colorScheme.error
+                    ),
+                    onClick = { onSelectInnerViewDelete(innerViewItemState.id) },
+                    onDismissRequest = { onSelectInnerViewDropdown(innerViewItemState.id) }
+                )
+            }
         }
     }
 
@@ -114,16 +128,16 @@ fun InnerViewItem(
 private fun InnerViewContentPreview() {
     InnerViewTheme {
         InnerViewItem(
-            onInnerViewClick = {},
-            onInnerViewLongClick = {},
+            navigateToInnerViewDetail = { _ -> },
+            onSelectInnerViewDropdown = {},
             onSelectInnerViewDelete = {},
             onInnerViewDeleteRequest = {},
             innerViewItemState = InnerViewItemUiState(
-                id = 0,
+                id = "",
                 title = "innerView title",
                 type = InnerViewType.YEAR,
                 createdAt = ZonedDateTime.now(ZoneOffset.UTC),
-                isInnerViewDeleteDialogVisible = true,
+                isInnerViewDeleteDialogVisible = true
             )
         )
     }

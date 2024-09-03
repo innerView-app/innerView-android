@@ -24,6 +24,7 @@ import com.dev.innerview.core.designsystem.theme.Paddings
 
 @Composable
 fun InnerViewDialogTextField(
+    modifier: Modifier = Modifier,
     value: () -> String,
     onValueChange: (String) -> Unit,
     singleLine: Boolean = true,
@@ -33,7 +34,7 @@ fun InnerViewDialogTextField(
     supportingText: String = "",
 ) {
     BasicTextField(
-        modifier = Modifier
+        modifier = modifier
             .background(
                 color = MaterialTheme.colorScheme.background,
                 shape = MaterialTheme.shapes.extraSmall

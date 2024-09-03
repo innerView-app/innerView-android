@@ -4,10 +4,10 @@ import kotlinx.serialization.Serializable
 
 sealed interface Route {
     @Serializable
-    data class InnerViewDetail(val id: Int) : Route
+    data class InnerViewDetail(val id: String) : Route
 
     @Serializable
-    data object InnerViewQuestion : Route
+    data class InnerViewQuestion(val id: String) : Route
 
     @Serializable
     data object InterviewGroup : Route
@@ -16,10 +16,10 @@ sealed interface Route {
     data object Player : Route
 
     @Serializable
-    data object Records : Route
+    data class Records(val innerViewId: String, val interviewGroupId: Int, val title: String) : Route
 
     @Serializable
-    data object Filming : Route
+    data class Filming(val innerViewId: String, val interviewGroupId: Int, val question: String) : Route
 
     @Serializable
     data object InterviewSelect : Route

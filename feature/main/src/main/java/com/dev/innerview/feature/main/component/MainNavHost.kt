@@ -10,6 +10,7 @@ import com.dev.innerview.feature.home.navigation.homeNavGraph
 import com.dev.innerview.feature.main.MainNavigator
 import com.dev.innerview.feature.peek.navigation.peekNavGraph
 import com.dev.innerview.feature.peek.navigation.profileNavGraph
+import com.dev.innerview.feature.record.navigation.recordNavGraph
 
 @Composable
 internal fun MainNavHost(
@@ -26,10 +27,17 @@ internal fun MainNavHost(
         homeNavGraph(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            onInnerViewClick = { navigator.navigateInnerViewDetail(it) },
             onBackClick = { navigator.popBackStackIfNotHome() },
-            onInterviewGroupClick = { navigator.navigateInterviewGroup() },
-            onInnerViewQuestionClick = { navigator.navigateInnerViewQuestion() }
+            navigateToInnerViewDetail = { id -> navigator.navigateInnerViewDetail(id) },
+            navigateToInnerViewQuestion = { id -> navigator.navigateInnerViewQuestion(id) },
+            navigateToInterviewGroup = { navigator.navigateInterviewGroup() },
+            navigateToRecord = { innerViewId, interviewGroupId, title ->
+                navigator.navigateRecord(
+                    innerViewId,
+                    interviewGroupId,
+                    title
+                )
+            }
         )
         peekNavGraph(
             padding = padding,
@@ -42,6 +50,18 @@ internal fun MainNavHost(
         profileNavGraph(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar
+        )
+        recordNavGraph(
+            padding = padding,
+            onBackClick = { navigator.popBackStackIfNotHome() },
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToFilming = { innerViewId, interviewGroupId, question ->
+                navigator.navigateFilming(
+                    innerViewId,
+                    interviewGroupId,
+                    question
+                )
+            }
         )
     }
 }

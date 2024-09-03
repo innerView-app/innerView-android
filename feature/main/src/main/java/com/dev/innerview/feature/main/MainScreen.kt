@@ -8,10 +8,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import com.dev.innerview.feature.main.component.MainBottomBar
 import com.dev.innerview.feature.main.component.MainNavHost
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
+import java.lang.IllegalArgumentException
 
 @Composable
 internal fun MainScreen(
@@ -23,9 +25,13 @@ internal fun MainScreen(
     val localContextResource = LocalContext.current.resources
     val onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { throwable ->
         coroutineScope.launch {
+
+            val unknownErrorMessage = localContextResource.getString(R.string.feature_main_error_message_unknown)
+
             snackBarHostState.showSnackbar(
                 when (throwable) {  // throwable 타입 별 snackBar 처리
-                    else -> localContextResource.getString(R.string.feature_main_error_message_unknown)
+                    is IllegalArgumentException -> throwable.message ?: unknownErrorMessage
+                    else -> unknownErrorMessage
                 }
             )
         }

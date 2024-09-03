@@ -4,12 +4,15 @@ import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.KeyboardArrowUp
+import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -21,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
@@ -52,7 +56,7 @@ fun InnerViewTopAppBar(
     navigationType: TopAppBarNavigationType = TopAppBarNavigationType.None,
     contentColor: Color = MaterialTheme.colorScheme.onPrimary,
     containerColor: Color = MaterialTheme.colorScheme.primary,
-    actionButtons: @Composable () -> Unit = {},
+    actionButtons: @Composable RowScope.() -> Unit = {},
     onNavigationClick: () -> Unit = {},
 ) {
     CompositionLocalProvider(LocalContentColor provides contentColor) {
@@ -76,15 +80,13 @@ fun InnerViewTopAppBar(
                     Spacer(modifier = Modifier.size(appBarSize))
                 }
                 Text(
+                    modifier = Modifier.weight(1f),
                     text = title,
                     style = MaterialTheme.typography.bodyLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis
                 )
-            }
 
-            Row(
-                modifier = Modifier.align(Alignment.CenterEnd),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
                 actionButtons()
             }
         }
@@ -101,7 +103,18 @@ private fun InnerViewTopAppBarPreviewBack() {
         InnerViewTopAppBar(
             title = "<Untitled>",
             navigationType = TopAppBarNavigationType.Back,
-            navigationIconContentDescription = "Navigation icon"
+            navigationIconContentDescription = "Navigation icon",
+            actionButtons = {
+                InnerViewAppBarIcon(
+                    imageVector = Icons.Filled.Notifications,
+                    navigationIconContentDescription = null
+                )
+                InnerViewAppBarIcon(
+                    imageVector = Icons.Filled.KeyboardArrowUp,
+                    navigationIconContentDescription = null
+                )
+
+            }
         )
     }
 }
