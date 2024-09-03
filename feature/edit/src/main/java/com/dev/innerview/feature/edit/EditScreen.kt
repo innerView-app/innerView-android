@@ -2,7 +2,9 @@ package com.dev.innerview.feature.edit
 
 import android.content.res.Configuration
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -25,6 +27,9 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun EditRoute(
+    innerViewId: String?,
+    interviewGroupId: Int?,
+    question: String?,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit,
     viewModel: EditViewModel = hiltViewModel(),
@@ -34,12 +39,18 @@ internal fun EditRoute(
     }
 
     EditScreen(
+        innerViewId = innerViewId,
+        interviewGroupId = interviewGroupId,
+        question = question,
         onBackClick = onBackClick
     )
 }
 
 @Composable
 private fun EditScreen(
+    innerViewId: String?,
+    interviewGroupId: Int?,
+    question: String?,
     onBackClick: () -> Unit
 ) {
     Box(
@@ -58,16 +69,29 @@ private fun EditScreen(
                 )
             }
         )
-        Box(
+        Column(
             modifier = Modifier
                 .systemBarsPadding()
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
         ) {
             Text(
                 text = "Edit Screen",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "$innerViewId",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "$interviewGroupId",
+                style = MaterialTheme.typography.titleMedium
+            )
+            Text(
+                text = "$question",
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -80,6 +104,9 @@ private fun EditScreen(
 private fun EditScreenPreview() {
     InnerViewTheme {
         EditScreen(
+            innerViewId = "innerViewId",
+            interviewGroupId = 0,
+            question = "question",
             onBackClick = {}
         )
     }

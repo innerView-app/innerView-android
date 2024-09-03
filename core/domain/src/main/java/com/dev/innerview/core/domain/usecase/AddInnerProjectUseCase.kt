@@ -9,6 +9,7 @@ class AddInnerProjectUseCase @Inject constructor(
     suspend operator fun invoke(
         innerViewId: String,
         interviewGroupId: Int,
-        question: String
-    ) = innerViewRepository.addInnerProject(innerViewId, interviewGroupId, question)
+        question: String,
+        videoPath: String
+    ) = innerViewRepository.addInnerProject(innerViewId, interviewGroupId, question, videoPath)
 }

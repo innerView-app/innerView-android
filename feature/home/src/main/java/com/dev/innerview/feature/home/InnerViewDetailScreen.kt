@@ -62,7 +62,7 @@ internal fun InnerViewDetailScreen(
     onBackClick: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
 
@@ -90,7 +90,7 @@ private fun InnerViewDetailContent(
     onBackClick: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     addInterviewGroup: () -> Unit
 ) {
     Box(
@@ -156,7 +156,7 @@ private fun InterviewGroupList(
     title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     reactivateDate: LocalDate,
     isActivated: Boolean,
 ) {
@@ -209,13 +209,11 @@ private fun InterviewGroupList(
                         .height(240.dp)
                         .clickable {
                             when (it.recordState) {
-                                RecordState.RECODING -> navigateToRecord(
-                                    innerViewId,
-                                    it.id,
-                                    "$title : $createAt"
-                                )
+                                RecordState.RECODING -> navigateToRecord(innerViewId, it.id)
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                else -> {}
                             }
                         },
                     filePath = it.thumbnailVideoPath
@@ -294,7 +292,7 @@ private fun InnerViewDetailContentPreview() {
             onBackClick = {},
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},
-            navigateToRecord = { _, _, _ -> },
+            navigateToRecord = { _, _ -> },
             addInterviewGroup = {}
         )
     }

@@ -6,6 +6,6 @@ import javax.inject.Inject
 class AddInterviewGroupUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
-    suspend operator fun invoke(innerViewId: String) =
-        innerViewRepository.addInterviewGroup(innerViewId)
+    suspend operator fun invoke(innerViewId: String, addPrevQuestions: Boolean = true) =
+        innerViewRepository.addInterviewGroup(innerViewId, addPrevQuestions)
 }

@@ -26,7 +26,9 @@ private val DarkColorScheme = darkColorScheme(
     onSecondaryContainer = Dun,
     tertiary = White,
     onTertiary = DimGray,
-    error = Red02
+    error = Red02,
+    outline = White,
+    scrim = Black.copy(alpha = 0.30f)
 )
 
 private val LightColorScheme = lightColorScheme(
@@ -44,7 +46,9 @@ private val LightColorScheme = lightColorScheme(
     onSecondaryContainer = Black,
     tertiary = DimGray,
     onTertiary = White,
-    error = Red02
+    error = Red02,
+    outline = White,
+    scrim = Black.copy(alpha = 0.30f)
 )
 
 @Composable
