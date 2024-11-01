@@ -7,10 +7,11 @@ import androidx.navigation.compose.composable
 import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
+import com.dev.innerview.feature.edit.EditHomeScreen
 import com.dev.innerview.feature.edit.EditRoute
 
 fun NavController.navigateEdit(navOptions: NavOptions) {
-    navigate(MainTabRoute.Edit, navOptions)
+    navigate(MainTabRoute.EditHome, navOptions)
 }
 
 fun NavController.navigateEditWithArgs(
@@ -26,11 +27,8 @@ fun NavGraphBuilder.editNavGraph(
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit
 ) {
-    composable<MainTabRoute.Edit> {
-        EditRoute(
-            innerViewId = null,
-            interviewGroupId = null,
-            question = null,
+    composable<MainTabRoute.EditHome> {
+        EditHomeScreen(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick
         )

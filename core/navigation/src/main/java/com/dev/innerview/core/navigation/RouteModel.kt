@@ -30,6 +30,9 @@ sealed interface Route {
     ) : Route
 
     @Serializable
+    data object ProjectSelect : Route
+
+    @Serializable
     data object InterviewSelect : Route
 
     @Serializable
@@ -44,7 +47,7 @@ sealed interface MainTabRoute : Route {
     data object Peek : MainTabRoute
 
     @Serializable
-    data object Edit : MainTabRoute
+    data object EditHome : MainTabRoute
 
     @Serializable
     data object Profile : MainTabRoute

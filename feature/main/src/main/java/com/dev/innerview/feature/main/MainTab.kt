@@ -22,7 +22,7 @@ internal enum class MainTab(
     INTERVIEW_EDIT(
         iconResId = R.drawable.ic_edit,
         contentDescription = "편집",
-        MainTabRoute.Edit,
+        MainTabRoute.EditHome,
     ),
     PROFILE(
         iconResId = R.drawable.ic_profile,
@@ -38,7 +38,7 @@ internal enum class MainTab(
 
         @Composable
         fun containWithoutEdit(predicate: @Composable (Route) -> Boolean): Boolean {
-            return entries.map { it.route }.filter { it != MainTabRoute.Edit }.any { predicate(it) }
+            return entries.map { it.route }.filter { it != MainTabRoute.EditHome }.any { predicate(it) }
         }
     }
 }
