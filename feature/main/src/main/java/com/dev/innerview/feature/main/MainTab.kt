@@ -37,8 +37,8 @@ internal enum class MainTab(
         }
 
         @Composable
-        fun containWithoutEdit(predicate: @Composable (Route) -> Boolean): Boolean {
-            return entries.map { it.route }.filter { it != MainTabRoute.EditHome }.any { predicate(it) }
+        fun contain(predicate: @Composable (Route) -> Boolean): Boolean {
+            return entries.map { it.route }.any { predicate(it) }
         }
     }
 }
