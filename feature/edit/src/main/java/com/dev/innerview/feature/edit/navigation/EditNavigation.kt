@@ -10,17 +10,13 @@ import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.EditHomeScreen
 import com.dev.innerview.feature.edit.EditRoute
 
-fun NavController.navigateEdit(navOptions: NavOptions) {
+fun NavController.navigateEditHome(navOptions: NavOptions) {
     navigate(MainTabRoute.EditHome, navOptions)
 }
 
-fun NavController.navigateEditWithArgs(
-    innerViewId: String,
-    interviewGroupId: Int,
-    question: String
-) {
+fun NavController.navigateEdit(innerProjectId: Int) {
     popBackStack<Route.Records>(inclusive = false)
-    navigate(Route.EditWithArgs(innerViewId, interviewGroupId, question))
+    navigate(Route.Edit(innerProjectId))
 }
 
 fun NavGraphBuilder.editNavGraph(
@@ -34,12 +30,10 @@ fun NavGraphBuilder.editNavGraph(
         )
     }
 
-    composable<Route.EditWithArgs> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId, question) = navBackStackEntry.toRoute<Route.EditWithArgs>()
+    composable<Route.Edit> { navBackStackEntry ->
+        val (innerProjectId) = navBackStackEntry.toRoute<Route.Edit>()
         EditRoute(
-            innerViewId = innerViewId,
-            interviewGroupId = interviewGroupId,
-            question = question,
+            innerProjectId = innerProjectId,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick
         )

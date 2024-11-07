@@ -11,5 +11,5 @@ class AddInnerProjectUseCase @Inject constructor(
         interviewGroupId: Int,
         question: String,
         videoPath: String
-    ) = innerViewRepository.addInnerProject(innerViewId, interviewGroupId, question, videoPath)
+    ): Int = innerViewRepository.addInnerProject(innerViewId, interviewGroupId, question, videoPath)
 }

@@ -22,7 +22,7 @@ fun NavGraphBuilder.recordNavGraph(
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     navigateToFilming: (String, Int, String) -> Unit,
-    navigateToEdit: (String, Int, String) -> Unit
+    navigateToEdit: (Int) -> Unit
 ) {
 
     composable<Route.Records> { navBackStackEntry ->

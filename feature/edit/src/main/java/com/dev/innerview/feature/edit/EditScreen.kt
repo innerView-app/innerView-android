@@ -27,9 +27,7 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun EditRoute(
-    innerViewId: String?,
-    interviewGroupId: Int?,
-    question: String?,
+    innerProjectId: Int,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit,
     viewModel: EditViewModel = hiltViewModel(),
@@ -39,18 +37,14 @@ internal fun EditRoute(
     }
 
     EditScreen(
-        innerViewId = innerViewId,
-        interviewGroupId = interviewGroupId,
-        question = question,
+        innerProjectId = innerProjectId,
         onBackClick = onBackClick
     )
 }
 
 @Composable
 private fun EditScreen(
-    innerViewId: String?,
-    interviewGroupId: Int?,
-    question: String?,
+    innerProjectId: Int,
     onBackClick: () -> Unit
 ) {
     Box(
@@ -83,15 +77,7 @@ private fun EditScreen(
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
-                text = "$innerViewId",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "$interviewGroupId",
-                style = MaterialTheme.typography.titleMedium
-            )
-            Text(
-                text = "$question",
+                text = "$innerProjectId",
                 style = MaterialTheme.typography.titleMedium
             )
         }
@@ -104,9 +90,7 @@ private fun EditScreen(
 private fun EditScreenPreview() {
     InnerViewTheme {
         EditScreen(
-            innerViewId = "innerViewId",
-            interviewGroupId = 0,
-            question = "question",
+            innerProjectId = 0,
             onBackClick = {}
         )
     }

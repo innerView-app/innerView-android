@@ -45,7 +45,7 @@ interface InnerViewRepository {
         interviewGroupId: Int,
         question: String,
         videoPath: String
-    )
+    ): Int
 
     suspend fun deleteInnerProject(
         innerViewId: String,

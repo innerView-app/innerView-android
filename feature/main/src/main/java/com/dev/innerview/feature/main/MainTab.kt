@@ -19,7 +19,7 @@ internal enum class MainTab(
         contentDescription = "PEEK",
         MainTabRoute.Peek
     ),
-    INTERVIEW_EDIT(
+    EDIT_HOME(
         iconResId = R.drawable.ic_edit,
         contentDescription = "편집",
         MainTabRoute.EditHome,

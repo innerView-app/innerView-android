@@ -31,7 +31,7 @@ import com.dev.innerview.feature.record.model.InterviewItemUiState
 fun InterviewItem(
     interviewItemUiState: InterviewItemUiState,
     navigateToFilming: (String) -> Unit,
-    navigationToEdit: (String) -> Unit,
+    navigationToEdit: (Int) -> Unit,
     onSelectInterviewDropdown: (String) -> Unit,
     onSelectQuestionDelete: (String) -> Unit,
     onSelectInnerProjectDelete: (String) -> Unit,
@@ -45,7 +45,7 @@ fun InterviewItem(
             .combinedClickable(
                 onClick = {
                     if (interviewItemUiState.interview.isRecordComplete) {
-                        navigationToEdit(interviewItemUiState.interview.question)
+                        navigationToEdit(interviewItemUiState.interview.innerProjectId)
                     } else {
                         navigateToFilming(interviewItemUiState.interview.question)
                     }

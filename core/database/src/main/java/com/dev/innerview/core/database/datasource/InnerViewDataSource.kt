@@ -8,6 +8,7 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.query.max
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.security.MessageDigest
@@ -163,7 +164,8 @@ class InnerViewDataSource @Inject constructor(
         interviewGroupId: Int,
         question: String,
         videoPath: String
-    ) {
+    ): Int {
+        var innerProjectId = 0
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
@@ -171,13 +173,17 @@ class InnerViewDataSource @Inject constructor(
                 .interviews.first { it.question == question }
 
             interview.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
+
+            innerProjectId = (query<InnerProjectSchema>().max<Int>("_id").find() ?: 0) + 1
             interview.innerProject = InnerProjectSchema().apply {
+                this._id = innerProjectId
                 this.innerViewId = innerViewId
                 this.interviewGroupId = interviewGroupId
                 this.recordState = "RECODING"
                 this.videoPath = videoPath
             }
         }
+        return innerProjectId
     }
 
     suspend fun deleteInnerProject(

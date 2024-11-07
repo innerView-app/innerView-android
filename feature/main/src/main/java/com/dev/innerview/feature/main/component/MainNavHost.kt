@@ -58,8 +58,8 @@ internal fun MainNavHost(
                     question
                 )
             },
-            navigateToEdit = { innerViewId, interviewGroupId, question ->
-                navigator.navigateEditWithArgs(innerViewId, interviewGroupId, question)
+            navigateToEdit = { innerProjectId ->
+                navigator.navigateEdit(innerProjectId)
             }
         )
     }

@@ -38,5 +38,5 @@ data class RecordingState(
 )
 
 sealed interface FilmingUiEvent {
-    data object NavigateToEdit : FilmingUiEvent
+    data class NavigateToEdit(val innerProjectId: Int) : FilmingUiEvent
 }
