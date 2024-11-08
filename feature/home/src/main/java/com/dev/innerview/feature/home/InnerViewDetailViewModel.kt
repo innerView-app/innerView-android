@@ -43,6 +43,7 @@ class InnerViewDetailViewModel @Inject constructor(
                 _innerViewDetailUiState.update {
                     it.copy(
                         title = innerViewContent.innerView.title,
+                        type = innerViewContent.innerView.type,
                         interviewGroups = innerViewContent.interviewGroups.toPersistentList(),
                         reactivateAt = reactivateAt,
                         isActivated = !LocalDate.now().isBefore(reactivateAt)
