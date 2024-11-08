@@ -204,55 +204,24 @@ private fun InterviewGroupList(
                 val createAt = it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
-                InterviewGroupCard(
+                InterviewGroupItem(
                     modifier = Modifier
                         .height(240.dp)
                         .clickable {
                             when (it.recordState) {
-                                RecordState.RECODING -> navigateToRecord(
-                                    innerViewId,
-                                    it.id,
-                                    "$title : $createAt"
-                                )
+                                RecordState.RECODING ->
+                                    navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
                             }
                         },
-                    filePath = it.thumbnailVideoPath
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .align(Alignment.BottomStart)
-                            .padding(start = Paddings.medium, bottom = Paddings.medium)
-                    ) {
-                        OutlinedText(
-                            text = "${it.questionCount}개의 질문",
-                            style = MaterialTheme.typography.labelSmall.copy(
-                                color = MaterialTheme.colorScheme.onTertiary
-                            ),
-                            outlineColor = MaterialTheme.colorScheme.tertiary,
-                            outlineDrawStyle = Stroke(
-                                width = 4f
-                            )
-                        )
-                        Spacer(modifier = Modifier.size(8.dp))
-                        OutlinedText(
-                            text = createAt,
-                            style = MaterialTheme.typography.titleSmall.copy(
-                                color = MaterialTheme.colorScheme.onTertiary
-                            ),
-                            outlineColor = MaterialTheme.colorScheme.tertiary,
-                            outlineDrawStyle = Stroke(
-                                width = 5f
-                            )
-                        )
-                    }
-                }
+                    interviewGroup = it,
+                    dateTextStyle = MaterialTheme.typography.titleSmall,
+                    createAt = createAt,
+                )
             }
-            repeat(interviewGroups.size % 2 + 1) {
-                item {
-                    Spacer(modifier = Modifier.height(80.dp))
-                }
+            item(span = { GridItemSpan(maxLineSpan) }) {
+                Spacer(modifier = Modifier.height(80.dp))
             }
         }
     }
