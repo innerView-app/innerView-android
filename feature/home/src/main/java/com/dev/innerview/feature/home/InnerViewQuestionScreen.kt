@@ -1,30 +1,80 @@
 package com.dev.innerview.feature.home
 
 import android.content.res.Configuration
+import androidx.compose.animation.core.animateIntAsState
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.List
-import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
+import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.feature.home.component.InnerViewQuestionItem
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
+import kotlin.math.absoluteValue
+import kotlin.math.roundToInt
 
 @Composable
 internal fun InnerViewQuestionScreen(
+    innerViewId: String,
     onBackClick: () -> Unit,
+    viewModel: InnerViewQuestionViewModel = hiltViewModel()
+) {
+    val innerViewQuestionUiState by viewModel.innerViewQuestionUiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(innerViewId) {
+        viewModel.fetchInnerViewQuestions(innerViewId)
+    }
+
+    InnerViewQuestionContent(
+        onBackClick = onBackClick,
+        title = innerViewQuestionUiState.title,
+        questions = innerViewQuestionUiState.interviewQuestions,
+        updateQuestions = { oldIndex, newIndex ->
+            viewModel.updateQuestions(innerViewId, oldIndex, newIndex)
+        }
+    )
+}
+
+@Composable
+private fun InnerViewQuestionContent(
+    onBackClick: () -> Unit,
+    title: String,
+    questions: ImmutableList<String>,
+    updateQuestions: (Int, Int) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -32,35 +82,111 @@ internal fun InnerViewQuestionScreen(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = "InnerViewQuestionScreen",
+            title = title,
             navigationType = TopAppBarNavigationType.Back,
-            onNavigationClick = { onBackClick() },
-            actionButtons = {
-                InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.List,
-                    navigationIconContentDescription = null
-                )
-                InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.Notifications,
-                    navigationIconContentDescription = null
-                )
-                InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.KeyboardArrowUp,
-                    navigationIconContentDescription = null
-                )
-            }
+            onNavigationClick = { onBackClick() }
         )
-        Box(
+        Column(
             modifier = Modifier
                 .systemBarsPadding()
                 .padding(top = appBarSize)
                 .fillMaxSize()
-                .background(MaterialTheme.colorScheme.background),
-            contentAlignment = Alignment.Center
+                .background(MaterialTheme.colorScheme.background)
         ) {
-            Text(
-                text = "InnerViewQuestion Screen",
-                style = MaterialTheme.typography.titleMedium
+            Column(
+                Modifier.padding(Paddings.xlarge)
+            ) {
+                Text(
+                    text = stringResource(R.string.feature_home_innerview_question_list_title),
+                    style = MaterialTheme.typography.labelLarge
+                )
+                Spacer(modifier = Modifier.size(8.dp))
+                Text(
+                    text = stringResource(R.string.feature_home_innerview_question_description),
+                    style = MaterialTheme.typography.labelMedium
+                )
+
+            }
+            if (questions.isNotEmpty()) {
+                ReorderableList(
+                    questions = questions,
+                    updateQuestions = updateQuestions
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ReorderableList(
+    questions: List<String>,
+    updateQuestions: (Int, Int) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+    val offsetYs = remember { questions.map { 0 }.toMutableStateList() }
+    var draggedIndex by remember { mutableStateOf<Int?>(null) }
+    var draggedOffsetY by remember { mutableIntStateOf(0) }
+    var targetIndex by remember { mutableIntStateOf(0) }
+
+    LazyColumn(
+        Modifier.fillMaxSize(),
+        state = lazyListState,
+        verticalArrangement = Arrangement.spacedBy((-1).dp)
+    ) {
+        itemsIndexed(questions) { index, item ->
+            val isDragged = index == draggedIndex
+            val overlapPx = with(LocalDensity.current) { 1.dp.toPx() }.roundToInt()
+            val animatedOffsetY by animateIntAsState(
+                targetValue = offsetYs[index],
+                label = "moving animation"
+            )
+
+            InnerViewQuestionItem(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .offset {
+                        if (isDragged) IntOffset(0, draggedOffsetY)
+                        else if (draggedIndex == null) IntOffset(0, 0)
+                        else IntOffset(0, animatedOffsetY)
+                    }
+                    .zIndex(zIndex = if (isDragged) 1f else 0f)
+                    .background(
+                        if (isDragged) MaterialTheme.colorScheme.secondaryContainer
+                        else MaterialTheme.colorScheme.background
+                    ),
+                onDragStarted = {
+                    draggedIndex = index
+                    targetIndex = index
+                },
+                onDragStopped = {
+                    draggedIndex = null
+                    draggedOffsetY = 0
+                    updateQuestions(index, targetIndex)
+                    offsetYs.fill(0)
+                },
+                draggableState = rememberDraggableState { dragAmount ->
+                    val itemHeight = lazyListState.layoutInfo.visibleItemsInfo[0].size - overlapPx
+                    val min = (lazyListState.firstVisibleItemIndex - index) * itemHeight
+                    val max = min + lazyListState.layoutInfo.visibleItemsInfo.lastIndex * itemHeight
+
+                    draggedOffsetY = (draggedOffsetY + dragAmount.roundToInt()).coerceIn(min, max)
+
+                    val tmpOffsetY = draggedOffsetY - offsetYs[index]
+                    if (tmpOffsetY.absoluteValue > itemHeight / 2) {
+                        if (tmpOffsetY > 0) {
+                            targetIndex++
+                            if (targetIndex > index) offsetYs[targetIndex] -= itemHeight
+                            else offsetYs[targetIndex - 1] -= itemHeight
+                            offsetYs[index] += itemHeight
+                        } else {
+                            targetIndex--
+                            if (targetIndex < index) offsetYs[targetIndex] += itemHeight
+                            else offsetYs[targetIndex + 1] += itemHeight
+                            offsetYs[index] -= itemHeight
+                        }
+                    }
+                },
+                content = item
             )
         }
     }
@@ -71,8 +197,11 @@ internal fun InnerViewQuestionScreen(
 @Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
 private fun InnerViewQuestionScreenPreview() {
     InnerViewTheme {
-        InnerViewQuestionScreen(
-            onBackClick = {}
+        InnerViewQuestionContent(
+            onBackClick = {},
+            title = "title",
+            questions = (1..20).map { it.toString() }.toPersistentList(),
+            updateQuestions = { _, _ -> }
         )
     }
 }
