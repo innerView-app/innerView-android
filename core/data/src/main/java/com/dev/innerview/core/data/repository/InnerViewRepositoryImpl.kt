@@ -110,6 +110,10 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.addQuestion(innerViewId, interviewGroupId, question)
     }
 
+    override suspend fun reorderQuestions(innerViewId: String, oldIndex: Int, newIndex: Int) {
+        innerViewDataSource.reorderQuestions(innerViewId, oldIndex, newIndex)
+    }
+
     override suspend fun deleteQuestion(
         innerViewId: String,
         interviewGroupId: Int,

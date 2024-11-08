@@ -31,6 +31,12 @@ interface InnerViewRepository {
         question: String
     )
 
+    suspend fun reorderQuestions(
+        innerViewId: String,
+        oldIndex: Int,
+        newIndex: Int
+    )
+
     suspend fun deleteQuestion(
         innerViewId: String,
         interviewGroupId: Int,

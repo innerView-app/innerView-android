@@ -63,8 +63,10 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InnerViewQuestion> {
+    composable<Route.InnerViewQuestion> { navBackStackEntry ->
+        val (id) = navBackStackEntry.toRoute<Route.InnerViewQuestion>()
         InnerViewQuestionScreen(
+            innerViewId = id,
             onBackClick = onBackClick
         )
     }
