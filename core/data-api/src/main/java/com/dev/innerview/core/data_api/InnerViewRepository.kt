@@ -1,5 +1,6 @@
 package com.dev.innerview.core.data_api
 
+import com.dev.innerview.core.model.InnerProject
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
@@ -16,6 +17,8 @@ interface InnerViewRepository {
     fun getInterviewGroupContentById(innerViewId: String, interviewGroupId: Int): Flow<InterviewGroupContent>
 
     fun getInterviewByQuestion(innerViewId: String, question: String): Flow<List<Interview>>
+
+    fun getInnerProject(): Flow<List<InnerProject>>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 
@@ -41,10 +44,10 @@ interface InnerViewRepository {
     )
 
     suspend fun addInnerProject(
-        innerViewId: String,
-        interviewGroupId: Int,
-        question: String,
-        videoPath: String
+        title: String,
+        innerViewId: String? = null,
+        interviewGroupId: Int? = null,
+        jsonData: String? = null
     ): Int
 
     suspend fun deleteInnerProject(

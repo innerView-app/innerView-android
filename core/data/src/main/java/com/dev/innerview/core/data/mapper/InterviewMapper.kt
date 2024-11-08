@@ -11,5 +11,5 @@ internal fun InterviewSchema.toData(): Interview =
         isRequired = isRequired,
         isRecordComplete = innerProject != null,
         innerProjectId = innerProject?._id ?: 0,
-        thumbnailVideoPath = innerProject?.videoPath
+        thumbnailVideoPath = innerProject?.jsonData
     )

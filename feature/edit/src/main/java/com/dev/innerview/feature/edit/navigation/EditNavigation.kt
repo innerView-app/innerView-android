@@ -1,5 +1,6 @@
 package com.dev.innerview.feature.edit.navigation
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
@@ -20,13 +21,16 @@ fun NavController.navigateEdit(innerProjectId: Int) {
 }
 
 fun NavGraphBuilder.editNavGraph(
+    padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    navigateToEdit: (Int) -> Unit,
     onBackClick: () -> Unit
 ) {
     composable<MainTabRoute.EditHome> {
         EditHomeScreen(
+            padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            onBackClick = onBackClick
+            navigateToEdit = navigateToEdit
         )
     }
 

@@ -11,5 +11,5 @@ internal fun InterviewGroupSchema.toData(): InterviewGroup =
         createdAt = ZonedDateTime.parse(createdAt),
         recordState = RecordState.stringToRecordState(recordState),
         questionCount = interviews.size,
-        thumbnailVideoPath = interviews.firstNotNullOfOrNull { it.innerProject?.videoPath }
+        thumbnailVideoPath = interviews.firstNotNullOfOrNull { it.innerProject?.jsonData }
     )

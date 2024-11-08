@@ -128,7 +128,6 @@ private fun InnerViewDetailContent(
         ) {
             InterviewGroupList(
                 innerViewId = innerViewId,
-                title = innerViewDetailUiState.title,
                 interviewGroups = innerViewDetailUiState.interviewGroups,
                 navigateToInterviewGroup = navigateToInterviewGroup,
                 navigateToRecord = navigateToRecord,
@@ -153,7 +152,6 @@ private fun InnerViewDetailContent(
 @Composable
 private fun InterviewGroupList(
     innerViewId: String,
-    title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String, Int) -> Unit,

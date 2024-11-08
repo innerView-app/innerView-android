@@ -3,6 +3,7 @@ package com.dev.innerview.core.data.repository
 import com.dev.innerview.core.data.mapper.toData
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
+import com.dev.innerview.core.model.InnerProject
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
@@ -66,6 +67,14 @@ class InnerViewRepositoryImpl @Inject constructor(
                     .filter { it.question == question }.map { it.toData() }
             }
 
+    override fun getInnerProject(): Flow<List<InnerProject>> =
+        innerViewDataSource.projectData
+            .map { innerProjects ->
+                innerProjects.filter { it.innerViewId == null && it.interviewGroupId == null }.map {
+                    it.toData()
+                }
+            }
+
     override suspend fun addInnerView(title: String, type: InnerViewType) {
         innerViewDataSource.addInnerView(title, type.name)
     }
@@ -99,12 +108,12 @@ class InnerViewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addInnerProject(
-        innerViewId: String,
-        interviewGroupId: Int,
-        question: String,
-        videoPath: String
+        title: String,
+        innerViewId: String?,
+        interviewGroupId: Int?,
+        jsonData: String?,
     ): Int {
-        return innerViewDataSource.addInnerProject(innerViewId, interviewGroupId, question, videoPath)
+        return innerViewDataSource.addInnerProject(title, innerViewId, interviewGroupId, jsonData)
     }
 
     override suspend fun deleteInnerProject(

@@ -53,9 +53,9 @@ class FilmingViewModel @Inject constructor(
         viewModelScope.launch {
             runCatching {
                 val innerProjectId = addInnerProjectUseCase(
+                    question,
                     innerViewId,
                     interviewGroupId,
-                    question,
                     _filmingUiState.value.outputFileName
                 )
                 _uiEventFlow.emit(FilmingUiEvent.NavigateToEdit(innerProjectId))
