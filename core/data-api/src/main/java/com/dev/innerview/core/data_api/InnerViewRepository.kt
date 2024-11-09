@@ -4,6 +4,7 @@ import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
+import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 
 interface InnerViewRepository {
@@ -12,13 +13,15 @@ interface InnerViewRepository {
 
     fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent>
 
-    fun getInterviews(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>>
+    fun getInterviewGroupContentById(innerViewId: String, interviewGroupId: Int): Flow<InterviewGroupContent>
+
+    fun getInterviewByQuestion(innerViewId: String, question: String): Flow<List<Interview>>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 
     suspend fun deleteInnerView(id: String)
 
-    suspend fun addInterviewGroup(innerViewId: String)
+    suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true)
 
     suspend fun deleteInterviewGroup(
         innerViewId: String,
@@ -47,6 +50,7 @@ interface InnerViewRepository {
         innerViewId: String,
         interviewGroupId: Int,
         question: String,
+        videoPath: String
     )
 
     suspend fun deleteInnerProject(
