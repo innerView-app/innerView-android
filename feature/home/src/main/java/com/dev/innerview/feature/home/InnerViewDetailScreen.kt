@@ -66,7 +66,7 @@ internal fun InnerViewDetailScreen(
     onBackClick: () -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
     val innerViewDetailUiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
@@ -93,7 +93,7 @@ private fun InnerViewDetailContent(
     onBackClick: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     addInterviewGroup: () -> Unit
 ) {
     Box(
@@ -230,7 +230,7 @@ private fun InterviewGroupList(
     title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     reactivateDate: LocalDate,
     isActivated: Boolean,
 ) {
@@ -305,6 +305,8 @@ private fun InterviewGroupList(
                                     navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                else -> {}
                             }
                         },
                     interviewGroup = it,
@@ -355,7 +357,7 @@ private fun InnerViewDetailContentPreview() {
             onBackClick = {},
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},
-            navigateToRecord = { _, _, _ -> },
+            navigateToRecord = { _, _ -> },
             addInterviewGroup = {}
         )
     }

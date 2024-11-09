@@ -31,12 +31,8 @@ internal fun MainNavHost(
             navigateToInnerViewDetail = { id -> navigator.navigateInnerViewDetail(id) },
             navigateToInnerViewQuestion = { id -> navigator.navigateInnerViewQuestion(id) },
             navigateToInterviewGroup = { navigator.navigateInterviewGroup() },
-            navigateToRecord = { innerViewId, interviewGroupId, title ->
-                navigator.navigateRecord(
-                    innerViewId,
-                    interviewGroupId,
-                    title
-                )
+            navigateToRecord = { innerViewId, interviewGroupId ->
+                navigator.navigateRecord(innerViewId, interviewGroupId)
             }
         )
         peekNavGraph(
@@ -61,6 +57,9 @@ internal fun MainNavHost(
                     interviewGroupId,
                     question
                 )
+            },
+            navigateToEdit = { innerViewId, interviewGroupId, question ->
+                navigator.navigateEditWithArgs(innerViewId, interviewGroupId, question)
             }
         )
     }

@@ -1,6 +1,8 @@
 package com.dev.innerview.core.model
 
 enum class RecordState {
+    IDLE,
+    PAUSE,
     RECODING,
     COMPLETE;
 

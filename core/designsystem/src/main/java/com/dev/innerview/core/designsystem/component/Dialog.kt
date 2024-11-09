@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -13,8 +14,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Card
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -35,71 +40,77 @@ fun InnerViewDialog(
     dismissText: String = "",
     onDismissRequest: () -> Unit = {},
     onConfirmRequest: () -> Unit = {},
-    content: (@Composable ColumnScope.() -> Unit)? = null
+    boxContent: @Composable BoxScope.() -> Unit = {},
+    content: @Composable ColumnScope.() -> Unit = {},
 ) {
     Dialog(
         onDismissRequest = { onDismissRequest() }
     ) {
-        Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(Paddings.xlarge),
-            shape = RoundedCornerShape(16.dp),
+        Box(
+            modifier = Modifier.padding(Paddings.xlarge)
         ) {
-            Column(
+            Card(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .background(MaterialTheme.colorScheme.background)
-                    .padding(Paddings.extra),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
+                    .fillMaxWidth(),
+                shape = RoundedCornerShape(16.dp),
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = titleText,
-                    style = MaterialTheme.typography.titleSmall
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = contentText,
-                    style = MaterialTheme.typography.labelMedium.copy(
-                        lineHeight = 18.sp
-                    )
-                )
-                Spacer(modifier = Modifier.size(16.dp))
-                content?.let { it() }
-                Row(
+                Column(
                     modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.background)
+                        .padding(Paddings.extra),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .padding(end = Paddings.large)
-                            .size(width = 48.dp, height = 32.dp)
-                            .clickable { onDismissRequest() }
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = dismissText,
-                            style = MaterialTheme.typography.labelMedium
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = titleText,
+                        style = MaterialTheme.typography.titleSmall
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        text = contentText,
+                        style = MaterialTheme.typography.labelMedium.copy(
+                            lineHeight = 18.sp
                         )
-                    }
+                    )
+                    Spacer(modifier = Modifier.size(16.dp))
+                    content()
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .padding(end = Paddings.large)
+                                .size(width = 48.dp, height = 32.dp)
+                                .clickable { onDismissRequest() }
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = dismissText,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
 
-                    Box(
-                        modifier = Modifier
-                            .size(width = 48.dp, height = 32.dp)
-                            .clickable { onConfirmRequest() }
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = confirmText,
-                            style = MaterialTheme.typography.labelMedium
-                        )
+                        Box(
+                            modifier = Modifier
+                                .size(width = 48.dp, height = 32.dp)
+                                .clickable { onConfirmRequest() }
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = confirmText,
+                                style = MaterialTheme.typography.labelMedium
+                            )
+                        }
                     }
                 }
             }
+
+            boxContent()
         }
     }
 }
