@@ -1,6 +1,5 @@
 package com.dev.innerview.feature.home
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -162,7 +161,6 @@ private fun InnerViewDetailContent(
     }
 }
 
-@SuppressLint("RememberReturnType")
 @Composable
 private fun DailyInterviewGroupList(
     innerViewId: String,
@@ -209,6 +207,8 @@ private fun DailyInterviewGroupList(
                                         navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                     RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                    else -> {}
                                 }
                             },
                         interviewGroup = it,
@@ -305,6 +305,8 @@ private fun InterviewGroupList(
                                     navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                else -> {}
                             }
                         },
                     interviewGroup = it,
