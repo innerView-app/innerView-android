@@ -36,7 +36,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToInnerViewDetail: (String) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int) -> Unit
+    navigateToRecord: (String, Int, String) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -63,8 +63,10 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InnerViewQuestion> {
+    composable<Route.InnerViewQuestion> { navBackStackEntry ->
+        val (id) = navBackStackEntry.toRoute<Route.InnerViewQuestion>()
         InnerViewQuestionScreen(
+            innerViewId = id,
             onBackClick = onBackClick
         )
     }
