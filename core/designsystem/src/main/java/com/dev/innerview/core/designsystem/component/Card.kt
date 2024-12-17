@@ -62,7 +62,7 @@ fun InterviewGroupCard(
         ) {
             VideoThumbnail(
                 modifier = Modifier.fillMaxSize(),
-                filePath = "interviews/$filePath",
+                filePath = filePath ?: "",
                 contentDescription = interviewDescription
             )
 
@@ -96,7 +96,7 @@ fun InterviewCard(
             ) {
                 VideoThumbnail(
                     modifier = Modifier,
-                    filePath = "interviews/$filePath",
+                    filePath = filePath ?: "",
                     contentScale = ContentScale.FillWidth,
                     contentDescription = interviewDescription
                 )

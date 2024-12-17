@@ -157,7 +157,7 @@ private fun InnerProjectList(
                     modifier = Modifier
                         .height(240.dp)
                         .clickable { navigateToEdit(it.id) },
-                    filePath = it.jsonData
+                    filePath = it.innerProjectComponents.videos.firstOrNull()?.filePath ?: ""
                 ) {
                     Column(
                         modifier = Modifier
