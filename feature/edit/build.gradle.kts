@@ -1,5 +1,6 @@
 plugins {
     id("innerview.android.feature")
+    id("innerview.android.media3")
 }
 
 android {
