@@ -1,6 +1,7 @@
 package com.dev.innerview.core.domain.usecase
 
 import com.dev.innerview.core.data_api.InnerViewRepository
+import com.dev.innerview.core.model.InnerProjectComponents
 import javax.inject.Inject
 
 class AddInnerProjectUseCase @Inject constructor(
@@ -10,6 +11,6 @@ class AddInnerProjectUseCase @Inject constructor(
         title: String,
         innerViewId: String? = null,
         interviewGroupId: Int? = null,
-        jsonData: String? = null
-    ): Int = innerViewRepository.addInnerProject(title, innerViewId, interviewGroupId, jsonData)
+        innerProjectComponents: InnerProjectComponents = InnerProjectComponents()
+    ): Int = innerViewRepository.addInnerProject(title, innerViewId, interviewGroupId, innerProjectComponents)
 }

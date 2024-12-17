@@ -4,6 +4,7 @@ import com.dev.innerview.core.data.mapper.toData
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
 import com.dev.innerview.core.model.InnerProject
+import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
@@ -11,6 +12,8 @@ import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class InnerViewRepositoryImpl @Inject constructor(
@@ -75,6 +78,12 @@ class InnerViewRepositoryImpl @Inject constructor(
                 }
             }
 
+    override fun getInnerProjectById(id: Int): Flow<InnerProject> =
+        innerViewDataSource.getInnerProjectById(id)
+            .map { innerProject ->
+                innerProject.toData()
+            }
+
     override suspend fun addInnerView(title: String, type: InnerViewType) {
         innerViewDataSource.addInnerView(title, type.name)
     }
@@ -111,8 +120,9 @@ class InnerViewRepositoryImpl @Inject constructor(
         title: String,
         innerViewId: String?,
         interviewGroupId: Int?,
-        jsonData: String?,
+        innerProjectComponents: InnerProjectComponents
     ): Int {
+        val jsonData = Json.encodeToString(innerProjectComponents)
         return innerViewDataSource.addInnerProject(title, innerViewId, interviewGroupId, jsonData)
     }
 

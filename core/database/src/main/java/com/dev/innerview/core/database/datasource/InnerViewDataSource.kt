@@ -41,6 +41,13 @@ class InnerViewDataSource @Inject constructor(
             result.list.firstOrNull() ?: throw IllegalArgumentException()
         }
 
+    fun getInnerProjectById(id: Int): Flow<InnerProjectSchema> = realm
+        .query<InnerProjectSchema>("_id == $0", id)
+        .asFlow()
+        .map { result ->
+            result.list.firstOrNull() ?: throw IllegalArgumentException()
+        }
+
     suspend fun addInnerView(
         title: String,
         type: String,

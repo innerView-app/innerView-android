@@ -1,6 +1,7 @@
 package com.dev.innerview.core.data_api
 
 import com.dev.innerview.core.model.InnerProject
+import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
@@ -14,11 +15,16 @@ interface InnerViewRepository {
 
     fun getInnerViewContent(innerViewId: String): Flow<InnerViewContent>
 
-    fun getInterviewGroupContentById(innerViewId: String, interviewGroupId: Int): Flow<InterviewGroupContent>
+    fun getInterviewGroupContentById(
+        innerViewId: String,
+        interviewGroupId: Int
+    ): Flow<InterviewGroupContent>
 
     fun getInterviewByQuestion(innerViewId: String, question: String): Flow<List<Interview>>
 
     fun getInnerProject(): Flow<List<InnerProject>>
+
+    fun getInnerProjectById(id: Int): Flow<InnerProject>
 
     suspend fun addInnerView(title: String, type: InnerViewType)
 
@@ -47,7 +53,7 @@ interface InnerViewRepository {
         title: String,
         innerViewId: String? = null,
         interviewGroupId: Int? = null,
-        jsonData: String? = null
+        innerProjectComponents: InnerProjectComponents = InnerProjectComponents()
     ): Int
 
     suspend fun deleteInnerProject(
