@@ -9,7 +9,7 @@ import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.EditHomeScreen
-import com.dev.innerview.feature.edit.EditRoute
+import com.dev.innerview.feature.edit.EditScreen
 
 fun NavController.navigateEditHome(navOptions: NavOptions) {
     navigate(MainTabRoute.EditHome, navOptions)
@@ -36,7 +36,7 @@ fun NavGraphBuilder.editNavGraph(
 
     composable<Route.Edit> { navBackStackEntry ->
         val (innerProjectId) = navBackStackEntry.toRoute<Route.Edit>()
-        EditRoute(
+        EditScreen(
             innerProjectId = innerProjectId,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick

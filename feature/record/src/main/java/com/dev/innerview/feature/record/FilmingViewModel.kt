@@ -4,6 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewByQuestionUseCase
+import com.dev.innerview.core.model.InnerProjectComponents
+import com.dev.innerview.core.model.Interview
+import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.record.model.FilmingUiEvent
 import com.dev.innerview.feature.record.model.FilmingUiState
@@ -49,14 +52,23 @@ class FilmingViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun addInnerProject(innerViewId: String, interviewGroupId: Int, question: String) {
+    fun addInnerProject(innerViewId: String, interviewGroupId: Int, question: String, duration: Long) {
         viewModelScope.launch {
             runCatching {
                 val innerProjectId = addInnerProjectUseCase(
                     question,
                     innerViewId,
                     interviewGroupId,
-                    _filmingUiState.value.outputFileName
+                    InnerProjectComponents(
+                        videos = listOf(
+                            InterviewPiece(
+                                filePath = "interviews/${_filmingUiState.value.outputFileName}",
+                                startPosition = 0L,
+                                endPosition = duration,
+                                duration = duration
+                            )
+                        )
+                    )
                 )
                 _uiEventFlow.emit(FilmingUiEvent.NavigateToEdit(innerProjectId))
             }
