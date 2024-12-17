@@ -65,8 +65,8 @@ internal class MainNavigator(
         navController.navigateInnerViewQuestion(id)
     }
 
-    fun navigateRecord(innerViewId: String, interviewGroupId: Int) {
-        navController.navigateRecord(innerViewId, interviewGroupId)
+    fun navigateRecord(innerViewId: String, interviewGroupId: Int, title:String) {
+        navController.navigateRecord(innerViewId, interviewGroupId, title)
     }
 
     fun navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {

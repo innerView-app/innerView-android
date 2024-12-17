@@ -148,6 +148,21 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
+    suspend fun reorderQuestions(
+        innerViewId: String,
+        oldIndex: Int,
+        newIndex: Int
+    ) {
+        realm.write {
+            val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
+            val questions = innerView.questions
+            if (oldIndex in questions.indices && newIndex in questions.indices) {
+                val question = questions.removeAt(oldIndex)
+                questions.add(newIndex, question)
+            }
+        }
+    }
+
     suspend fun deleteQuestion(
         innerViewId: String,
         interviewGroupId: Int,
