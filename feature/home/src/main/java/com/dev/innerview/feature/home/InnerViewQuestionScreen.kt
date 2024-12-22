@@ -119,7 +119,7 @@ private fun InnerViewQuestionContent(
 
 @Composable
 private fun ReorderableList(
-    questions: List<String>,
+    questions: ImmutableList<String>,
     updateQuestions: (Int, Int) -> Unit
 ) {
     val lazyListState = rememberLazyListState()
