@@ -8,12 +8,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import com.dev.innerview.feature.main.component.MainBottomBar
 import com.dev.innerview.feature.main.component.MainNavHost
+import com.dev.innerview.feature.notification.NotificationPermissionLauncher
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 @Composable
 internal fun MainScreen(
@@ -42,6 +41,8 @@ internal fun MainScreen(
         onShowErrorSnackBar = onShowErrorSnackBar,
         snackBarHostState = snackBarHostState
     )
+
+    NotificationPermissionLauncher()
 }
 
 @Composable
