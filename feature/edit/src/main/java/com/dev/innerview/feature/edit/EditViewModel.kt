@@ -9,6 +9,7 @@ import androidx.media3.common.Player
 import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.MediaUiState
 import com.dev.innerview.feature.edit.playstate.PlaybackStateListener
 import com.dev.innerview.feature.edit.playstate.PlaybackStateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -63,53 +64,56 @@ class EditViewModel @Inject constructor(
 
     fun fetchInnerProject(id: Int) {
         getInnerProjectByIdUseCase(id).onEach { innerProject ->
-            val duration = innerProject.innerProjectComponents.videos.sumOf {
+            val duration = innerProject.innerProjectComponents.media.sumOf {
                 it.endPosition - it.startPosition
             }
+            val media = innerProject.innerProjectComponents.media.map{ mediaItem ->
+                MediaUiState(medium = mediaItem)
+            }
             val accumulatedDurations =
-                calculateAccumulatedDurations(innerProject.innerProjectComponents.videos)
+                calculateAccumulatedDurations(media)
             _editUiState.update {
                 it.copy(
                     innerProjectId = id,
                     title = innerProject.title,
                     recordState = innerProject.recordState,
                     duration = duration,
-                    media = innerProject.innerProjectComponents.videos.toPersistentList(),
+                    media = media.toPersistentList(),
                     accumulatedDurations = accumulatedDurations.toPersistentList(),
                     subtitles = innerProject.innerProjectComponents.subtitles.toPersistentList(),
                 )
             }
-            setMediaItems(innerProject.innerProjectComponents.videos)
+            setMediaItems(innerProject.innerProjectComponents.media)
         }.launchIn(viewModelScope)
     }
 
     fun addMediaItem() {
-        val newVideos = _editUiState.value.media.toPersistentList().add(
+        val newMedia = _editUiState.value.media.toPersistentList().add(
             _editUiState.value.media.last()
         )
-        val duration = newVideos.sumOf {
-            it.endPosition - it.startPosition
+        val duration = newMedia.sumOf {
+            it.medium.endPosition - it.medium.startPosition
         }
-        val mediaItem = newVideos.last().let { video ->
-            val videoFile = File(context.filesDir, video.filePath)
+        val mediaItem = newMedia.last().let { mediaUiState ->
+            val videoFile = File(context.filesDir, mediaUiState.medium.filePath)
             val mediaUri = videoFile.toUri()
 
             val mediaItem = MediaItem.Builder()
                 .setUri(mediaUri)
                 .setClippingConfiguration(
                     MediaItem.ClippingConfiguration.Builder()
-                        .setStartPositionMs(video.startPosition)
-                        .setEndPositionMs(video.endPosition)
+                        .setStartPositionMs(mediaUiState.medium.startPosition)
+                        .setEndPositionMs(mediaUiState.medium.endPosition)
                         .build()
                 )
                 .build()
             mediaItem
         }
         player.addMediaItem(mediaItem)
-        val accumulatedDurations = calculateAccumulatedDurations(newVideos)
+        val accumulatedDurations = calculateAccumulatedDurations(newMedia)
         _editUiState.update {
             it.copy(
-                media = newVideos,
+                media = newMedia,
                 accumulatedDurations = accumulatedDurations.toPersistentList(),
                 duration = duration
             )
@@ -131,7 +135,7 @@ class EditViewModel @Inject constructor(
                 if (_editUiState.value.currentMediaItemIndex == _editUiState.value.media.size - 1) {
                     player.seekTo(
                         _editUiState.value.media.size - 1,
-                        _editUiState.value.media.last().duration
+                        _editUiState.value.media.last().medium.duration
                     )
                 } else {
                     player.seekToNextMediaItem()
@@ -169,6 +173,25 @@ class EditViewModel @Inject constructor(
         val positionMs = (scrollPosition / _editUiState.value.zoom).toLong()
         val itemIndex = calculateMediaItemIndex(positionMs)
         player.seekTo(itemIndex, positionMs - _editUiState.value.accumulatedDurations[itemIndex])
+    }
+
+    fun selectMediaItem(index: Int) {
+        _editUiState.update {
+            it.copy(
+                media = it.media.mapIndexed { i, uiState ->
+                    when {
+                        i == index -> {
+                            if (!uiState.selected && _editUiState.value.currentMediaItemIndex != index) {
+                                player.seekTo(index, 0L)
+                            }
+                            uiState.copy(selected = !uiState.selected)
+                        }
+                        uiState.selected -> uiState.copy(selected = false)
+                        else -> uiState
+                    }
+                }.toPersistentList()
+            )
+        }
     }
 
     private fun setMediaItems(videos: List<InterviewPiece>) {
@@ -217,8 +240,8 @@ class EditViewModel @Inject constructor(
         return r
     }
 
-    private fun calculateAccumulatedDurations(media: List<InterviewPiece>): List<Long> {
-        return media.map { it.endPosition - it.startPosition }
+    private fun calculateAccumulatedDurations(media: List<MediaUiState>): List<Long> {
+        return media.map { it.medium.endPosition - it.medium.startPosition }
             .runningFold(0L) { sum, item -> sum + item }
     }
 
