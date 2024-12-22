@@ -72,12 +72,12 @@ class AlarmHelper @Inject constructor(
         CoroutineScope(Dispatchers.IO).launch {
             getInnerViewUseCase().first()
                 .filter { it.isNotificationOn }
-                .map { getInnerViewContentUseCase(it.id).last() }
+                .map { getInnerViewContentUseCase(it.id).first() }
                 .filter { it.interviewGroups.isNotEmpty() }
                 .forEach { content ->
                     registerInitialAlarm(
                         innerViewId = content.innerView.id,
-                        lastInnerViewTime = content.interviewGroups.last().createdAt,
+                        lastInnerViewTime = content.interviewGroups.first().createdAt,
                         innerViewType = content.innerView.type,
                         innerViewTitle = content.innerView.title
                     )

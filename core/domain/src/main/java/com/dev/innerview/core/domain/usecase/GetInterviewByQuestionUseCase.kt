@@ -5,9 +5,9 @@ import com.dev.innerview.core.model.Interview
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class GetInterviewUseCase @Inject constructor(
+class GetInterviewByQuestionUseCase @Inject constructor(
     private val innerViewRepository: InnerViewRepository
 ) {
-    operator fun invoke(innerViewId: String, interviewGroupId: Int): Flow<List<Interview>> =
-        innerViewRepository.getInterviews(innerViewId, interviewGroupId)
+    operator fun invoke(innerViewId: String, question: String): Flow<List<Interview>> =
+        innerViewRepository.getInterviewByQuestion(innerViewId, question)
 }

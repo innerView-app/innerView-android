@@ -87,7 +87,7 @@ class InnerViewDetailViewModel @Inject constructor(
                             innerViewId = innerViewId,
                             innerViewType = content.type,
                             innerViewTitle = content.title,
-                            lastInnerViewTime = content.interviewGroups.last().createdAt
+                            lastInnerViewTime = content.interviewGroups.first().createdAt
                         )
                     }
 
@@ -99,7 +99,7 @@ class InnerViewDetailViewModel @Inject constructor(
 
     fun addInnerViewGroup(innerViewId: String) {
         viewModelScope.launch {
-            addInterviewGroupUseCase(innerViewId)
+            addInterviewGroupUseCase(innerViewId, _innerViewDetailUiState.value.type != InnerViewType.DAY)
         }
     }
 }

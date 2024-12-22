@@ -1,16 +1,19 @@
 package com.dev.innerview.core.data.repository
 
+import com.dev.innerview.core.data.mapper.toData
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
+import com.dev.innerview.core.model.InnerProject
+import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InnerView
 import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
-import com.dev.innerview.core.model.InterviewGroup
-import com.dev.innerview.core.model.RecordState
+import com.dev.innerview.core.model.InterviewGroupContent
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import java.time.ZonedDateTime
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
 class InnerViewRepositoryImpl @Inject constructor(
@@ -19,16 +22,9 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override fun getInnerViews(): Flow<List<InnerView>> =
         innerViewDataSource.innerViewData
-            .map { innerViewList ->
-                innerViewList.map { innerViewSchema ->
-                    InnerView(
-                        id = innerViewSchema._id,
-                        title = innerViewSchema.title,
-                        type = InnerViewType.stringToInnerViewType(innerViewSchema.type),
-                        createdAt = ZonedDateTime.parse(innerViewSchema.createdAt),
-                        questions = innerViewSchema.questions,
-                        isNotificationOn = innerViewSchema.isNotificationOn
-                    )
+            .map { innerViews ->
+                innerViews.map { innerView ->
+                    innerView.toData()
                 }
             }
 
@@ -36,55 +32,56 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.getInnerViewById(innerViewId)
             .map { innerView ->
                 val interviewGroups = innerView.interviewGroups
-                    .map { interviewGroupSchema ->
-                        val videoPaths =
-                            interviewGroupSchema.interviews.mapNotNull { it.innerProject?.videoPath }
-                        val thumbnailVideoPath = videoPaths.firstOrNull()
-
-                        InterviewGroup(
-                            id = interviewGroupSchema.id,
-                            createdAt = ZonedDateTime.parse(interviewGroupSchema.createdAt),
-                            recordState = RecordState.stringToRecordState(interviewGroupSchema.recordState),
-                            questionCount = interviewGroupSchema.interviews.size,
-                            thumbnailVideoPath = thumbnailVideoPath
-                        )
-                    }.sortedByDescending { it.createdAt }
 
                 InnerViewContent(
-                    InnerView(
-                        id = innerViewId,
-                        title = innerView.title,
-                        type = InnerViewType.stringToInnerViewType(innerView.type),
-                        createdAt = ZonedDateTime.parse(innerView.createdAt),
-                        questions = innerView.questions,
-                        isNotificationOn = innerView.isNotificationOn
-                    ),
-                    interviewGroups
+                    innerView = innerView.toData(),
+                    interviewGroups = interviewGroups.map { it.toData() }
+                        .sortedByDescending { it.createdAt }
                 )
             }
 
-    override fun getInterviews(
+    override fun getInterviewGroupContentById(
         innerViewId: String,
         interviewGroupId: Int
-    ): Flow<List<Interview>> =
+    ): Flow<InterviewGroupContent> =
         innerViewDataSource.getInnerViewById(innerViewId)
             .map { innerView ->
 
                 val interviewGroups =
-                    innerView.interviewGroups
+                    innerView.interviewGroups.firstOrNull { it.id == interviewGroupId }
+                        ?: throw IllegalArgumentException()
 
-                val interviews =
-                    interviewGroups.firstOrNull { it.id == interviewGroupId }?.interviews
+                InterviewGroupContent(
+                    innerView = innerView.toData(),
+                    interviewGroup = interviewGroups.toData(),
+                    interviews = interviewGroups.interviews.map { interviewSchema ->
+                        interviewSchema.toData()
+                    }
+                )
+            }
 
-                interviews?.map { interviewSchema ->
-                    Interview(
-                        createdAt = interviewSchema.createdAt?.let { ZonedDateTime.parse(it) },
-                        question = interviewSchema.question,
-                        isRequired = interviewSchema.isRequired,
-                        isRecordComplete = interviewSchema.innerProject != null,
-                        thumbnailVideoPath = interviewSchema.innerProject?.videoPath
-                    )
-                } ?: listOf()
+    override fun getInterviewByQuestion(
+        innerViewId: String,
+        question: String
+    ): Flow<List<Interview>> =
+        innerViewDataSource.getInnerViewById(innerViewId)
+            .map { innerView ->
+                innerView.interviewGroups.flatMap { it.interviews }
+                    .filter { it.question == question }.map { it.toData() }
+            }
+
+    override fun getInnerProject(): Flow<List<InnerProject>> =
+        innerViewDataSource.projectData
+            .map { innerProjects ->
+                innerProjects.filter { it.innerViewId == null && it.interviewGroupId == null }.map {
+                    it.toData()
+                }
+            }
+
+    override fun getInnerProjectById(id: Int): Flow<InnerProject> =
+        innerViewDataSource.getInnerProjectById(id)
+            .map { innerProject ->
+                innerProject.toData()
             }
 
 
@@ -96,8 +93,8 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.deleteInnerView(id)
     }
 
-    override suspend fun addInterviewGroup(innerViewId: String) {
-        innerViewDataSource.addInterviewGroup(innerViewId)
+    override suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean) {
+        innerViewDataSource.addInterviewGroup(innerViewId, addPrevQuestions)
     }
 
     override suspend fun changeInnerViewNotification(innerViewId: String, isOn: Boolean) {
@@ -129,11 +126,13 @@ class InnerViewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun addInnerProject(
-        innerViewId: String,
-        interviewGroupId: Int,
-        question: String
-    ) {
-        innerViewDataSource.addInnerProject(innerViewId, interviewGroupId, question)
+        title: String,
+        innerViewId: String?,
+        interviewGroupId: Int?,
+        innerProjectComponents: InnerProjectComponents
+    ): Int {
+        val jsonData = Json.encodeToString(innerProjectComponents)
+        return innerViewDataSource.addInnerProject(title, innerViewId, interviewGroupId, jsonData)
     }
 
     override suspend fun deleteInnerProject(

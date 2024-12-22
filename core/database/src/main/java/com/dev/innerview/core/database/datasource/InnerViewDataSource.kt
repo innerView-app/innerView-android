@@ -8,6 +8,7 @@ import io.realm.kotlin.Realm
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.query.max
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.security.MessageDigest
@@ -35,6 +36,13 @@ class InnerViewDataSource @Inject constructor(
 
     fun getInnerViewById(id: String): Flow<InnerViewSchema> = realm
         .query<InnerViewSchema>("_id == $0", id)
+        .asFlow()
+        .map { result ->
+            result.list.firstOrNull() ?: throw IllegalArgumentException()
+        }
+
+    fun getInnerProjectById(id: Int): Flow<InnerProjectSchema> = realm
+        .query<InnerProjectSchema>("_id == $0", id)
         .asFlow()
         .map { result ->
             result.list.firstOrNull() ?: throw IllegalArgumentException()
@@ -73,12 +81,12 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
-    suspend fun addInterviewGroup(innerViewId: String) {
+    suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true) {
         realm.write {
 
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
-            val interviews = if (innerView.interviewGroups.isEmpty()) {
+            val interviews = if (!addPrevQuestions || innerView.interviewGroups.isEmpty()) {
                 realmListOf()
             } else {
                 innerView.interviewGroups.last().interviews.map { prevInterview ->
@@ -182,24 +190,43 @@ class InnerViewDataSource @Inject constructor(
     }
 
     suspend fun addInnerProject(
-        innerViewId: String,
-        interviewGroupId: Int,
-        question: String,
-    ) {
+        title: String,
+        innerViewId: String? = null,
+        interviewGroupId: Int? = null,
+        jsonData: String? = null,
+    ): Int {
+        var innerProjectId = 0
         realm.write {
-            val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
+            innerProjectId = (query<InnerProjectSchema>().max<Int>("_id").find() ?: 0) + 1
 
-            val interview = innerView.interviewGroups.first { it.id == interviewGroupId }
-                .interviews.first { it.question == question }
+            if (innerViewId != null && interviewGroupId != null) {
+                val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
-            interview.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
-            interview.innerProject = InnerProjectSchema().apply {
-                this.innerViewId = innerViewId
-                this.interviewGroupId = interviewGroupId
-                this.recordState = "RECODING"
-                this.videoPath = "input.mp4"
+                val interview = innerView.interviewGroups.first { it.id == interviewGroupId }
+                    .interviews.first { it.question == title }
+
+                interview.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
+
+                interview.innerProject = InnerProjectSchema().apply {
+                    this._id = innerProjectId
+                    this.title = title
+                    this.innerViewId = innerViewId
+                    this.interviewGroupId = interviewGroupId
+                    this.recordState = "RECODING"
+                    jsonData?.let { this.jsonData = it }
+                }
+            } else {
+                copyToRealm(
+                    InnerProjectSchema().apply {
+                        this._id = innerProjectId
+                        this.title = title
+                        this.recordState = "COMPLETE"
+                        jsonData?.let { this.jsonData = it }
+                    }
+                )
             }
         }
+        return innerProjectId
     }
 
     suspend fun deleteInnerProject(
@@ -232,7 +259,9 @@ class InnerViewDataSource @Inject constructor(
                     .filter { !it.isRequired }
                     .map { it.question }
                     .forEach { question ->
-                        innerView.questions.add(question)
+                        if (!innerView.questions.contains(question)) {
+                            innerView.questions.add(question)
+                        }
                     }
 
                 interviewGroup.recordState = "COMPLETE"

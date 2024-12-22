@@ -59,5 +59,15 @@ gradlePlugin {
             id = "innerview.android.realm"
             implementationClass = "AndroidRealmConventionPlugin"
         }
+
+        register("androidCamera") {
+            id = "innerview.android.camera"
+            implementationClass = "AndroidCameraConventionPlugin"
+        }
+
+        register("androidMedia3") {
+            id = "innerview.android.media3"
+            implementationClass = "AndroidMedia3ConventionPlugin"
+        }
     }
 }

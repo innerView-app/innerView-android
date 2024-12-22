@@ -133,11 +133,11 @@ private fun ReorderableList(
         state = lazyListState,
         verticalArrangement = Arrangement.spacedBy((-1).dp)
     ) {
-        itemsIndexed(questions) { index, item ->
-            val isDragged = index == draggedIndex
+        itemsIndexed(questions, key = { _, question -> question }) { id, question ->
+            val isDragged = id == draggedIndex
             val overlapPx = with(LocalDensity.current) { 1.dp.toPx() }.roundToInt()
             val animatedOffsetY by animateIntAsState(
-                targetValue = offsetYs[index],
+                targetValue = offsetYs[id],
                 label = "moving animation"
             )
 
@@ -155,38 +155,38 @@ private fun ReorderableList(
                         else MaterialTheme.colorScheme.background
                     ),
                 onDragStarted = {
-                    draggedIndex = index
-                    targetIndex = index
+                    draggedIndex = id
+                    targetIndex = id
                 },
                 onDragStopped = {
                     draggedIndex = null
                     draggedOffsetY = 0
-                    updateQuestions(index, targetIndex)
+                    updateQuestions(id, targetIndex)
                     offsetYs.fill(0)
                 },
                 draggableState = rememberDraggableState { dragAmount ->
                     val itemHeight = lazyListState.layoutInfo.visibleItemsInfo[0].size - overlapPx
-                    val min = (lazyListState.firstVisibleItemIndex - index) * itemHeight
+                    val min = (lazyListState.firstVisibleItemIndex - id) * itemHeight
                     val max = min + lazyListState.layoutInfo.visibleItemsInfo.lastIndex * itemHeight
 
                     draggedOffsetY = (draggedOffsetY + dragAmount.roundToInt()).coerceIn(min, max)
 
-                    val tmpOffsetY = draggedOffsetY - offsetYs[index]
+                    val tmpOffsetY = draggedOffsetY - offsetYs[id]
                     if (tmpOffsetY.absoluteValue > itemHeight / 2) {
                         if (tmpOffsetY > 0) {
                             targetIndex++
-                            if (targetIndex > index) offsetYs[targetIndex] -= itemHeight
+                            if (targetIndex > id) offsetYs[targetIndex] -= itemHeight
                             else offsetYs[targetIndex - 1] -= itemHeight
-                            offsetYs[index] += itemHeight
+                            offsetYs[id] += itemHeight
                         } else {
                             targetIndex--
-                            if (targetIndex < index) offsetYs[targetIndex] += itemHeight
+                            if (targetIndex < id) offsetYs[targetIndex] += itemHeight
                             else offsetYs[targetIndex + 1] += itemHeight
-                            offsetYs[index] -= itemHeight
+                            offsetYs[id] -= itemHeight
                         }
                     }
                 },
-                content = item
+                content = question
             )
         }
     }

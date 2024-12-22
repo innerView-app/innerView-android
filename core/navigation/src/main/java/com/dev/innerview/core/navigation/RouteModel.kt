@@ -23,10 +23,17 @@ sealed interface Route {
     data object Player : Route
 
     @Serializable
-    data class Records(val innerViewId: String, val interviewGroupId: Int, val title: String) : Route
+    data class Records(val innerViewId: String, val interviewGroupId: Int, val title:String) : Route
 
     @Serializable
-    data class Filming(val innerViewId: String, val interviewGroupId: Int, val question: String) : Route
+    data class Filming(val innerViewId: String, val interviewGroupId: Int, val question: String) :
+        Route
+
+    @Serializable
+    data class Edit(val innerProjectId: Int) : Route
+
+    @Serializable
+    data object ProjectSelect : Route
 
     @Serializable
     data object InterviewSelect : Route
@@ -43,7 +50,7 @@ sealed interface MainTabRoute : Route {
     data object Peek : MainTabRoute
 
     @Serializable
-    data object Edit : MainTabRoute
+    data object EditHome : MainTabRoute
 
     @Serializable
     data object Profile : MainTabRoute

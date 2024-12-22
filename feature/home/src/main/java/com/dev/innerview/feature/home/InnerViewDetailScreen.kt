@@ -214,6 +214,8 @@ private fun DailyInterviewGroupList(
                                         navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                     RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                    else -> {}
                                 }
                             },
                         interviewGroup = it,
@@ -310,6 +312,8 @@ private fun InterviewGroupList(
                                     navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
+
+                                else -> {}
                             }
                         },
                     interviewGroup = it,

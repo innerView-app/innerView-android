@@ -9,7 +9,7 @@ import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.FilmingScreen
 import com.dev.innerview.feature.record.RecordScreen
 
-fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int, title: String) {
+fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int, title:String) {
     navigate(Route.Records(innerViewId, interviewGroupId, title))
 }
 
@@ -21,19 +21,20 @@ fun NavGraphBuilder.recordNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
-    navigateToFilming: (String, Int, String) -> Unit
+    navigateToFilming: (String, Int, String) -> Unit,
+    navigateToEdit: (Int) -> Unit
 ) {
 
     composable<Route.Records> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId, title) = navBackStackEntry.toRoute<Route.Records>()
+        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.Records>()
         RecordScreen(
             innerViewId = innerViewId,
             interviewGroupId = interviewGroupId,
-            title = title,
             padding = padding,
             onBackClick = onBackClick,
             onShowErrorSnackBar = onShowErrorSnackBar,
-            navigateToFilming = navigateToFilming
+            navigateToFilming = navigateToFilming,
+            navigationToEdit = navigateToEdit
         )
     }
 
@@ -45,6 +46,7 @@ fun NavGraphBuilder.recordNavGraph(
             question = question,
             padding = padding,
             onBackClick = onBackClick,
+            navigationToEdit = navigateToEdit,
             onShowErrorSnackBar = onShowErrorSnackBar
         )
     }

@@ -32,11 +32,7 @@ internal fun MainNavHost(
             navigateToInnerViewQuestion = { id -> navigator.navigateInnerViewQuestion(id) },
             navigateToInterviewGroup = { navigator.navigateInterviewGroup() },
             navigateToRecord = { innerViewId, interviewGroupId, title ->
-                navigator.navigateRecord(
-                    innerViewId,
-                    interviewGroupId,
-                    title
-                )
+                navigator.navigateRecord(innerViewId, interviewGroupId, title)
             }
         )
         peekNavGraph(
@@ -44,7 +40,9 @@ internal fun MainNavHost(
             onShowErrorSnackBar = onShowErrorSnackBar
         )
         editNavGraph(
+            padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            navigateToEdit = { innerProjectId -> navigator.navigateEdit(innerProjectId) },
             onBackClick = { navigator.popBackStackIfNotHome() }
         )
         profileNavGraph(
@@ -61,7 +59,8 @@ internal fun MainNavHost(
                     interviewGroupId,
                     question
                 )
-            }
+            },
+            navigateToEdit = { innerProjectId -> navigator.navigateEdit(innerProjectId) }
         )
     }
 }
