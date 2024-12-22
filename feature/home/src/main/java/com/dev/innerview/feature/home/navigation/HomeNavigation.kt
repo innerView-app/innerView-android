@@ -5,7 +5,9 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
+import com.dev.innerview.core.navigation.DEEP_LINK_BASE_PATH
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.home.HomeRoute
@@ -46,7 +48,11 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InnerViewDetail> { navBackStackEntry ->
+    composable<Route.InnerViewDetail>(
+        deepLinks = listOf(
+            navDeepLink<Route.InnerViewDetail>(basePath = DEEP_LINK_BASE_PATH)
+        )
+    ) { navBackStackEntry ->
         val (id) = navBackStackEntry.toRoute<Route.InnerViewDetail>()
         InnerViewDetailScreen(
             innerViewId = id,
