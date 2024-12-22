@@ -51,6 +51,9 @@ realmDB = "2.0.0"
 ## CameraX
 camerax = "1.4.0-rc01"
 
+## media3
+media3 = "1.4.1"
+
 junit = "4.13.2"
 ui-test-junit4 = "1.6.8"
 androidxTestRunner = "1.6.1"
@@ -121,6 +124,10 @@ androidx-junit = { group = "androidx.test.ext", name = "junit", version.ref = "j
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "androidxEspresso" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
+media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "media3" }
+media3-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-dash", version.ref = "media3" }
+media3-player-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
+media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }

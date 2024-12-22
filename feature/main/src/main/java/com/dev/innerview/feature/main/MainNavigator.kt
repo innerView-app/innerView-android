@@ -12,7 +12,7 @@ import androidx.navigation.navOptions
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.navigation.navigateEdit
-import com.dev.innerview.feature.edit.navigation.navigateEditWithArgs
+import com.dev.innerview.feature.edit.navigation.navigateEditHome
 import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
 import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
@@ -48,7 +48,7 @@ internal class MainNavigator(
         when (tab) {
             MainTab.HOME -> navController.navigateHome(navOptions)
             MainTab.PEEK -> navController.navigatePeek(navOptions)
-            MainTab.INTERVIEW_EDIT -> navController.navigateEdit(navOptions)
+            MainTab.EDIT_HOME -> navController.navigateEditHome(navOptions)
             MainTab.PROFILE -> navController.navigateProfile(navOptions)
         }
     }
@@ -73,8 +73,8 @@ internal class MainNavigator(
         navController.navigateFilming(innerViewId, interviewGroupId, question)
     }
 
-    fun navigateEditWithArgs(innerViewId: String, interviewGroupId: Int, question: String) {
-        navController.navigateEditWithArgs(innerViewId, interviewGroupId, question)
+    fun navigateEdit(innerProjectId: Int) {
+        navController.navigateEdit(innerProjectId)
     }
 
     private fun popBackStack() {
@@ -92,7 +92,7 @@ internal class MainNavigator(
     }
 
     @Composable
-    fun shouldShowBottomBar() = MainTab.containWithoutEdit { route ->
+    fun shouldShowBottomBar() = MainTab.contain { route ->
         currentDestination?.hasRoute(route::class) == true
     }
 }

@@ -7,5 +7,6 @@ data class Interview(
     val question: String = "",
     var isRequired: Boolean = false,
     val isRecordComplete: Boolean = false,
+    val innerProjectId: Int = 0,
     val thumbnailVideoPath: String? = null
 )

@@ -2,6 +2,7 @@ package com.dev.innerview.feature.record.camerax
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.media.MediaMetadataRetriever
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.TorchState
 import androidx.camera.video.FileOutputOptions
@@ -17,6 +18,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -65,7 +67,7 @@ internal fun CameraScreen(
     updateFlashState: (Boolean) -> Unit,
     updateRecordingState: (Long, Long) -> Unit,
     selectBottomSheet: () -> Unit,
-    addInnerProject: () -> Unit
+    addInnerProject: (Long) -> Unit
 ) {
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -88,7 +90,7 @@ internal fun CameraScreen(
     }
 
     Box(
-        modifier = modifier
+        modifier = modifier.fillMaxSize()
     ) {
         AndroidView(
             factory = {
@@ -98,7 +100,7 @@ internal fun CameraScreen(
                     controller?.cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
                 }
             },
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier.align(Alignment.Center).aspectRatio(9f / 16f)
         )
 
         ScrimText(
@@ -151,8 +153,16 @@ internal fun CameraScreen(
                                 val outputFile =
                                     File(context.filesDir, "interviews/$outputFileName")
                                 tempFile.renameTo(outputFile)
-                                println("비디오 저장 완료: ${outputFile.absolutePath}")
-                                addInnerProject()
+
+                                val retriever = MediaMetadataRetriever()
+                                retriever.setDataSource(outputFile.absolutePath)
+                                val durationStr = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+                                retriever.release()
+                                durationStr?.let { duration ->
+                                    println("duration : $duration")
+                                    println("비디오 저장 완료: ${outputFile.absolutePath}")
+                                    addInnerProject(duration.toLong())
+                                }
                             }
                         }
                     }
