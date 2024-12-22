@@ -3,10 +3,12 @@ package com.dev.innerview.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInterviewGroupUseCase
+import com.dev.innerview.core.domain.usecase.ChangeInnerViewNotificationUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
+import com.dev.innerview.feature.notification.AlarmHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -24,7 +26,9 @@ import javax.inject.Inject
 @HiltViewModel
 class InnerViewDetailViewModel @Inject constructor(
     private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
-    private val addInterviewGroupUseCase: AddInterviewGroupUseCase
+    private val addInterviewGroupUseCase: AddInterviewGroupUseCase,
+    private val changeInnerViewNotificationUseCase: ChangeInnerViewNotificationUseCase,
+    private val alarmHelper: AlarmHelper
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -46,7 +50,8 @@ class InnerViewDetailViewModel @Inject constructor(
                         type = innerViewContent.innerView.type,
                         interviewGroups = innerViewContent.interviewGroups.toPersistentList(),
                         reactivateAt = reactivateAt,
-                        isActivated = !LocalDate.now().isBefore(reactivateAt)
+                        isActivated = !LocalDate.now().isBefore(reactivateAt),
+                        isNotificationOn = innerViewContent.innerView.isNotificationOn
                     )
                 }
             }.launchIn(viewModelScope)
@@ -67,6 +72,27 @@ class InnerViewDetailViewModel @Inject constructor(
                 InnerViewType.WEEK -> lastDate.plusWeeks(1)
                 InnerViewType.MONTH -> lastDate.plusMonths(1)
                 InnerViewType.YEAR -> lastDate.plusYears(1)
+            }
+        }
+    }
+
+    fun changeNotificationState(innerviewId: String, isOn: Boolean) {
+        viewModelScope.launch {
+            changeInnerViewNotificationUseCase(innerviewId, isOn)
+            if (isOn) {
+                innerViewDetailUiState.value
+                    .takeIf { it.interviewGroups.isNotEmpty() }
+                    ?.let { content ->
+                        alarmHelper.registerInitialAlarm(
+                            innerviewId = innerviewId,
+                            innerviewType = content.type,
+                            innerviewTitle = content.title,
+                            lastInnerviewTime = content.interviewGroups.last().createdAt
+                        )
+                    }
+
+            } else {
+                alarmHelper.cancelAlarm(innerviewId)
             }
         }
     }

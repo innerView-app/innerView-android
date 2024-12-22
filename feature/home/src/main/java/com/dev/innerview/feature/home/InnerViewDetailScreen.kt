@@ -1,6 +1,5 @@
 package com.dev.innerview.feature.home
 
-import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -34,7 +33,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
@@ -79,6 +80,7 @@ internal fun InnerViewDetailScreen(
         innerViewId = innerViewId,
         innerViewDetailUiState = innerViewDetailUiState,
         onBackClick = onBackClick,
+        onNotificationClick = { isOn -> viewModel.changeNotificationState(innerViewId, isOn) },
         navigateToInterviewGroup = navigateToInterviewGroup,
         navigateToInnerViewQuestion = navigateToInnerViewQuestion,
         navigateToRecord = navigateToRecord,
@@ -91,6 +93,7 @@ private fun InnerViewDetailContent(
     innerViewId: String,
     innerViewDetailUiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
+    onNotificationClick: (Boolean) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
@@ -112,8 +115,11 @@ private fun InnerViewDetailContent(
                     onClick = { navigateToInnerViewQuestion(innerViewId) }
                 )
                 InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.Notifications,
-                    navigationIconContentDescription = null
+                    imageVector =
+                    if (innerViewDetailUiState.isNotificationOn) Icons.Filled.Notifications
+                    else ImageVector.vectorResource(R.drawable.ic_notifications_off),
+                    navigationIconContentDescription = null,
+                    onClick = { onNotificationClick(!innerViewDetailUiState.isNotificationOn) }
                 )
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.KeyboardArrowUp,
@@ -162,7 +168,6 @@ private fun InnerViewDetailContent(
     }
 }
 
-@SuppressLint("RememberReturnType")
 @Composable
 private fun DailyInterviewGroupList(
     innerViewId: String,
@@ -356,6 +361,7 @@ private fun InnerViewDetailContentPreview() {
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},
             navigateToRecord = { _, _, _ -> },
+            onNotificationClick = {},
             addInterviewGroup = {}
         )
     }
@@ -399,6 +405,7 @@ private fun DailyInnerViewDetailContentPreview() {
             navigateToInterviewGroup = {},
             navigateToInnerViewQuestion = {},
             navigateToRecord = { _, _, _ -> },
+            onNotificationClick = {},
             addInterviewGroup = {}
         )
     }

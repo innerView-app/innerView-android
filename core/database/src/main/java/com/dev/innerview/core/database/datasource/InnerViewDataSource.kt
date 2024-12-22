@@ -100,6 +100,14 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
+    suspend fun changeInnerViewNotification(innerViewId:String, isOn:Boolean) {
+        realm.write {
+            val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
+
+            innerView.isNotificationOn = isOn
+        }
+    }
+
     suspend fun deleteInterviewGroup(
         innerViewId: String,
         interviewGroupId: Int,

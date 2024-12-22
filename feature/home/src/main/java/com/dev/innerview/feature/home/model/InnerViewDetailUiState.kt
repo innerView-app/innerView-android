@@ -13,5 +13,6 @@ data class InnerViewDetailUiState(
     val type: InnerViewType = InnerViewType.YEAR,
     val interviewGroups: ImmutableList<InterviewGroup> = persistentListOf(),
     val reactivateAt: LocalDate = LocalDate.now(),
-    val isActivated: Boolean = true
+    val isActivated: Boolean = true,
+    val isNotificationOn: Boolean = true,
 )
