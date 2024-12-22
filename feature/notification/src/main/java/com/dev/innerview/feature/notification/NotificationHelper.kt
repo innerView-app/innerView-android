@@ -60,6 +60,6 @@ class NotificationHelper @Inject constructor(private val context: Context) {
     }
 
     companion object {
-        private const val CHANNEL_ID = "InnerviewNotificationChannel"
+        private const val CHANNEL_ID = "InnerViewNotificationChannel"
     }
 }

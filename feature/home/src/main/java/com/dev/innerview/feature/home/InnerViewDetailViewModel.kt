@@ -76,23 +76,23 @@ class InnerViewDetailViewModel @Inject constructor(
         }
     }
 
-    fun changeNotificationState(innerviewId: String, isOn: Boolean) {
+    fun changeNotificationState(innerViewId: String, isOn: Boolean) {
         viewModelScope.launch {
-            changeInnerViewNotificationUseCase(innerviewId, isOn)
+            changeInnerViewNotificationUseCase(innerViewId, isOn)
             if (isOn) {
                 innerViewDetailUiState.value
                     .takeIf { it.interviewGroups.isNotEmpty() }
                     ?.let { content ->
                         alarmHelper.registerInitialAlarm(
-                            innerviewId = innerviewId,
-                            innerviewType = content.type,
-                            innerviewTitle = content.title,
-                            lastInnerviewTime = content.interviewGroups.last().createdAt
+                            innerViewId = innerViewId,
+                            innerViewType = content.type,
+                            innerViewTitle = content.title,
+                            lastInnerViewTime = content.interviewGroups.last().createdAt
                         )
                     }
 
             } else {
-                alarmHelper.cancelAlarm(innerviewId)
+                alarmHelper.cancelAlarm(innerViewId)
             }
         }
     }
