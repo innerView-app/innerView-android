@@ -13,4 +13,5 @@ class InnerViewSchema : RealmObject {
     var createdAt: String = ""
     var questions: RealmList<String> = realmListOf()
     var interviewGroups: RealmList<InterviewGroupSchema> = realmListOf()
+    var isNotificationOn: Boolean = true
 }

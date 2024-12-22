@@ -7,5 +7,6 @@ data class InnerView(
     val title: String,
     val type: InnerViewType,
     val createdAt: ZonedDateTime,
-    val questions: List<String>
+    val questions: List<String>,
+    val isNotificationOn: Boolean
 )

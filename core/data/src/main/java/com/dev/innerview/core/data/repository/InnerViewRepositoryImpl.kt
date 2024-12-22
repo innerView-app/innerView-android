@@ -26,7 +26,8 @@ class InnerViewRepositoryImpl @Inject constructor(
                         title = innerViewSchema.title,
                         type = InnerViewType.stringToInnerViewType(innerViewSchema.type),
                         createdAt = ZonedDateTime.parse(innerViewSchema.createdAt),
-                        questions = innerViewSchema.questions
+                        questions = innerViewSchema.questions,
+                        isNotificationOn = innerViewSchema.isNotificationOn
                     )
                 }
             }
@@ -55,7 +56,8 @@ class InnerViewRepositoryImpl @Inject constructor(
                         title = innerView.title,
                         type = InnerViewType.stringToInnerViewType(innerView.type),
                         createdAt = ZonedDateTime.parse(innerView.createdAt),
-                        questions = innerView.questions
+                        questions = innerView.questions,
+                        isNotificationOn = innerView.isNotificationOn
                     ),
                     interviewGroups
                 )
@@ -96,6 +98,10 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override suspend fun addInterviewGroup(innerViewId: String) {
         innerViewDataSource.addInterviewGroup(innerViewId)
+    }
+
+    override suspend fun changeInnerViewNotification(innerViewId: String, isOn: Boolean) {
+        innerViewDataSource.changeInnerViewNotification(innerViewId, isOn)
     }
 
     override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: Int) {
