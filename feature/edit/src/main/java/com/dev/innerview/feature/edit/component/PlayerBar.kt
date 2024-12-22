@@ -34,6 +34,7 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.MediaUiState
 import kotlinx.collections.immutable.persistentListOf
 
 @SuppressLint("DefaultLocale")
@@ -177,18 +178,24 @@ private fun PlayerBarPreview() {
                 duration = 6000L,
                 zoom = 1f,
                 media = persistentListOf(
-                    InterviewPiece(
-                        filePath = "",
-                        startPosition = 0L,
-                        endPosition = 5000L,
-                        duration = 5000L,
+                    MediaUiState(
+                        medium = InterviewPiece(
+                            filePath = "",
+                            startPosition = 0L,
+                            endPosition = 5000L,
+                            duration = 5000L,
+                        ),
+                        selected = false,
                     ),
-                    InterviewPiece(
-                        filePath = "",
-                        startPosition = 1000L,
-                        endPosition = 2000L,
-                        duration = 3000L,
-                    )
+                    MediaUiState(
+                        medium = InterviewPiece(
+                            filePath = "",
+                            startPosition = 1000L,
+                            endPosition = 2000L,
+                            duration = 3000L,
+                        ),
+                        selected = false,
+                    ),
                 ),
                 accumulatedDurations = persistentListOf(
                     0L, 5000L, 6000L

@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewByQuestionUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
-import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.record.model.FilmingUiEvent
@@ -60,7 +59,7 @@ class FilmingViewModel @Inject constructor(
                     innerViewId,
                     interviewGroupId,
                     InnerProjectComponents(
-                        videos = listOf(
+                        media = listOf(
                             InterviewPiece(
                                 filePath = "interviews/${_filmingUiState.value.outputFileName}",
                                 startPosition = 0L,
