@@ -67,7 +67,7 @@ class EditViewModel @Inject constructor(
             val duration = innerProject.innerProjectComponents.media.sumOf {
                 it.endPosition - it.startPosition
             }
-            val media = innerProject.innerProjectComponents.media.map{ mediaItem ->
+            val media = innerProject.innerProjectComponents.media.map { mediaItem ->
                 MediaUiState(medium = mediaItem)
             }
             val accumulatedDurations =
@@ -186,10 +186,19 @@ class EditViewModel @Inject constructor(
                             }
                             uiState.copy(selected = !uiState.selected)
                         }
+
                         uiState.selected -> uiState.copy(selected = false)
                         else -> uiState
                     }
                 }.toPersistentList()
+            )
+        }
+    }
+
+    fun cancelMediaItem() {
+        _editUiState.update {
+            it.copy(
+                media = it.media.map { it.copy(selected = false) }.toPersistentList()
             )
         }
     }

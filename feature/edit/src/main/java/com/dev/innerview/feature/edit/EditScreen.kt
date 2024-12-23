@@ -55,6 +55,7 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.component.EditLayer
 import com.dev.innerview.feature.edit.component.MediaItem
+import com.dev.innerview.feature.edit.component.MediaItemBottomBar
 import com.dev.innerview.feature.edit.component.PlayerBar
 import com.dev.innerview.feature.edit.component.PlayerView
 import com.dev.innerview.feature.edit.model.EditUiState
@@ -89,6 +90,7 @@ internal fun EditScreen(
         seekByMediaItem = viewModel::seekByMediaItem,
         seekByPosition = viewModel::seekByPosition,
         selectMediaItem = viewModel::selectMediaItem,
+        cancelMediaItem = viewModel::cancelMediaItem,
     )
 }
 
@@ -105,6 +107,7 @@ private fun EditContent(
     seekByMediaItem: (Int) -> Unit,
     seekByPosition: (Long) -> Unit,
     selectMediaItem: (Int) -> Unit,
+    cancelMediaItem: () -> Unit,
 ) {
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
@@ -288,6 +291,11 @@ private fun EditContent(
                     thickness = 1.dp,
                     color = Color.Red
                 )
+                MediaItemBottomBar(
+                    isVisible = editUiState.media.any { it.selected },
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    cancelMediaItem = cancelMediaItem,
+                )
             }
         }
     }
@@ -335,7 +343,8 @@ private fun EditContentPreview() {
             seekToScrollPosition = {},
             seekByMediaItem = {},
             seekByPosition = {},
-            selectMediaItem = {}
+            selectMediaItem = {},
+            cancelMediaItem = {},
         )
     }
 }
