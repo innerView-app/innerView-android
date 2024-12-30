@@ -12,10 +12,12 @@ import com.dev.innerview.core.navigation.getDeepLinkOf
 import javax.inject.Inject
 
 class NotificationHelper @Inject constructor(private val context: Context) {
-    init { createNotificationChannel() }
-
     private val notificationManager: NotificationManager =
         context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+    init {
+        createNotificationChannel()
+    }
 
     internal fun createNotification(
         notificationId: String,
