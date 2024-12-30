@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.notification
+package com.dev.innerview.core.notification
 
 import android.app.AlarmManager
 import android.app.PendingIntent

@@ -12,5 +12,4 @@ dependencies {
     implementation(project(":feature:edit"))
     implementation(project(":feature:profile"))
     implementation(project(":feature:record"))
-    implementation(project(":feature:notification"))
 }

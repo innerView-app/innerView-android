@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.notification
+package com.dev.innerview.feature.home
 
 import android.Manifest
 import android.content.pm.PackageManager

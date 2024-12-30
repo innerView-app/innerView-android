@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.notification.di
+package com.dev.innerview.core.notification.di
 
 import android.content.Context
 import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
