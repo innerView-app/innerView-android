@@ -24,7 +24,7 @@ class AlarmHelper @Inject constructor(
 ) {
     private val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-    fun registerInitialAlarm(
+    fun registerNotificationAlarm(
         innerViewId: String,
         innerViewType: InnerViewType,
         innerViewTitle: String,
@@ -34,64 +34,7 @@ class AlarmHelper @Inject constructor(
         val notificationTime = findNotificationTime(lastTime, innerViewType)
 
         val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = INTENT_ACTION_INITIAL_ALARM
-            putExtra(INTENT_EXTRA_ID, innerViewId)
-            putExtra(INTENT_EXTRA_TIME, notificationTime)
-            putExtra(INTENT_EXTRA_TITLE, innerViewTitle)
-        }
-
-        val pendingIntent = PendingIntent.getBroadcast(
-            context,
-            innerViewId.hashCode(),
-            intent,
-            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-        )
-
-        alarmMgr.set(
-            AlarmManager.RTC,
-            notificationTime,
-            pendingIntent
-        )
-    }
-
-    fun cancelAlarm(id: String) {
-        listOf(INTENT_ACTION_INITIAL_ALARM, INTENT_ACTION_REPEATED_ALARM)
-            .forEach { action ->
-                val pendingIntent = PendingIntent.getBroadcast(
-                    context,
-                    id.hashCode(),
-                    Intent(context, AlarmReceiver::class.java).apply { this.action = action },
-                    PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
-                )
-
-                alarmMgr.cancel(pendingIntent)
-            }
-    }
-
-    internal fun registerInitialAlarms() {
-        CoroutineScope(Dispatchers.IO).launch {
-            getInnerViewUseCase().first()
-                .filter { it.isNotificationOn }
-                .map { getInnerViewContentUseCase(it.id).first() }
-                .filter { it.interviewGroups.isNotEmpty() }
-                .forEach { content ->
-                    registerInitialAlarm(
-                        innerViewId = content.innerView.id,
-                        lastInnerViewTime = content.interviewGroups.first().createdAt,
-                        innerViewType = content.innerView.type,
-                        innerViewTitle = content.innerView.title
-                    )
-                }
-        }
-    }
-
-    internal fun registerRepeatedAlarm(
-        notificationTime: Long,
-        innerViewId: String,
-        innerViewTitle: String
-    ) {
-        val intent = Intent(context, AlarmReceiver::class.java).apply {
-            action = INTENT_ACTION_REPEATED_ALARM
+            action = INTENT_ACTION_NOTIFICATION_ALARM
             putExtra(INTENT_EXTRA_ID, innerViewId)
             putExtra(INTENT_EXTRA_TITLE, innerViewTitle)
         }
@@ -109,6 +52,35 @@ class AlarmHelper @Inject constructor(
             NOTIFICATION_INTERVAL,
             pendingIntent
         )
+    }
+
+    fun cancelAlarm(id: String) {
+        val pendingIntent = PendingIntent.getBroadcast(
+            context,
+            id.hashCode(),
+            Intent(context, AlarmReceiver::class.java)
+                .apply { this.action = INTENT_ACTION_NOTIFICATION_ALARM },
+            PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT
+        )
+
+        alarmMgr.cancel(pendingIntent)
+    }
+
+    internal fun registerNotificationAlarms() {
+        CoroutineScope(Dispatchers.IO).launch {
+            getInnerViewUseCase().first()
+                .filter { it.isNotificationOn }
+                .map { getInnerViewContentUseCase(it.id).first() }
+                .filter { it.interviewGroups.isNotEmpty() }
+                .forEach { content ->
+                    registerNotificationAlarm(
+                        innerViewId = content.innerView.id,
+                        lastInnerViewTime = content.interviewGroups.first().createdAt,
+                        innerViewType = content.innerView.type,
+                        innerViewTitle = content.innerView.title
+                    )
+                }
+        }
     }
 
     private fun findNotificationTime(
@@ -139,11 +111,9 @@ class AlarmHelper @Inject constructor(
         private const val NOTIFICATION_TIME_MINUTE = 0
         private const val NOTIFICATION_INTERVAL = 24 * 60 * 60 * 1000L
 
-        internal const val INTENT_ACTION_INITIAL_ALARM = "initialAlarm"
-        internal const val INTENT_ACTION_REPEATED_ALARM = "repeatedAlarm"
+        internal const val INTENT_ACTION_NOTIFICATION_ALARM = "notificationAlarm"
 
         internal const val INTENT_EXTRA_ID = "intentExtraId"
-        internal const val INTENT_EXTRA_TIME = "intentExtraTime"
         internal const val INTENT_EXTRA_TITLE = "intentExtraTitle"
     }
 }

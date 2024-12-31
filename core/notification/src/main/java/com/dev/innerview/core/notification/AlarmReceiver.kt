@@ -16,18 +16,9 @@ class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            Intent.ACTION_BOOT_COMPLETED -> alarmHelper.registerInitialAlarms()
+            Intent.ACTION_BOOT_COMPLETED -> alarmHelper.registerNotificationAlarms()
 
-            AlarmHelper.INTENT_ACTION_INITIAL_ALARM -> {
-                val notificationTime =
-                    intent.getLongExtra(AlarmHelper.INTENT_EXTRA_TIME, System.currentTimeMillis())
-                val id = intent.getStringExtra(AlarmHelper.INTENT_EXTRA_ID) ?: return
-                val title = intent.getStringExtra(AlarmHelper.INTENT_EXTRA_TITLE) ?: return
-
-                alarmHelper.registerRepeatedAlarm(notificationTime, id, title)
-            }
-
-            AlarmHelper.INTENT_ACTION_REPEATED_ALARM -> {
+            AlarmHelper.INTENT_ACTION_NOTIFICATION_ALARM -> {
                 val id = intent.getStringExtra(AlarmHelper.INTENT_EXTRA_ID) ?: return
                 val title = intent.getStringExtra(AlarmHelper.INTENT_EXTRA_TITLE) ?: return
 
