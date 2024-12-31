@@ -72,7 +72,10 @@ class AlarmHelper @Inject constructor(
                 .forEach { content ->
                     registerNotificationAlarm(
                         innerViewId = content.innerView.id,
-                        lastInnerViewTime = content.interviewGroups.first().createdAt,
+                        lastInnerViewTime = content.interviewGroups
+                            .find { it.interviewState == InterviewState.COMPLETE }
+                            ?.createdAt
+                            ?: return@launch,
                         innerViewType = content.innerView.type,
                         innerViewTitle = content.innerView.title
                     )

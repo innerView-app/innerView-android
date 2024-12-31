@@ -50,7 +50,7 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
-import com.dev.innerview.core.model.RecordState
+import com.dev.innerview.core.model.InterviewState
 import com.dev.innerview.feature.home.component.InterviewGroupItem
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import kotlinx.collections.immutable.ImmutableList
@@ -141,7 +141,7 @@ private fun InnerViewDetailContent(
                     title = innerViewDetailUiState.title,
                     interviewGroups = innerViewDetailUiState.interviewGroups,
                     navigateToInterviewGroup = navigateToInterviewGroup,
-                    navigateToRecord = navigateToRecord,
+                    navigateToRecord = navigateToRecord
                 )
             } else {
                 InterviewGroupList(
@@ -209,13 +209,11 @@ private fun DailyInterviewGroupList(
                         modifier = Modifier
                             .height(150.dp)
                             .clickable {
-                                when (it.recordState) {
-                                    RecordState.RECODING ->
+                                when (it.interviewState) {
+                                    InterviewState.RECORDING ->
                                         navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
-                                    RecordState.COMPLETE -> navigateToInterviewGroup()
-
-                                    else -> {}
+                                    InterviewState.COMPLETE -> navigateToInterviewGroup()
                                 }
                             },
                         interviewGroup = it,
@@ -307,11 +305,11 @@ private fun InterviewGroupList(
                     modifier = Modifier
                         .height(240.dp)
                         .clickable {
-                            when (it.recordState) {
-                                RecordState.RECODING ->
+                            when (it.interviewState) {
+                                InterviewState.RECORDING ->
                                     navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
-                                RecordState.COMPLETE -> navigateToInterviewGroup()
+                                InterviewState.COMPLETE -> navigateToInterviewGroup()
 
                                 else -> {}
                             }
@@ -341,21 +339,21 @@ private fun InnerViewDetailContentPreview() {
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )
@@ -385,21 +383,21 @@ private fun DailyInnerViewDetailContentPreview() {
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now().minusMonths(1),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now().minusMonths(2),
-                        recordState = RecordState.RECODING,
+                        interviewState = InterviewState.RECORDING,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )

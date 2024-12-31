@@ -3,7 +3,7 @@ package com.dev.innerview.core.data.mapper
 import com.dev.innerview.core.database.schema.InterviewGroupSchema
 import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewGroup
-import com.dev.innerview.core.model.RecordState
+import com.dev.innerview.core.model.InterviewState
 import kotlinx.serialization.json.Json
 import java.time.ZonedDateTime
 
@@ -17,7 +17,7 @@ internal fun InterviewGroupSchema.toData(): InterviewGroup {
     return InterviewGroup(
         id = id,
         createdAt = ZonedDateTime.parse(createdAt),
-        recordState = RecordState.stringToRecordState(recordState),
+        interviewState = InterviewState.stringToInterviewState(recordState),
         questionCount = interviews.size,
         thumbnailVideoPath = thumbnailVideoPath
     )
