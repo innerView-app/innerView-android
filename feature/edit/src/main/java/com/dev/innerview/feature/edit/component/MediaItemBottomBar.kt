@@ -31,12 +31,15 @@ import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.feature.edit.R
+import com.dev.innerview.feature.edit.model.SplitOption
 
 @Composable
 fun MediaItemBottomBar(
     isVisible: Boolean = false,
     modifier: Modifier = Modifier,
     cancelMediaItem: () -> Unit,
+    splitMediaItem: (SplitOption) -> Unit,
+    deleteMediaItem: () -> Unit,
 ) {
     AnimatedVisibility(
         visible = isVisible,
@@ -55,7 +58,7 @@ fun MediaItemBottomBar(
             ) {
                 IconButton(
                     modifier = Modifier.weight(1f),
-                    onClick = {}
+                    onClick = { deleteMediaItem() }
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -76,7 +79,7 @@ fun MediaItemBottomBar(
                 }
                 IconButton(
                     modifier = Modifier.weight(1f),
-                    onClick = {}
+                    onClick = { splitMediaItem(SplitOption.LEFT) }
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -98,7 +101,7 @@ fun MediaItemBottomBar(
                 }
                 IconButton(
                     modifier = Modifier.weight(1f),
-                    onClick = {}
+                    onClick = { splitMediaItem(SplitOption.NONE) }
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -119,7 +122,7 @@ fun MediaItemBottomBar(
                 }
                 IconButton(
                     modifier = Modifier.weight(1f),
-                    onClick = {}
+                    onClick = { splitMediaItem(SplitOption.RIGHT) }
                 ) {
                     Column(
                         verticalArrangement = Arrangement.Center,
@@ -166,7 +169,9 @@ private fun MediaItemBottomBarPreview() {
     InnerViewTheme {
         MediaItemBottomBar(
             isVisible = true,
-            cancelMediaItem = {}
+            cancelMediaItem = {},
+            splitMediaItem = {},
+            deleteMediaItem = {},
         )
     }
 }
