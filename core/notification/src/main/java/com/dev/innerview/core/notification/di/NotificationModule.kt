@@ -1,10 +1,9 @@
 package com.dev.innerview.core.notification.di
 
 import android.content.Context
-import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
-import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
-import com.dev.innerview.feature.notification.AlarmHelper
-import com.dev.innerview.feature.notification.NotificationHelper
+import com.dev.innerview.core.data_api.InnerViewRepository
+import com.dev.innerview.core.notification.AlarmHelper
+import com.dev.innerview.core.notification.NotificationHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,10 +17,8 @@ object NotificationModule {
     @Singleton
     @Provides
     fun provideAlarmHelper(
-        @ApplicationContext context: Context,
-        getInnerViewUseCase: GetInnerViewUseCase,
-        getInnerViewContentUseCase: GetInnerViewContentUseCase
-    ) = AlarmHelper(context, getInnerViewUseCase, getInnerViewContentUseCase)
+        @ApplicationContext context: Context, innerViewRepository: InnerViewRepository
+    ) = AlarmHelper(context, innerViewRepository)
 
     @Singleton
     @Provides

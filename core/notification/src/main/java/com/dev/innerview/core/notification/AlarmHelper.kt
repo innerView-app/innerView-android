@@ -4,13 +4,12 @@ import android.app.AlarmManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
-import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
-import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
+import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.model.InnerViewType
+import com.dev.innerview.core.model.InterviewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.launch
 import java.time.LocalTime
 import java.time.ZoneId
@@ -19,8 +18,7 @@ import javax.inject.Inject
 
 class AlarmHelper @Inject constructor(
     private val context: Context,
-    private val getInnerViewUseCase: GetInnerViewUseCase,
-    private val getInnerViewContentUseCase: GetInnerViewContentUseCase
+    private val repository: InnerViewRepository
 ) {
     private val alarmMgr = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
@@ -68,10 +66,9 @@ class AlarmHelper @Inject constructor(
 
     internal fun registerNotificationAlarms() {
         CoroutineScope(Dispatchers.IO).launch {
-            getInnerViewUseCase().first()
+            repository.getInnerViews().first()
                 .filter { it.isNotificationOn }
-                .map { getInnerViewContentUseCase(it.id).first() }
-                .filter { it.interviewGroups.isNotEmpty() }
+                .map { repository.getInnerViewContent(it.id).first() }
                 .forEach { content ->
                     registerNotificationAlarm(
                         innerViewId = content.innerView.id,
