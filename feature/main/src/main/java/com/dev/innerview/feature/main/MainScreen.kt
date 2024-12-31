@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.dev.innerview.feature.main.component.MainBottomBar
 import com.dev.innerview.feature.main.component.MainNavHost
-import com.dev.innerview.feature.notification.NotificationPermissionLauncher
+import com.dev.innerview.feature.home.NotificationPermissionLauncher
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 

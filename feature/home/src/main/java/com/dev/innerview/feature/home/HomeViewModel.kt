@@ -3,6 +3,7 @@ package com.dev.innerview.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerViewUseCase
+import com.dev.innerview.core.domain.usecase.CancelNotificationAlarmUseCase
 import com.dev.innerview.core.domain.usecase.DeleteInnerViewUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
 import com.dev.innerview.core.model.InnerViewType
@@ -25,7 +26,8 @@ import javax.inject.Inject
 class HomeViewModel @Inject constructor(
     getInnerViewUseCase: GetInnerViewUseCase,
     private val addInnerViewUseCase: AddInnerViewUseCase,
-    private val deleteInnerViewUseCase: DeleteInnerViewUseCase
+    private val deleteInnerViewUseCase: DeleteInnerViewUseCase,
+    private val cancelNotificationAlarmUseCase: CancelNotificationAlarmUseCase
 ) : ViewModel() {
 
     val maxInnerViewTitleLength = 40
@@ -69,6 +71,7 @@ class HomeViewModel @Inject constructor(
     fun deleteInnerView(id: String) {
         viewModelScope.launch {
             deleteInnerViewUseCase(id)
+            cancelNotificationAlarmUseCase(id)
         }
     }
 

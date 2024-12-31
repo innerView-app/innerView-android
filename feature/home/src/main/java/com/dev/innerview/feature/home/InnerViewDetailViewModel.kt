@@ -3,12 +3,13 @@ package com.dev.innerview.feature.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInterviewGroupUseCase
+import com.dev.innerview.core.domain.usecase.CancelNotificationAlarmUseCase
 import com.dev.innerview.core.domain.usecase.ChangeInnerViewNotificationUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
+import com.dev.innerview.core.domain.usecase.RegisterNotificationAlarmUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
-import com.dev.innerview.feature.notification.AlarmHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +29,8 @@ class InnerViewDetailViewModel @Inject constructor(
     private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
     private val addInterviewGroupUseCase: AddInterviewGroupUseCase,
     private val changeInnerViewNotificationUseCase: ChangeInnerViewNotificationUseCase,
-    private val alarmHelper: AlarmHelper
+    private val registerNotificationAlarmUseCase: RegisterNotificationAlarmUseCase,
+    private val cancelNotificationAlarmUseCase: CancelNotificationAlarmUseCase
 ) : ViewModel() {
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
@@ -83,7 +85,7 @@ class InnerViewDetailViewModel @Inject constructor(
                 innerViewDetailUiState.value
                     .takeIf { it.interviewGroups.isNotEmpty() }
                     ?.let { content ->
-                        alarmHelper.registerInitialAlarm(
+                        registerNotificationAlarmUseCase(
                             innerViewId = innerViewId,
                             innerViewType = content.type,
                             innerViewTitle = content.title,
@@ -92,14 +94,17 @@ class InnerViewDetailViewModel @Inject constructor(
                     }
 
             } else {
-                alarmHelper.cancelAlarm(innerViewId)
+                cancelNotificationAlarmUseCase(innerViewId)
             }
         }
     }
 
     fun addInnerViewGroup(innerViewId: String) {
         viewModelScope.launch {
-            addInterviewGroupUseCase(innerViewId, _innerViewDetailUiState.value.type != InnerViewType.DAY)
+            addInterviewGroupUseCase(
+                innerViewId,
+                _innerViewDetailUiState.value.type != InnerViewType.DAY
+            )
         }
     }
 }
