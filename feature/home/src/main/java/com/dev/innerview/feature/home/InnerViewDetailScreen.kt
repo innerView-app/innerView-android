@@ -203,7 +203,7 @@ private fun DailyInterviewGroupList(
                             .height(150.dp)
                             .clickable {
                                 when (it.recordState) {
-                                    RecordState.RECODING ->
+                                    RecordState.RECORDING ->
                                         navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                     RecordState.COMPLETE -> navigateToInterviewGroup()
@@ -301,7 +301,7 @@ private fun InterviewGroupList(
                         .height(240.dp)
                         .clickable {
                             when (it.recordState) {
-                                RecordState.RECODING ->
+                                RecordState.RECORDING ->
                                     navigateToRecord(innerViewId, it.id, "$title : $createAt")
 
                                 RecordState.COMPLETE -> navigateToInterviewGroup()
@@ -334,21 +334,21 @@ private fun InnerViewDetailContentPreview() {
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )
@@ -377,21 +377,21 @@ private fun DailyInnerViewDetailContentPreview() {
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now().minusMonths(1),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now().minusMonths(2),
-                        recordState = RecordState.RECODING,
+                        recordState = RecordState.RECORDING,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )

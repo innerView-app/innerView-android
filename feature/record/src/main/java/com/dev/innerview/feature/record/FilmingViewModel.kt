@@ -102,7 +102,7 @@ class FilmingViewModel @Inject constructor(
         _filmingUiState.update {
             it.copy(
                 recordingState = RecordingState(
-                    recordState = RecordState.RECODING
+                    recordState = RecordState.RECORDING
                 )
             )
         }
@@ -119,7 +119,7 @@ class FilmingViewModel @Inject constructor(
     }
 
     fun pauseRecording() {
-        if (_filmingUiState.value.recordingState.recordState == RecordState.RECODING) {
+        if (_filmingUiState.value.recordingState.recordState == RecordState.RECORDING) {
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(
@@ -135,7 +135,7 @@ class FilmingViewModel @Inject constructor(
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(
-                        recordState = RecordState.RECODING
+                        recordState = RecordState.RECORDING
                     )
                 )
             }
@@ -153,7 +153,7 @@ class FilmingViewModel @Inject constructor(
     }
 
     fun updateRecordingState(duration: Long, sizeByte: Long) {
-        if (_filmingUiState.value.recordingState.recordState == RecordState.RECODING) {
+        if (_filmingUiState.value.recordingState.recordState == RecordState.RECORDING) {
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(

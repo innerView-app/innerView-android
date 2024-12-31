@@ -11,7 +11,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class EditUiState(
     val innerProjectId: Int = 0,
     val title: String = "",
-    val recordState: RecordState = RecordState.RECODING,
+    val recordState: RecordState = RecordState.RECORDING,
     val isPlaying: Boolean = false,
     val currentMediaItemIndex: Int = 0,
     val position: Long = 0,

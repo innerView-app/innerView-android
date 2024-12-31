@@ -75,7 +75,7 @@ fun RecordButton(
                         onRecordStart()
                     }
 
-                    RecordState.RECODING -> {
+                    RecordState.RECORDING -> {
                         onRecordPause()
                     }
 
@@ -105,13 +105,13 @@ private fun RecordButtonPreview() {
         RecordButton(
             recordState = recordState,
             onRecordStart = {
-                recordState = RecordState.RECODING
+                recordState = RecordState.RECORDING
             },
             onRecordPause = {
                 recordState = RecordState.PAUSE
             },
             onRecordResume = {
-                recordState = RecordState.RECODING
+                recordState = RecordState.RECORDING
             }
         )
     }
