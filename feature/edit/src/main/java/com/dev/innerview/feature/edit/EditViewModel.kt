@@ -10,6 +10,7 @@ import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaUiState
+import com.dev.innerview.feature.edit.model.SplitOption
 import com.dev.innerview.feature.edit.playstate.PlaybackStateListener
 import com.dev.innerview.feature.edit.playstate.PlaybackStateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -43,7 +44,6 @@ class EditViewModel @Inject constructor(
 
     init {
         playbackStateListener.attachTo(player)
-        player.prepare()
 
         viewModelScope.launch {
             playbackStateManager.flow.collect { playbackState ->
@@ -94,22 +94,9 @@ class EditViewModel @Inject constructor(
         val duration = newMedia.sumOf {
             it.medium.endPosition - it.medium.startPosition
         }
-        val mediaItem = newMedia.last().let { mediaUiState ->
-            val videoFile = File(context.filesDir, mediaUiState.medium.filePath)
-            val mediaUri = videoFile.toUri()
-
-            val mediaItem = MediaItem.Builder()
-                .setUri(mediaUri)
-                .setClippingConfiguration(
-                    MediaItem.ClippingConfiguration.Builder()
-                        .setStartPositionMs(mediaUiState.medium.startPosition)
-                        .setEndPositionMs(mediaUiState.medium.endPosition)
-                        .build()
-                )
-                .build()
-            mediaItem
-        }
+        val mediaItem = newMedia.last().toMediaItem()
         player.addMediaItem(mediaItem)
+        player.prepare()
         val accumulatedDurations = calculateAccumulatedDurations(newMedia)
         _editUiState.update {
             it.copy(
@@ -175,6 +162,20 @@ class EditViewModel @Inject constructor(
         player.seekTo(itemIndex, positionMs - _editUiState.value.accumulatedDurations[itemIndex])
     }
 
+    private fun seekToPosition(positionMs: Long, accumulatedDurations: List<Long>) {
+        player.pause()
+        val itemIndex = calculateMediaItemIndex(positionMs)
+
+        if (itemIndex > 0 && itemIndex >= accumulatedDurations.size - 1) {
+            player.seekTo(
+                itemIndex - 1,
+                accumulatedDurations[itemIndex] - accumulatedDurations[itemIndex - 1]
+            )
+        } else {
+            player.seekTo(itemIndex, positionMs - accumulatedDurations[itemIndex])
+        }
+    }
+
     fun selectMediaItem(index: Int) {
         _editUiState.update {
             it.copy(
@@ -203,6 +204,119 @@ class EditViewModel @Inject constructor(
         }
     }
 
+    fun splitMediaItem(splitOption: SplitOption = SplitOption.NONE) {
+        player.pause()
+        with(_editUiState.value) {
+            if (media[currentMediaItemIndex].selected) {
+                val cutPosition = position - accumulatedDurations[currentMediaItemIndex]
+                if (cutPosition == 0L || cutPosition + 1 >= media[currentMediaItemIndex].medium.endPosition) return
+
+                media[currentMediaItemIndex].medium.startPosition + cutPosition
+
+
+                val splitMediaUiStateList = mutableListOf<MediaUiState>()
+                when (splitOption) {
+                    SplitOption.NONE -> {
+                        splitMediaUiStateList.addAll(
+                            listOf(
+                                MediaUiState(
+                                    medium = media[currentMediaItemIndex].medium.copy(
+                                        startPosition = media[currentMediaItemIndex].medium.startPosition,
+                                        endPosition = media[currentMediaItemIndex].medium.startPosition + cutPosition - 1
+                                    ),
+                                    selected = false
+                                ),
+                                MediaUiState(
+                                    medium = media[currentMediaItemIndex].medium.copy(
+                                        startPosition = media[currentMediaItemIndex].medium.startPosition + cutPosition,
+                                        endPosition = media[currentMediaItemIndex].medium.endPosition
+                                    ),
+                                    selected = true
+                                )
+                            )
+                        )
+                    }
+
+                    SplitOption.LEFT -> {
+                        splitMediaUiStateList.add(
+                            MediaUiState(
+                                medium = media[currentMediaItemIndex].medium.copy(
+                                    startPosition = media[currentMediaItemIndex].medium.startPosition + cutPosition,
+                                    endPosition = media[currentMediaItemIndex].medium.endPosition
+                                ),
+                                selected = true
+                            )
+                        )
+                    }
+
+                    SplitOption.RIGHT -> {
+                        splitMediaUiStateList.add(
+                            MediaUiState(
+                                medium = media[currentMediaItemIndex].medium.copy(
+                                    startPosition = media[currentMediaItemIndex].medium.startPosition,
+                                    endPosition = media[currentMediaItemIndex].medium.startPosition + cutPosition - 1
+                                ),
+                                selected = true
+                            )
+                        )
+                    }
+                }
+
+                val newMedia = media.toPersistentList().removeAt(currentMediaItemIndex).addAll(
+                    currentMediaItemIndex, splitMediaUiStateList
+                )
+                val newAccumulatedDurations =
+                    calculateAccumulatedDurations(newMedia).toPersistentList()
+
+                _editUiState.update {
+                    it.copy(
+                        media = newMedia,
+                        duration = newAccumulatedDurations.last(),
+                        accumulatedDurations = newAccumulatedDurations,
+                    )
+                }
+
+                player.replaceMediaItems(
+                    currentMediaItemIndex,
+                    currentMediaItemIndex + 1,
+                    splitMediaUiStateList.map { it.toMediaItem() })
+                player.prepare()
+
+                when (splitOption) {
+                    SplitOption.LEFT -> {
+                        player.seekTo(currentMediaItemIndex, 0L)
+                    }
+
+                    else -> {
+                        seekToPosition(position, newAccumulatedDurations)
+                    }
+                }
+            }
+        }
+    }
+
+    fun deleteMediaItem() {
+        player.pause()
+        with(_editUiState.value) {
+
+            val selectedItemIndex = media.indexOfFirst { it.selected }
+            val newMedia = media.toPersistentList().removeAt(selectedItemIndex)
+            val newAccumulatedDurations = calculateAccumulatedDurations(newMedia).toPersistentList()
+
+            _editUiState.update {
+                it.copy(
+                    media = newMedia,
+                    duration = newAccumulatedDurations.last(),
+                    accumulatedDurations = newAccumulatedDurations
+                )
+            }
+
+            player.removeMediaItem(selectedItemIndex)
+            player.prepare()
+            seekToPosition(position, newAccumulatedDurations)
+        }
+    }
+
     private fun setMediaItems(videos: List<InterviewPiece>) {
         val mediaItems = videos.map { video ->
             val videoFile = File(context.filesDir, video.filePath)
@@ -221,6 +335,7 @@ class EditViewModel @Inject constructor(
         }
         player.clearMediaItems()
         player.addMediaItems(mediaItems)
+        player.prepare()
     }
 
     private fun calculateCurrentPosition(
@@ -252,6 +367,22 @@ class EditViewModel @Inject constructor(
     private fun calculateAccumulatedDurations(media: List<MediaUiState>): List<Long> {
         return media.map { it.medium.endPosition - it.medium.startPosition }
             .runningFold(0L) { sum, item -> sum + item }
+    }
+
+    private fun MediaUiState.toMediaItem(): MediaItem {
+        val videoFile = File(context.filesDir, this.medium.filePath)
+        val mediaUri = videoFile.toUri()
+
+        val mediaItem = MediaItem.Builder()
+            .setUri(mediaUri)
+            .setClippingConfiguration(
+                MediaItem.ClippingConfiguration.Builder()
+                    .setStartPositionMs(this.medium.startPosition)
+                    .setEndPositionMs(this.medium.endPosition)
+                    .build()
+            )
+            .build()
+        return mediaItem
     }
 
     override fun onCleared() {
