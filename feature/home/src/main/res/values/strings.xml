@@ -32,4 +32,8 @@
     <string name="feature_home_permission_dialog_title">권한 설정</string>
     <string name="feature_home_permission_dialog_content">알림을 허용하면 새로운 인터뷰 촬영이 가능할 때 알림을 받을 수 있습니다. \n허용하시겠습니까?</string>
     <string name="feature_home_permission_dialog_approve">허용</string>
+
+    <string name="feature_home_toast_notification_permission">[설정]→[애플리케이션 정보]→[알림]\n권한을 허용해주세요.</string>
+    <string name="feature_home_toast_notification_on">%1$s 알림을 켰습니다.</string>
+    <string name="feature_home_toast_notification_off">%1$s 알림을 껐습니다.</string>
 </resources>

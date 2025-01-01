@@ -1,5 +1,7 @@
 package com.dev.innerview.feature.home
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -35,11 +37,13 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
@@ -52,9 +56,11 @@ import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
 import com.dev.innerview.feature.home.component.InterviewGroupItem
+import com.dev.innerview.feature.home.model.InnerViewDetailUiEvent
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.ZoneId
 import java.time.ZonedDateTime
@@ -64,15 +70,47 @@ import java.time.format.DateTimeFormatter
 internal fun InnerViewDetailScreen(
     innerViewId: String,
     onBackClick: () -> Unit,
+    onShowToast: (text: String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(innerViewId) {
         viewModel.fetchInnerView(innerViewId)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is InnerViewDetailUiEvent.TurnNotificationEvent -> {
+                    val hasPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                    val toastText =
+                        if (event.isOn && !hasPermission) {
+                            context.getString(R.string.feature_home_toast_notification_permission)
+                        } else if (event.isOn) {
+                            context.getString(
+                                R.string.feature_home_toast_notification_on,
+                                uiState.title
+                            )
+                        } else {
+                            context.getString(
+                                R.string.feature_home_toast_notification_off,
+                                uiState.title
+                            )
+                        }
+
+                    onShowToast(toastText)
+                }
+            }
+        }
     }
 
     InnerViewDetailContent(

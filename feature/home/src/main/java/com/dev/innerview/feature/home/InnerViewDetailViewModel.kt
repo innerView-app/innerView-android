@@ -9,6 +9,7 @@ import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
 import com.dev.innerview.core.domain.usecase.RegisterNotificationAlarmUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
+import com.dev.innerview.feature.home.model.InnerViewDetailUiEvent
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -35,6 +36,9 @@ class InnerViewDetailViewModel @Inject constructor(
 
     private val _errorFlow = MutableSharedFlow<Throwable>()
     val errorFlow get() = _errorFlow.asSharedFlow()
+
+    private val _uiEventFlow = MutableSharedFlow<InnerViewDetailUiEvent>()
+    val uiEventFlow = _uiEventFlow.asSharedFlow()
 
     private val _innerViewDetailUiState = MutableStateFlow(InnerViewDetailUiState())
     val innerViewDetailUiState = _innerViewDetailUiState.asStateFlow()
@@ -90,12 +94,13 @@ class InnerViewDetailViewModel @Inject constructor(
                         lastInnerViewTime = interviewGroups
                             .find { !it.isRecording }
                             ?.createdAt
-                            ?: return@launch
+                            ?: return@with
                     )
                 }
             } else {
                 cancelNotificationAlarmUseCase(innerViewId)
             }
+            _uiEventFlow.emit(InnerViewDetailUiEvent.TurnNotificationEvent(isOn))
         }
     }
 

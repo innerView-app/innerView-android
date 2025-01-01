@@ -35,6 +35,7 @@ fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowToast: (text: String) -> Unit,
     navigateToInnerViewDetail: (String) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
@@ -57,6 +58,7 @@ fun NavGraphBuilder.homeNavGraph(
         InnerViewDetailScreen(
             innerViewId = id,
             onBackClick = onBackClick,
+            onShowToast = onShowToast,
             navigateToInterviewGroup = navigateToInterviewGroup,
             navigateToInnerViewQuestion = navigateToInnerViewQuestion,
             navigateToRecord = navigateToRecord
