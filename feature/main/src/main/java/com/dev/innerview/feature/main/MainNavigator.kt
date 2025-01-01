@@ -17,6 +17,7 @@ import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
 import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
+import com.dev.innerview.feature.home.navigation.navigatePlayer
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
 import com.dev.innerview.feature.record.navigation.navigateFilming
@@ -75,6 +76,10 @@ internal class MainNavigator(
 
     fun navigateEdit(innerProjectId: Int) {
         navController.navigateEdit(innerProjectId)
+    }
+
+    fun navigatePlayer() {
+        navController.navigatePlayer()
     }
 
     private fun popBackStack() {

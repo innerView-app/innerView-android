@@ -37,7 +37,8 @@ internal fun MainNavHost(
             },
             navigateToRecord = { innerViewId, interviewGroupId ->
                 navigator.navigateRecord(innerViewId, interviewGroupId)
-            }
+            },
+            navigateToPlayer = { navigator.navigatePlayer() }
         )
         peekNavGraph(
             padding = padding,
