@@ -57,8 +57,8 @@ internal class MainNavigator(
         navController.navigateInnerViewDetail(id)
     }
 
-    fun navigateInterviewGroup() {
-        navController.navigateInterviewGroup()
+    fun navigateInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+        navController.navigateInterviewGroup(innerViewId, interviewGroupId)
     }
 
     fun navigateInnerViewQuestion(id: String) {

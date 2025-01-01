@@ -73,9 +73,9 @@ internal fun InnerViewDetailScreen(
     innerViewId: String,
     onBackClick: () -> Unit,
     onShowToast: (text: String) -> Unit,
-    navigateToInterviewGroup: () -> Unit,
+    navigateToInterviewGroup: (String, Int) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
@@ -122,9 +122,9 @@ internal fun InnerViewDetailScreen(
         innerViewId = innerViewId,
         uiState = uiState,
         onBackClick = onBackClick,
-        onClickInterviewGroup = { isRecording, id, title ->
-            if (isRecording) navigateToRecord(innerViewId, id, title)
-            else navigateToInterviewGroup()
+        onClickInterviewGroup = { isRecording, id ->
+            if (isRecording) navigateToRecord(innerViewId, id)
+            else navigateToInterviewGroup(innerViewId, id)
         },
         onNotificationClick = { isOn -> viewModel.changeNotificationState(innerViewId, isOn) },
         navigateToInnerViewQuestion = navigateToInnerViewQuestion,
@@ -138,7 +138,7 @@ private fun InnerViewDetailContent(
     innerViewId: String,
     uiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     onNotificationClick: (Boolean) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     addInterviewGroup: () -> Unit
@@ -247,9 +247,8 @@ private fun InnerViewDetailContent(
 
 @Composable
 private fun DailyInterviewGroupList(
-    title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     lazyGridState: LazyGridState
 ) {
     val interviews = interviewGroups.groupBy {
@@ -284,13 +283,7 @@ private fun DailyInterviewGroupList(
                 InterviewGroupItem(
                     modifier = Modifier
                         .height(150.dp)
-                        .clickable {
-                            onClickInterviewGroup(
-                                it.isRecording,
-                                it.id,
-                                "$title : $createAt"
-                            )
-                        },
+                        .clickable { onClickInterviewGroup(it.isRecording, it.id) },
                     interviewGroup = it,
                     dateTextStyle = MaterialTheme.typography.labelLarge,
                     createAt = createAt,
@@ -304,9 +297,8 @@ private fun DailyInterviewGroupList(
 
 @Composable
 private fun InterviewGroupList(
-    title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     lazyGridState: LazyGridState
 ) {
     LazyVerticalGrid(
@@ -328,9 +320,7 @@ private fun InterviewGroupList(
             InterviewGroupItem(
                 modifier = Modifier
                     .height(240.dp)
-                    .clickable {
-                        onClickInterviewGroup(it.isRecording, it.id, "$title : $createAt")
-                    },
+                    .clickable { onClickInterviewGroup(it.isRecording, it.id) },
                 interviewGroup = it,
                 dateTextStyle = MaterialTheme.typography.titleSmall,
                 createAt = createAt,
@@ -375,10 +365,11 @@ private fun InnerViewDetailContentPreview() {
                 )
             ),
             onBackClick = {},
-            onClickInterviewGroup = { _, _, _ -> },
-            navigateToInnerViewQuestion = {},
+            onClickInterviewGroup = { _, _ -> },
             onNotificationClick = {},
-            addInterviewGroup = {}
+            navigateToInnerViewQuestion = {},
+            addInterviewGroup = {},
+            padding = PaddingValues()
         )
     }
 }
@@ -418,10 +409,11 @@ private fun DailyInnerViewDetailContentPreview() {
                 )
             ),
             onBackClick = {},
-            onClickInterviewGroup = { _, _, _ -> },
-            navigateToInnerViewQuestion = {},
+            onClickInterviewGroup = { _, _ -> },
             onNotificationClick = {},
-            addInterviewGroup = {}
+            navigateToInnerViewQuestion = {},
+            addInterviewGroup = {},
+            padding = PaddingValues()
         )
     }
 }

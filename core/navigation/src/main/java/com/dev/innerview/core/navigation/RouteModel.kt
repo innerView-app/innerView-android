@@ -17,7 +17,7 @@ sealed interface Route {
     data class InnerViewQuestion(val id: String) : Route
 
     @Serializable
-    data object InterviewGroup : Route
+    data class InterviewGroup(val innerViewId: String, val interviewGroupId: Int) : Route
 
     @Serializable
     data object Player : Route

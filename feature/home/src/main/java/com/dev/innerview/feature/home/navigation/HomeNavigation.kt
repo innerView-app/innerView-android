@@ -23,8 +23,8 @@ fun NavController.navigateInnerViewDetail(id: String) {
     navigate(Route.InnerViewDetail(id))
 }
 
-fun NavController.navigateInterviewGroup() {
-    navigate(Route.InterviewGroup)
+fun NavController.navigateInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+    navigate(Route.InterviewGroup(innerViewId, interviewGroupId))
 }
 
 fun NavController.navigateInnerViewQuestion(id: String) {
@@ -38,8 +38,8 @@ fun NavGraphBuilder.homeNavGraph(
     onShowToast: (text: String) -> Unit,
     navigateToInnerViewDetail: (String) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit
+    navigateToRecord: (String, Int) -> Unit,
+    navigateToInterviewGroup: (String, Int) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -66,7 +66,8 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InterviewGroup> {
+    composable<Route.InterviewGroup> { navBackStackEntry ->
+        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.InterviewGroup>()
         InterviewGroupScreen(
             onBackClick = onBackClick
         )
