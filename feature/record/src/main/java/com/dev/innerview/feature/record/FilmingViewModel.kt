@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewByQuestionUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
-import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.record.model.FilmingUiEvent
@@ -60,7 +59,7 @@ class FilmingViewModel @Inject constructor(
                     innerViewId,
                     interviewGroupId,
                     InnerProjectComponents(
-                        videos = listOf(
+                        media = listOf(
                             InterviewPiece(
                                 filePath = "interviews/${_filmingUiState.value.outputFileName}",
                                 startPosition = 0L,
@@ -103,7 +102,7 @@ class FilmingViewModel @Inject constructor(
         _filmingUiState.update {
             it.copy(
                 recordingState = RecordingState(
-                    recordState = RecordState.RECODING
+                    recordState = RecordState.RECORDING
                 )
             )
         }
@@ -120,7 +119,7 @@ class FilmingViewModel @Inject constructor(
     }
 
     fun pauseRecording() {
-        if (_filmingUiState.value.recordingState.recordState == RecordState.RECODING) {
+        if (_filmingUiState.value.recordingState.recordState == RecordState.RECORDING) {
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(
@@ -136,7 +135,7 @@ class FilmingViewModel @Inject constructor(
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(
-                        recordState = RecordState.RECODING
+                        recordState = RecordState.RECORDING
                     )
                 )
             }
@@ -154,7 +153,7 @@ class FilmingViewModel @Inject constructor(
     }
 
     fun updateRecordingState(duration: Long, sizeByte: Long) {
-        if (_filmingUiState.value.recordingState.recordState == RecordState.RECODING) {
+        if (_filmingUiState.value.recordingState.recordState == RecordState.RECORDING) {
             _filmingUiState.update {
                 it.copy(
                     recordingState = it.recordingState.copy(

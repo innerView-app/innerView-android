@@ -10,7 +10,7 @@ internal fun InterviewSchema.toData(): Interview {
 
     val thumbnailVideoPath = innerProject?.let {
         val innerProjectComponents: InnerProjectComponents = Json.decodeFromString(it.jsonData)
-        innerProjectComponents.videos.firstOrNull()?.filePath ?: ""
+        innerProjectComponents.media.firstOrNull()?.filePath ?: ""
     } ?: ""
 
     return Interview(

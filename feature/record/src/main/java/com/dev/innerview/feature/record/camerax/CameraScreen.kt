@@ -182,7 +182,7 @@ internal fun CameraScreen(
             modifier = Modifier
                 .align(Alignment.BottomStart)
                 .padding(start = Paddings.xlarge, bottom = Paddings.extra),
-            visible = recordingState.recordState == RecordState.RECODING || recordingState.recordState == RecordState.PAUSE,
+            visible = recordingState.recordState == RecordState.RECORDING || recordingState.recordState == RecordState.PAUSE,
             enter = fadeIn(),
             exit = fadeOut()
         ) {
@@ -217,7 +217,7 @@ internal fun CameraScreen(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .padding(end = Paddings.xlarge),
-            visible = recordingState.recordState != RecordState.RECODING,
+            visible = recordingState.recordState != RecordState.RECORDING,
             enter = fadeIn() + slideInHorizontally(initialOffsetX = { it }),
             exit = fadeOut() + slideOutHorizontally(targetOffsetX = { it })
         ) {

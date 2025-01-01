@@ -62,6 +62,11 @@ interface InnerViewRepository {
         innerProjectComponents: InnerProjectComponents = InnerProjectComponents()
     ): Int
 
+    suspend fun updateInnerProject(
+        innerProjectId: Int,
+        innerProjectComponents: InnerProjectComponents
+    )
+
     suspend fun deleteInnerProject(
         innerViewId: String,
         interviewGroupId: Int,

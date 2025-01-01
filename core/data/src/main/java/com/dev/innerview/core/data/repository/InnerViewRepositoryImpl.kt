@@ -130,6 +130,14 @@ class InnerViewRepositoryImpl @Inject constructor(
         return innerViewDataSource.addInnerProject(title, innerViewId, interviewGroupId, jsonData)
     }
 
+    override suspend fun updateInnerProject(
+        innerProjectId: Int,
+        innerProjectComponents: InnerProjectComponents
+    ) {
+        val jsonData = Json.encodeToString(innerProjectComponents)
+        innerViewDataSource.updateInnerProject(innerProjectId, jsonData)
+    }
+
     override suspend fun deleteInnerProject(
         innerViewId: String,
         interviewGroupId: Int,

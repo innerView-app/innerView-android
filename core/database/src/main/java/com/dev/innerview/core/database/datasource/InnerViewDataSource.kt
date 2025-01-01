@@ -100,7 +100,7 @@ class InnerViewDataSource @Inject constructor(
             val newInterviewGroupSchema = InterviewGroupSchema().apply {
                 this.id = innerView.interviewGroups.size + 1
                 this.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
-                this.recordState = "RECODING"
+                this.recordState = "RECORDING"
                 this.interviews = interviews
             }
 
@@ -204,7 +204,7 @@ class InnerViewDataSource @Inject constructor(
                     this.title = title
                     this.innerViewId = innerViewId
                     this.interviewGroupId = interviewGroupId
-                    this.recordState = "RECODING"
+                    this.recordState = "RECORDING"
                     jsonData?.let { this.jsonData = it }
                 }
             } else {
@@ -219,6 +219,16 @@ class InnerViewDataSource @Inject constructor(
             }
         }
         return innerProjectId
+    }
+
+    suspend fun updateInnerProject(
+        innerProjectId: Int,
+        jsonData: String? = null
+    ) {
+        realm.write {
+            val innerProject = query<InnerProjectSchema>("_id == $0", innerProjectId).find().first()
+            innerProject.jsonData = jsonData ?: "{}"
+        }
     }
 
     suspend fun deleteInnerProject(

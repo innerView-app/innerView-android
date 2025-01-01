@@ -11,14 +11,20 @@ import kotlinx.collections.immutable.persistentListOf
 data class EditUiState(
     val innerProjectId: Int = 0,
     val title: String = "",
-    val recordState: RecordState = RecordState.RECODING,
+    val recordState: RecordState = RecordState.RECORDING,
     val isPlaying: Boolean = false,
     val currentMediaItemIndex: Int = 0,
     val position: Long = 0,
     val duration: Long = 0,
     val aspectRatio: Float = 9F / 16F,
     val zoom: Float = 0.1f,
-    val media: ImmutableList<InterviewPiece> = persistentListOf(),
+    val media: ImmutableList<MediaUiState> = persistentListOf(),
     val accumulatedDurations: ImmutableList<Long> = persistentListOf(),
     val subtitles: ImmutableList<Subtitle> = persistentListOf(),
+)
+
+@Immutable
+data class MediaUiState(
+    val medium: InterviewPiece = InterviewPiece(),
+    val selected: Boolean = false,
 )

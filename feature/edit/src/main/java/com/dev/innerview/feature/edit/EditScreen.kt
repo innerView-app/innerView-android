@@ -55,9 +55,12 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.component.EditLayer
 import com.dev.innerview.feature.edit.component.MediaItem
+import com.dev.innerview.feature.edit.component.MediaItemBottomBar
 import com.dev.innerview.feature.edit.component.PlayerBar
 import com.dev.innerview.feature.edit.component.PlayerView
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.MediaUiState
+import com.dev.innerview.feature.edit.model.SplitOption
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.filter
@@ -87,6 +90,10 @@ internal fun EditScreen(
         seekToScrollPosition = viewModel::seekToScrollPosition,
         seekByMediaItem = viewModel::seekByMediaItem,
         seekByPosition = viewModel::seekByPosition,
+        selectMediaItem = viewModel::selectMediaItem,
+        cancelMediaItem = viewModel::cancelMediaItem,
+        splitMediaItem = viewModel::splitMediaItem,
+        deleteMediaItem = viewModel::deleteMediaItem,
     )
 }
 
@@ -102,6 +109,10 @@ private fun EditContent(
     seekToScrollPosition: (Int) -> Unit,
     seekByMediaItem: (Int) -> Unit,
     seekByPosition: (Long) -> Unit,
+    selectMediaItem: (Int) -> Unit,
+    cancelMediaItem: () -> Unit,
+    splitMediaItem: (SplitOption) -> Unit,
+    deleteMediaItem: () -> Unit,
 ) {
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
@@ -246,7 +257,7 @@ private fun EditContent(
                                 ) {
                                     for (i in 0 until editUiState.media.size) {
                                         val duration =
-                                            with(editUiState.media[i]) { endPosition - startPosition }
+                                            with(editUiState.media[i]) { medium.endPosition - medium.startPosition }
                                         val widthDp =
                                             with(density) { (duration * editUiState.zoom).toDp() }
                                         val startOffset =
@@ -256,8 +267,8 @@ private fun EditContent(
                                                 .width(widthDp)
                                                 .padding(vertical = 2.dp)
                                                 .offset(x = startOffset)
-                                                .clickable { },
-                                            videoItem = editUiState.media[i]
+                                                .clickable { selectMediaItem(i) },
+                                            mediaUiState = editUiState.media[i]
                                         )
                                     }
                                 }
@@ -285,6 +296,13 @@ private fun EditContent(
                     thickness = 1.dp,
                     color = Color.Red
                 )
+                MediaItemBottomBar(
+                    isVisible = editUiState.media.any { it.selected },
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    cancelMediaItem = cancelMediaItem,
+                    splitMediaItem = splitMediaItem,
+                    deleteMediaItem = deleteMediaItem,
+                )
             }
         }
     }
@@ -302,17 +320,23 @@ private fun EditContentPreview() {
                 duration = 6000L,
                 zoom = 1f,
                 media = persistentListOf(
-                    InterviewPiece(
-                        filePath = "",
-                        startPosition = 0L,
-                        endPosition = 5000L,
-                        duration = 5000L,
+                    MediaUiState(
+                        medium = InterviewPiece(
+                            filePath = "",
+                            startPosition = 0L,
+                            endPosition = 5000L,
+                            duration = 5000L,
+                        ),
+                        selected = false,
                     ),
-                    InterviewPiece(
-                        filePath = "",
-                        startPosition = 1000L,
-                        endPosition = 2000L,
-                        duration = 3000L,
+                    MediaUiState(
+                        medium = InterviewPiece(
+                            filePath = "",
+                            startPosition = 1000L,
+                            endPosition = 2000L,
+                            duration = 3000L,
+                        ),
+                        selected = false,
                     )
                 ),
                 accumulatedDurations = persistentListOf(
@@ -326,6 +350,10 @@ private fun EditContentPreview() {
             seekToScrollPosition = {},
             seekByMediaItem = {},
             seekByPosition = {},
+            selectMediaItem = {},
+            cancelMediaItem = {},
+            splitMediaItem = {},
+            deleteMediaItem = {},
         )
     }
 }
