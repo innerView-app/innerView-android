@@ -72,7 +72,11 @@ fun NavGraphBuilder.homeNavGraph(
     composable<Route.InterviewGroup> { navBackStackEntry ->
         val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.InterviewGroup>()
         InterviewGroupScreen(
-            onBackClick = onBackClick
+            padding = padding,
+            onBackClick = onBackClick,
+            innerViewId = innerViewId,
+            interviewGroupId = interviewGroupId,
+            navigateToPlayer = navigateToPlayer
         )
     }
 
