@@ -5,7 +5,7 @@ import java.time.ZonedDateTime
 data class InterviewGroup(
     val id: Int = 0,
     val createdAt: ZonedDateTime = ZonedDateTime.now(),
-    val interviewState: InterviewState = InterviewState.RECORDING,
+    val isRecording: Boolean = false,
     val questionCount: Int = 0,
     val thumbnailVideoPath: String? = null
 )

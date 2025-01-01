@@ -72,7 +72,6 @@ class EditViewModel @Inject constructor(
                 it.copy(
                     innerProjectId = id,
                     title = innerProject.title,
-                    recordState = innerProject.recordState,
                     duration = duration,
                     media = innerProject.innerProjectComponents.videos.toPersistentList(),
                     accumulatedDurations = accumulatedDurations.toPersistentList(),

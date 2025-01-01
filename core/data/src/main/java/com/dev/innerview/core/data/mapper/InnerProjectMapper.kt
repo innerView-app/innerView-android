@@ -3,7 +3,6 @@ package com.dev.innerview.core.data.mapper
 import com.dev.innerview.core.database.schema.InnerProjectSchema
 import com.dev.innerview.core.model.InnerProject
 import com.dev.innerview.core.model.InnerProjectComponents
-import com.dev.innerview.core.model.RecordState
 import kotlinx.serialization.json.Json
 
 internal fun InnerProjectSchema.toData(): InnerProject {
@@ -13,7 +12,7 @@ internal fun InnerProjectSchema.toData(): InnerProject {
         title = title,
         innerViewId = innerViewId,
         interviewGroupId = interviewGroupId,
-        recordState = RecordState.stringToRecordState(recordState),
+        isRecording = isRecording,
         innerProjectComponents = innerProjectComponents
     )
 }

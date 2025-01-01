@@ -7,6 +7,6 @@ import io.realm.kotlin.types.RealmList
 class InterviewGroupSchema : EmbeddedRealmObject {
     var id: Int = 0
     var createdAt: String = ""
-    var recordState: String = ""
+    var isRecording: Boolean = false
     var interviews: RealmList<InterviewSchema> = realmListOf()
 }

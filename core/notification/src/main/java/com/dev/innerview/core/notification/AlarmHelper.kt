@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.model.InnerViewType
-import com.dev.innerview.core.model.InterviewState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -73,7 +72,7 @@ class AlarmHelper @Inject constructor(
                     registerNotificationAlarm(
                         innerViewId = content.innerView.id,
                         lastInnerViewTime = content.interviewGroups
-                            .find { it.interviewState == InterviewState.COMPLETE }
+                            .find { !it.isRecording }
                             ?.createdAt
                             ?: return@launch,
                         innerViewType = content.innerView.type,

@@ -9,6 +9,6 @@ class InnerProjectSchema : RealmObject {
     var title: String = ""
     var innerViewId: String? = null
     var interviewGroupId: Int? = null
-    var recordState: String = ""
+    var isRecording: Boolean = false
     var jsonData: String = "{}"
 }
