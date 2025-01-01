@@ -3,6 +3,7 @@ package com.dev.innerview.feature.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -87,10 +88,12 @@ internal fun InnerViewDetailScreen(
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
                 is InnerViewDetailUiEvent.TurnNotificationEvent -> {
-                    val hasPermission = ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
+                    val hasPermission =
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ) == PackageManager.PERMISSION_GRANTED
 
                     val toastText =
                         if (event.isOn && !hasPermission) {
