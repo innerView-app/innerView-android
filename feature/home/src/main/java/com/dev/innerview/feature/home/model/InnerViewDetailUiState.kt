@@ -15,4 +15,5 @@ data class InnerViewDetailUiState(
     val reactivateAt: LocalDate = LocalDate.now(),
     val isActivated: Boolean = true,
     val isNotificationOn: Boolean = true,
+    val isRecording: Boolean = false
 )

@@ -53,7 +53,9 @@ class InnerViewDetailViewModel @Inject constructor(
                         interviewGroups = innerViewContent.interviewGroups.toPersistentList(),
                         reactivateAt = reactivateAt,
                         isActivated = !LocalDate.now().isBefore(reactivateAt),
-                        isNotificationOn = innerViewContent.innerView.isNotificationOn
+                        isNotificationOn = innerViewContent.innerView.isNotificationOn,
+                        isRecording = innerViewContent.interviewGroups.firstOrNull()?.isRecording
+                            ?: false
                     )
                 }
             }.launchIn(viewModelScope)
@@ -63,18 +65,16 @@ class InnerViewDetailViewModel @Inject constructor(
         interviewGroups: List<InterviewGroup>,
         innerViewType: InnerViewType
     ): LocalDate {
-        return if (interviewGroups.isEmpty()) {
-            LocalDate.now()
-        } else {
-            val lastDate = interviewGroups.first().createdAt
-                .withZoneSameInstant(ZoneId.systemDefault())
-                .toLocalDate()
-            when (innerViewType) {
-                InnerViewType.DAY -> lastDate.plusDays(1)
-                InnerViewType.WEEK -> lastDate.plusWeeks(1)
-                InnerViewType.MONTH -> lastDate.plusMonths(1)
-                InnerViewType.YEAR -> lastDate.plusYears(1)
-            }
+        val lastDate = interviewGroups.firstOrNull()
+            ?.createdAt
+            ?.withZoneSameInstant(ZoneId.systemDefault())
+            ?.toLocalDate()
+            ?: return LocalDate.now()
+        return when (innerViewType) {
+            InnerViewType.DAY -> lastDate.plusDays(1)
+            InnerViewType.WEEK -> lastDate.plusWeeks(1)
+            InnerViewType.MONTH -> lastDate.plusMonths(1)
+            InnerViewType.YEAR -> lastDate.plusYears(1)
         }
     }
 
@@ -82,17 +82,17 @@ class InnerViewDetailViewModel @Inject constructor(
         viewModelScope.launch {
             changeInnerViewNotificationUseCase(innerViewId, isOn)
             if (isOn) {
-                innerViewDetailUiState.value
-                    .takeIf { it.interviewGroups.isNotEmpty() }
-                    ?.let { content ->
-                        registerNotificationAlarmUseCase(
-                            innerViewId = innerViewId,
-                            innerViewType = content.type,
-                            innerViewTitle = content.title,
-                            lastInnerViewTime = content.interviewGroups.first().createdAt
-                        )
-                    }
-
+                with(innerViewDetailUiState.value) {
+                    registerNotificationAlarmUseCase(
+                        innerViewId = innerViewId,
+                        innerViewType = type,
+                        innerViewTitle = title,
+                        lastInnerViewTime = interviewGroups
+                            .find { !it.isRecording }
+                            ?.createdAt
+                            ?: return@launch
+                    )
+                }
             } else {
                 cancelNotificationAlarmUseCase(innerViewId)
             }
