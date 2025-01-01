@@ -17,6 +17,7 @@ internal fun MainNavHost(
     navigator: MainNavigator,
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowToast: (text: String) -> Unit,
 ) {
     NavHost(
         navController = navigator.navController,

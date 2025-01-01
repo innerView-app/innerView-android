@@ -1,5 +1,7 @@
 package com.dev.innerview.feature.main
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -13,6 +15,14 @@ import com.dev.innerview.feature.main.component.MainNavHost
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.launch
 
+private var toast: Toast? = null
+
+private fun showToast(context: Context, text: String) {
+    toast?.cancel()
+    toast = Toast.makeText(context, text, Toast.LENGTH_SHORT)
+    toast?.show()
+}
+
 @Composable
 internal fun MainScreen(
     navigator: MainNavigator = rememberMainNavigator()
@@ -20,11 +30,12 @@ internal fun MainScreen(
     val snackBarHostState = remember { SnackbarHostState() }
 
     val coroutineScope = rememberCoroutineScope()
-    val localContextResource = LocalContext.current.resources
+    val context = LocalContext.current
     val onShowErrorSnackBar: (throwable: Throwable?) -> Unit = { throwable ->
         coroutineScope.launch {
 
-            val unknownErrorMessage = localContextResource.getString(R.string.feature_main_error_message_unknown)
+            val unknownErrorMessage =
+                context.getString(R.string.feature_main_error_message_unknown)
 
             snackBarHostState.showSnackbar(
                 when (throwable) {  // throwable 타입 별 snackBar 처리
@@ -34,11 +45,13 @@ internal fun MainScreen(
             )
         }
     }
+    val onShowToast:(text:String) -> Unit = { text -> showToast(context, text) }
 
     MainScreenContent(
         navigator = navigator,
         onShowErrorSnackBar = onShowErrorSnackBar,
-        snackBarHostState = snackBarHostState
+        snackBarHostState = snackBarHostState,
+        onShowToast = onShowToast
     )
 }
 
@@ -47,6 +60,7 @@ private fun MainScreenContent(
     modifier: Modifier = Modifier,
     navigator: MainNavigator,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowToast: (text: String) -> Unit,
     snackBarHostState: SnackbarHostState,
 ) {
     Scaffold(
@@ -56,6 +70,7 @@ private fun MainScreenContent(
                 navigator = navigator,
                 padding = padding,
                 onShowErrorSnackBar = onShowErrorSnackBar,
+                onShowToast = onShowToast
             )
         },
         bottomBar = {
