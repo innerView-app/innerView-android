@@ -7,6 +7,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
+import com.dev.innerview.core.domain.usecase.UpdateInnerProjectUseCase
+import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaUiState
@@ -20,8 +22,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.File
@@ -31,6 +32,7 @@ import javax.inject.Inject
 class EditViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getInnerProjectByIdUseCase: GetInnerProjectByIdUseCase,
+    private val updateInnerProjectUseCase: UpdateInnerProjectUseCase,
     private val playbackStateManager: PlaybackStateManager,
     private val playbackStateListener: PlaybackStateListener,
     val player: Player,
@@ -63,7 +65,8 @@ class EditViewModel @Inject constructor(
     }
 
     fun fetchInnerProject(id: Int) {
-        getInnerProjectByIdUseCase(id).onEach { innerProject ->
+        viewModelScope.launch {
+            val innerProject = getInnerProjectByIdUseCase(id).first()
             val duration = innerProject.innerProjectComponents.media.sumOf {
                 it.endPosition - it.startPosition
             }
@@ -84,7 +87,23 @@ class EditViewModel @Inject constructor(
                 )
             }
             setMediaItems(innerProject.innerProjectComponents.media)
-        }.launchIn(viewModelScope)
+        }
+    }
+
+    private fun saveInnerProject() {
+        viewModelScope.launch {
+            with(_editUiState.value) {
+                val innerProjectComponents = InnerProjectComponents(
+                    media = media.map { it.medium },
+                    subtitles = subtitles
+                )
+                runCatching {
+                    updateInnerProjectUseCase(innerProjectId, innerProjectComponents)
+                }.onFailure {
+                    fetchInnerProject(innerProjectId)
+                }
+            }
+        }
     }
 
     fun addMediaItem() {
@@ -105,6 +124,7 @@ class EditViewModel @Inject constructor(
                 duration = duration
             )
         }
+        saveInnerProject()
     }
 
     fun updateZoom(zoom: Float) {
@@ -177,6 +197,7 @@ class EditViewModel @Inject constructor(
     }
 
     fun selectMediaItem(index: Int) {
+        player.pause()
         _editUiState.update {
             it.copy(
                 media = it.media.mapIndexed { i, uiState ->
@@ -293,6 +314,7 @@ class EditViewModel @Inject constructor(
                 }
             }
         }
+        saveInnerProject()
     }
 
     fun deleteMediaItem() {
@@ -315,6 +337,7 @@ class EditViewModel @Inject constructor(
             player.prepare()
             seekToPosition(position, newAccumulatedDurations)
         }
+        saveInnerProject()
     }
 
     private fun setMediaItems(videos: List<InterviewPiece>) {
