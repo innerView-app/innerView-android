@@ -10,12 +10,12 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -69,6 +69,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun InnerViewDetailScreen(
+    padding: PaddingValues,
     innerViewId: String,
     onBackClick: () -> Unit,
     onShowToast: (text: String) -> Unit,
@@ -117,6 +118,7 @@ internal fun InnerViewDetailScreen(
     }
 
     InnerViewDetailContent(
+        padding = padding,
         innerViewId = innerViewId,
         uiState = uiState,
         onBackClick = onBackClick,
@@ -132,6 +134,7 @@ internal fun InnerViewDetailScreen(
 
 @Composable
 private fun InnerViewDetailContent(
+    padding: PaddingValues,
     innerViewId: String,
     uiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
@@ -142,7 +145,7 @@ private fun InnerViewDetailContent(
 ) {
     Box(
         modifier = Modifier
-            .systemBarsPadding()
+            .padding(padding)
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
@@ -170,7 +173,6 @@ private fun InnerViewDetailContent(
         )
         Box(
             modifier = Modifier
-                .systemBarsPadding()
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -218,14 +220,12 @@ private fun InnerViewDetailContent(
 
             if (uiState.type == InnerViewType.DAY) {
                 DailyInterviewGroupList(
-                    title = uiState.title,
                     interviewGroups = uiState.interviewGroups,
                     onClickInterviewGroup = onClickInterviewGroup,
                     lazyGridState = lazyGridState
                 )
             } else {
                 InterviewGroupList(
-                    title = uiState.title,
                     interviewGroups = uiState.interviewGroups,
                     onClickInterviewGroup = onClickInterviewGroup,
                     lazyGridState = lazyGridState
