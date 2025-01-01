@@ -3,11 +3,13 @@ package com.dev.innerview.feature.record
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddQuestionUseCase
+import com.dev.innerview.core.domain.usecase.CancelNotificationAlarmUseCase
 import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
 import com.dev.innerview.core.domain.usecase.DeleteInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.DeleteQuestionUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.core.domain.usecase.GetRecommendQuestionsByTypeUseCase
+import com.dev.innerview.core.domain.usecase.RegisterNotificationAlarmUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.record.model.InterviewItemUiState
 import com.dev.innerview.feature.record.model.RecordUiEvent
@@ -32,7 +34,9 @@ class RecordViewModel @Inject constructor(
     private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase,
     private val deleteQuestionUseCase: DeleteQuestionUseCase,
     private val deleteInnerProjectUseCase: DeleteInnerProjectUseCase,
-    private val getRecommendQuestionsByTypeUseCase: GetRecommendQuestionsByTypeUseCase
+    private val getRecommendQuestionsByTypeUseCase: GetRecommendQuestionsByTypeUseCase,
+    private val registerNotificationAlarmUseCase: RegisterNotificationAlarmUseCase,
+    private val cancelNotificationAlarmUseCase: CancelNotificationAlarmUseCase
 ) : ViewModel() {
 
     private val recommendQuestionCount = 3
@@ -54,6 +58,7 @@ class RecordViewModel @Inject constructor(
                     it.copy(
                         title = interviewGroupContent.innerView.title,
                         type = interviewGroupContent.innerView.type,
+                        createdAt = interviewGroupContent.interviewGroup.createdAt,
                         pervQuestions = interviewGroupContent.innerView.questions.toPersistentList(),
                         interviews = interviewGroupContent.interviews.map { interview ->
                             InterviewItemUiState(interview = interview)
@@ -110,6 +115,15 @@ class RecordViewModel @Inject constructor(
     fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         viewModelScope.launch {
             completeInterviewGroupUseCase(innerViewId, interviewGroupId)
+            cancelNotificationAlarmUseCase(innerViewId)
+            with(recordUiState.value) {
+                registerNotificationAlarmUseCase(
+                    innerViewId = innerViewId,
+                    innerViewType = type,
+                    innerViewTitle = title,
+                    lastInnerViewTime = createdAt
+                )
+            }
             _uiEventFlow.emit(RecordUiEvent.NavigateToBack)
         }
     }
