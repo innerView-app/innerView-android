@@ -17,7 +17,13 @@ data class EditUiState(
     val duration: Long = 0,
     val aspectRatio: Float = 9F / 16F,
     val zoom: Float = 0.1f,
-    val media: ImmutableList<InterviewPiece> = persistentListOf(),
+    val media: ImmutableList<MediaUiState> = persistentListOf(),
     val accumulatedDurations: ImmutableList<Long> = persistentListOf(),
     val subtitles: ImmutableList<Subtitle> = persistentListOf(),
+)
+
+@Immutable
+data class MediaUiState(
+    val medium: InterviewPiece = InterviewPiece(),
+    val selected: Boolean = false,
 )

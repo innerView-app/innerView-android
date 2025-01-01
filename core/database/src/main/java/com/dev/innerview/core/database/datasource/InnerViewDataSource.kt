@@ -229,6 +229,16 @@ class InnerViewDataSource @Inject constructor(
         return innerProjectId
     }
 
+    suspend fun updateInnerProject(
+        innerProjectId: Int,
+        jsonData: String? = null
+    ) {
+        realm.write {
+            val innerProject = query<InnerProjectSchema>("_id == $0", innerProjectId).find().first()
+            innerProject.jsonData = jsonData ?: "{}"
+        }
+    }
+
     suspend fun deleteInnerProject(
         innerViewId: String,
         interviewGroupId: Int,

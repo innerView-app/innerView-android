@@ -1,8 +1,11 @@
 package com.dev.innerview.feature.edit.di
 
 import android.content.Context
+import androidx.annotation.OptIn
 import androidx.media3.common.Player
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.exoplayer.SeekParameters
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -17,12 +20,14 @@ import kotlinx.coroutines.SupervisorJob
 @InstallIn(ViewModelComponent::class)
 object PlaybackModule {
 
+    @OptIn(UnstableApi::class)
     @Provides
     @ViewModelScoped
     internal fun provideVideoPlayer(
         @ApplicationContext context: Context,
     ): Player {
         return ExoPlayer.Builder(context)
+            .setSeekParameters(SeekParameters.EXACT)
             .build()
     }
 
