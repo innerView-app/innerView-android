@@ -84,6 +84,7 @@ class InnerViewRepositoryImpl @Inject constructor(
                 innerProject.toData()
             }
 
+
     override suspend fun addInnerView(title: String, type: InnerViewType) {
         innerViewDataSource.addInnerView(title, type.name)
     }
@@ -94,6 +95,10 @@ class InnerViewRepositoryImpl @Inject constructor(
 
     override suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean) {
         innerViewDataSource.addInterviewGroup(innerViewId, addPrevQuestions)
+    }
+
+    override suspend fun changeInnerViewNotification(innerViewId: String, isOn: Boolean) {
+        innerViewDataSource.changeInnerViewNotification(innerViewId, isOn)
     }
 
     override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: Int) {

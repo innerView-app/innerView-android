@@ -32,6 +32,11 @@ interface InnerViewRepository {
 
     suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true)
 
+    suspend fun changeInnerViewNotification(
+        innerViewId: String,
+        isOn: Boolean
+    )
+
     suspend fun deleteInterviewGroup(
         innerViewId: String,
         interviewGroupId: Int,

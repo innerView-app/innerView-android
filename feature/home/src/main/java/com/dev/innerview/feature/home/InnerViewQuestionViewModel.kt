@@ -11,8 +11,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -30,15 +29,15 @@ class InnerViewQuestionViewModel @Inject constructor(
     val innerViewQuestionUiState = _innerViewQuestionUiState.asStateFlow()
 
     fun fetchInnerViewQuestions(innerViewId: String) {
-        getInnerViewContentUseCase(innerViewId)
-            .onEach { innerViewContent ->
-                _innerViewQuestionUiState.update {
-                    it.copy(
-                        title = innerViewContent.innerView.title,
-                        interviewQuestions = innerViewContent.innerView.questions.toPersistentList()
-                    )
-                }
-            }.launchIn(viewModelScope)
+        viewModelScope.launch {
+            val innerViewContent = getInnerViewContentUseCase(innerViewId).first()
+            _innerViewQuestionUiState.update {
+                it.copy(
+                    title = innerViewContent.innerView.title,
+                    interviewQuestions = innerViewContent.innerView.questions.toPersistentList()
+                )
+            }
+        }
     }
 
     fun updateQuestions(innerViewId: String, oldIndex: Int, newIndex: Int) {

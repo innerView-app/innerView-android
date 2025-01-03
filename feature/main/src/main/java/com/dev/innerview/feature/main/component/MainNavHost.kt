@@ -17,6 +17,7 @@ internal fun MainNavHost(
     navigator: MainNavigator,
     padding: PaddingValues,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
+    onShowToast: (text: String) -> Unit,
 ) {
     NavHost(
         navController = navigator.navController,
@@ -27,6 +28,7 @@ internal fun MainNavHost(
         homeNavGraph(
             padding = padding,
             onShowErrorSnackBar = onShowErrorSnackBar,
+            onShowToast = onShowToast,
             onBackClick = { navigator.popBackStackIfNotHome() },
             navigateToInnerViewDetail = { id -> navigator.navigateInnerViewDetail(id) },
             navigateToInnerViewQuestion = { id -> navigator.navigateInnerViewQuestion(id) },

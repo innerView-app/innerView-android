@@ -1,5 +1,7 @@
 package com.dev.innerview.feature.home
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.content.res.Configuration
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
+import androidx.compose.foundation.lazy.grid.LazyGridState
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.grid.rememberLazyGridState
@@ -33,10 +36,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.core.content.ContextCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
@@ -48,13 +55,13 @@ import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
-import com.dev.innerview.core.model.RecordState
 import com.dev.innerview.feature.home.component.InterviewGroupItem
+import com.dev.innerview.feature.home.model.InnerViewDetailUiEvent
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
@@ -63,24 +70,59 @@ import java.time.format.DateTimeFormatter
 internal fun InnerViewDetailScreen(
     innerViewId: String,
     onBackClick: () -> Unit,
+    onShowToast: (text: String) -> Unit,
     navigateToInterviewGroup: () -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToRecord: (String, Int, String) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
-    val innerViewDetailUiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
+    val uiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(innerViewId) {
         viewModel.fetchInnerView(innerViewId)
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.uiEventFlow.collectLatest { event ->
+            when (event) {
+                is InnerViewDetailUiEvent.TurnNotificationEvent -> {
+                    val hasPermission = ContextCompat.checkSelfPermission(
+                        context,
+                        Manifest.permission.POST_NOTIFICATIONS
+                    ) == PackageManager.PERMISSION_GRANTED
+
+                    val toastText =
+                        if (event.isOn && !hasPermission) {
+                            context.getString(R.string.feature_home_toast_notification_permission)
+                        } else if (event.isOn) {
+                            context.getString(
+                                R.string.feature_home_toast_notification_on,
+                                uiState.title
+                            )
+                        } else {
+                            context.getString(
+                                R.string.feature_home_toast_notification_off,
+                                uiState.title
+                            )
+                        }
+
+                    onShowToast(toastText)
+                }
+            }
+        }
+    }
+
     InnerViewDetailContent(
         innerViewId = innerViewId,
-        innerViewDetailUiState = innerViewDetailUiState,
+        uiState = uiState,
         onBackClick = onBackClick,
-        navigateToInterviewGroup = navigateToInterviewGroup,
+        onClickInterviewGroup = { isRecording, id, title ->
+            if (isRecording) navigateToRecord(innerViewId, id, title)
+            else navigateToInterviewGroup()
+        },
+        onNotificationClick = { isOn -> viewModel.changeNotificationState(innerViewId, isOn) },
         navigateToInnerViewQuestion = navigateToInnerViewQuestion,
-        navigateToRecord = navigateToRecord,
         addInterviewGroup = { viewModel.addInnerViewGroup(innerViewId) }
     )
 }
@@ -88,11 +130,11 @@ internal fun InnerViewDetailScreen(
 @Composable
 private fun InnerViewDetailContent(
     innerViewId: String,
-    innerViewDetailUiState: InnerViewDetailUiState,
+    uiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
+    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onNotificationClick: (Boolean) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
     addInterviewGroup: () -> Unit
 ) {
     Box(
@@ -101,7 +143,7 @@ private fun InnerViewDetailContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = innerViewDetailUiState.title,
+            title = uiState.title,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -111,8 +153,11 @@ private fun InnerViewDetailContent(
                     onClick = { navigateToInnerViewQuestion(innerViewId) }
                 )
                 InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.Notifications,
-                    navigationIconContentDescription = null
+                    imageVector =
+                    if (uiState.isNotificationOn) Icons.Filled.Notifications
+                    else ImageVector.vectorResource(R.drawable.ic_notifications_off),
+                    navigationIconContentDescription = null,
+                    onClick = { onNotificationClick(!uiState.isNotificationOn) }
                 )
                 InnerViewAppBarIcon(
                     imageVector = Icons.Filled.KeyboardArrowUp,
@@ -128,23 +173,59 @@ private fun InnerViewDetailContent(
                 .background(MaterialTheme.colorScheme.background),
             contentAlignment = Alignment.Center
         ) {
-            if (innerViewDetailUiState.type == InnerViewType.DAY) {
+            val lazyGridState = rememberLazyGridState()
+            val coroutineScope = rememberCoroutineScope()
+            val lastScrolledBackward by remember {
+                derivedStateOf {
+                    lazyGridState.lastScrolledBackward || !lazyGridState.canScrollBackward
+                }
+            }
+
+            val animatedHeight by animateDpAsState(
+                targetValue = if (lastScrolledBackward) 60.dp else 0.dp,
+                label = "collapsing animation"
+            )
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .align(Alignment.TopStart)
+                    .zIndex(1f)
+                    .background(MaterialTheme.colorScheme.background)
+                    .clickable(
+                        interactionSource = remember { MutableInteractionSource() },
+                        indication = null
+                    ) { coroutineScope.launch { lazyGridState.animateScrollToItem(0) } }
+                    .height(animatedHeight)
+            ) {
+                val reactivateAt =
+                    uiState.reactivateAt.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+                Text(
+                    modifier = Modifier.align(Alignment.Center),
+                    text =
+                    if (uiState.isRecording) stringResource(R.string.feature_home_innerview_detail_description_recording)
+                    else if (uiState.isActivated) stringResource(R.string.feature_home_innerview_detail_description)
+                    else stringResource(
+                        R.string.feature_home_innerview_detail_description_date,
+                        reactivateAt
+                    ),
+                    style = MaterialTheme.typography.labelMedium
+                )
+            }
+
+            if (uiState.type == InnerViewType.DAY) {
                 DailyInterviewGroupList(
-                    innerViewId = innerViewId,
-                    title = innerViewDetailUiState.title,
-                    interviewGroups = innerViewDetailUiState.interviewGroups,
-                    navigateToInterviewGroup = navigateToInterviewGroup,
-                    navigateToRecord = navigateToRecord,
+                    title = uiState.title,
+                    interviewGroups = uiState.interviewGroups,
+                    onClickInterviewGroup = onClickInterviewGroup,
+                    lazyGridState = lazyGridState
                 )
             } else {
                 InterviewGroupList(
-                    innerViewId = innerViewId,
-                    title = innerViewDetailUiState.title,
-                    interviewGroups = innerViewDetailUiState.interviewGroups,
-                    navigateToInterviewGroup = navigateToInterviewGroup,
-                    navigateToRecord = navigateToRecord,
-                    reactivateDate = innerViewDetailUiState.reactivateAt,
-                    isActivated = innerViewDetailUiState.isActivated
+                    title = uiState.title,
+                    interviewGroups = uiState.interviewGroups,
+                    onClickInterviewGroup = onClickInterviewGroup,
+                    lazyGridState = lazyGridState
                 )
             }
             //if(innerViewDetailUiState.isActivated) {
@@ -163,161 +244,97 @@ private fun InnerViewDetailContent(
 
 @Composable
 private fun DailyInterviewGroupList(
-    innerViewId: String,
     title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
-    navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit
+    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    lazyGridState: LazyGridState
 ) {
     val interviews = interviewGroups.groupBy {
         it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
             .format(DateTimeFormatter.ofPattern("yyyy - MM월"))
     }
 
-    Box(
-        modifier = Modifier.fillMaxSize()
-    ) {
-
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Paddings.large, vertical = Paddings.medium),
-            columns = GridCells.Fixed(3),
-            verticalArrangement = Arrangement.spacedBy(Paddings.medium),
-            horizontalArrangement = Arrangement.spacedBy(Paddings.medium),
-        ) {
-            interviews.keys.forEach { key ->
-                item(span = { GridItemSpan(maxLineSpan) }) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = key,
-                        style = MaterialTheme.typography.labelMedium
-                    )
-                }
-                items(interviews[key]!!, key = { it.id }) {
-                    val createAt = it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
-                        .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-
-                    InterviewGroupItem(
-                        modifier = Modifier
-                            .height(150.dp)
-                            .clickable {
-                                when (it.recordState) {
-                                    RecordState.RECORDING ->
-                                        navigateToRecord(innerViewId, it.id, "$title : $createAt")
-
-                                    RecordState.COMPLETE -> navigateToInterviewGroup()
-
-                                    else -> {}
-                                }
-                            },
-                        interviewGroup = it,
-                        dateTextStyle = MaterialTheme.typography.labelLarge,
-                        createAt = createAt,
-                    )
-                }
-            }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(80.dp))
-            }
-        }
-    }
-}
-
-@Composable
-private fun InterviewGroupList(
-    innerViewId: String,
-    title: String,
-    interviewGroups: ImmutableList<InterviewGroup>,
-    navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
-    reactivateDate: LocalDate,
-    isActivated: Boolean,
-) {
-    val lazyGridState = rememberLazyGridState()
-    val coroutineScope = rememberCoroutineScope()
-    val lastScrolledBackward by remember {
-        derivedStateOf {
-            lazyGridState.lastScrolledBackward || !lazyGridState.canScrollBackward
-        }
-    }
-
-    val animatedHeight by animateDpAsState(
-        targetValue = if (lastScrolledBackward) 60.dp else 0.dp,
-        label = "collapsing animation"
-    )
-
-    Box(
+    LazyVerticalGrid(
         modifier = Modifier
             .fillMaxSize()
+            .padding(horizontal = Paddings.large, vertical = Paddings.medium),
+        state = lazyGridState,
+        columns = GridCells.Fixed(3),
+        verticalArrangement = Arrangement.spacedBy(Paddings.medium),
+        horizontalArrangement = Arrangement.spacedBy(Paddings.medium),
     ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .zIndex(1f)
-                .background(MaterialTheme.colorScheme.background)
-                .clickable(
-                    interactionSource = remember { MutableInteractionSource() },
-                    indication = null
-                ) {
-                    coroutineScope.launch {
-                        lazyGridState.animateScrollToItem(0)
-                    }
-                }
-                .height(animatedHeight)
-        ) {
-            val reactivateAt = reactivateDate.format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text =
-                if (isActivated) stringResource(R.string.feature_home_innerview_detail_description)
-                else stringResource(
-                    R.string.feature_home_innerview_detail_description_date,
-                    reactivateAt
-                ),
-                style = MaterialTheme.typography.labelMedium
-            )
-        }
 
-        LazyVerticalGrid(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = Paddings.large),
-            state = lazyGridState,
-            columns = GridCells.Fixed(2),
-            verticalArrangement = Arrangement.spacedBy(Paddings.medium),
-            horizontalArrangement = Arrangement.spacedBy(Paddings.medium),
-        ) {
+        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(50.dp)) }
+
+        interviews.keys.forEach { key ->
             item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(50.dp))
+                Text(
+                    text = key,
+                    style = MaterialTheme.typography.labelMedium
+                )
             }
-            items(interviewGroups, key = { it.id }) {
 
+            items(interviews[key]!!, key = { it.id }) {
                 val createAt = it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
                     .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
 
                 InterviewGroupItem(
                     modifier = Modifier
-                        .height(240.dp)
+                        .height(150.dp)
                         .clickable {
-                            when (it.recordState) {
-                                RecordState.RECORDING ->
-                                    navigateToRecord(innerViewId, it.id, "$title : $createAt")
-
-                                RecordState.COMPLETE -> navigateToInterviewGroup()
-
-                                else -> {}
-                            }
+                            onClickInterviewGroup(
+                                it.isRecording,
+                                it.id,
+                                "$title : $createAt"
+                            )
                         },
                     interviewGroup = it,
-                    dateTextStyle = MaterialTheme.typography.titleSmall,
+                    dateTextStyle = MaterialTheme.typography.labelLarge,
                     createAt = createAt,
                 )
             }
-            item(span = { GridItemSpan(maxLineSpan) }) {
-                Spacer(modifier = Modifier.height(80.dp))
-            }
         }
+
+        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(80.dp)) }
+    }
+}
+
+@Composable
+private fun InterviewGroupList(
+    title: String,
+    interviewGroups: ImmutableList<InterviewGroup>,
+    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    lazyGridState: LazyGridState
+) {
+    LazyVerticalGrid(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(horizontal = Paddings.large),
+        state = lazyGridState,
+        columns = GridCells.Fixed(2),
+        verticalArrangement = Arrangement.spacedBy(Paddings.medium),
+        horizontalArrangement = Arrangement.spacedBy(Paddings.medium),
+    ) {
+        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(50.dp)) }
+
+        items(interviewGroups, key = { it.id }) {
+
+            val createAt = it.createdAt.withZoneSameInstant(ZoneId.systemDefault())
+                .format(DateTimeFormatter.ofPattern("yyyy.MM.dd"))
+
+            InterviewGroupItem(
+                modifier = Modifier
+                    .height(240.dp)
+                    .clickable {
+                        onClickInterviewGroup(it.isRecording, it.id, "$title : $createAt")
+                    },
+                interviewGroup = it,
+                dateTextStyle = MaterialTheme.typography.titleSmall,
+                createAt = createAt,
+            )
+        }
+
+        item(span = { GridItemSpan(maxLineSpan) }) { Spacer(modifier = Modifier.height(80.dp)) }
     }
 }
 
@@ -328,36 +345,36 @@ private fun InnerViewDetailContentPreview() {
     InnerViewTheme {
         InnerViewDetailContent(
             innerViewId = "",
-            innerViewDetailUiState = InnerViewDetailUiState(
+            uiState = InnerViewDetailUiState(
                 title = "title",
                 interviewGroups = persistentListOf(
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )
                 )
             ),
             onBackClick = {},
-            navigateToInterviewGroup = {},
+            onClickInterviewGroup = { _, _, _ -> },
             navigateToInnerViewQuestion = {},
-            navigateToRecord = { _, _, _ -> },
+            onNotificationClick = {},
             addInterviewGroup = {}
         )
     }
@@ -370,37 +387,37 @@ private fun DailyInnerViewDetailContentPreview() {
     InnerViewTheme {
         InnerViewDetailContent(
             innerViewId = "",
-            innerViewDetailUiState = InnerViewDetailUiState(
+            uiState = InnerViewDetailUiState(
                 title = "title",
                 type = InnerViewType.DAY,
                 interviewGroups = persistentListOf(
                     InterviewGroup(
                         id = 1,
                         createdAt = ZonedDateTime.now(),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 30,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 2,
                         createdAt = ZonedDateTime.now().minusMonths(1),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 20,
                         thumbnailVideoPath = null
                     ),
                     InterviewGroup(
                         id = 3,
                         createdAt = ZonedDateTime.now().minusMonths(2),
-                        recordState = RecordState.RECORDING,
+                        isRecording = true,
                         questionCount = 10,
                         thumbnailVideoPath = null
                     )
                 )
             ),
             onBackClick = {},
-            navigateToInterviewGroup = {},
+            onClickInterviewGroup = { _, _, _ -> },
             navigateToInnerViewQuestion = {},
-            navigateToRecord = { _, _, _ -> },
+            onNotificationClick = {},
             addInterviewGroup = {}
         )
     }

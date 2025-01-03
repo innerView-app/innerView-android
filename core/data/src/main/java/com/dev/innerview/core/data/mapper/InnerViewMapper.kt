@@ -11,5 +11,6 @@ internal fun InnerViewSchema.toData(): InnerView =
         title = title,
         type = InnerViewType.stringToInnerViewType(type),
         createdAt = ZonedDateTime.parse(createdAt),
-        questions = questions
+        questions = questions,
+        isNotificationOn = isNotificationOn
     )

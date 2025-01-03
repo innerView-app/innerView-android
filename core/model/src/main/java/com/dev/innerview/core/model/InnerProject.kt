@@ -5,6 +5,6 @@ data class InnerProject(
     val title: String = "",
     val innerViewId: String? = null,
     val interviewGroupId: Int? = null,
-    val recordState: RecordState = RecordState.RECORDING,
+    val isRecording: Boolean = false,
     val innerProjectComponents: InnerProjectComponents = InnerProjectComponents()
 )

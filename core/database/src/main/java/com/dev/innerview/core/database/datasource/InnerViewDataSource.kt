@@ -100,11 +100,19 @@ class InnerViewDataSource @Inject constructor(
             val newInterviewGroupSchema = InterviewGroupSchema().apply {
                 this.id = innerView.interviewGroups.size + 1
                 this.createdAt = ZonedDateTime.now(ZoneOffset.UTC).toString()
-                this.recordState = "RECORDING"
+                this.isRecording = true
                 this.interviews = interviews
             }
 
             innerView.interviewGroups.add(newInterviewGroupSchema)
+        }
+    }
+
+    suspend fun changeInnerViewNotification(innerViewId:String, isOn:Boolean) {
+        realm.write {
+            val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
+
+            innerView.isNotificationOn = isOn
         }
     }
 
@@ -204,7 +212,7 @@ class InnerViewDataSource @Inject constructor(
                     this.title = title
                     this.innerViewId = innerViewId
                     this.interviewGroupId = interviewGroupId
-                    this.recordState = "RECORDING"
+                    this.isRecording = true
                     jsonData?.let { this.jsonData = it }
                 }
             } else {
@@ -212,7 +220,7 @@ class InnerViewDataSource @Inject constructor(
                     InnerProjectSchema().apply {
                         this._id = innerProjectId
                         this.title = title
-                        this.recordState = "COMPLETE"
+                        this.isRecording = false
                         jsonData?.let { this.jsonData = it }
                     }
                 )
@@ -266,9 +274,9 @@ class InnerViewDataSource @Inject constructor(
                         }
                     }
 
-                interviewGroup.recordState = "COMPLETE"
+                interviewGroup.isRecording = false
                 interviewGroup.interviews.forEach { interview ->
-                    interview.innerProject?.recordState = "COMPLETE"
+                    interview.innerProject?.isRecording = false
                 }
 
             }

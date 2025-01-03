@@ -36,6 +36,7 @@ import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.feature.home.component.InnerViewCreateDialog
 import com.dev.innerview.feature.home.component.InnerViewItem
+import com.dev.innerview.feature.home.component.NotificationPermissionLauncher
 import com.dev.innerview.feature.home.model.HomeUiState
 import com.dev.innerview.feature.home.model.InnerViewItemUiState
 import kotlinx.collections.immutable.ImmutableList
@@ -68,6 +69,8 @@ internal fun HomeRoute(
         onSelectInnerViewCreate = { viewModel.selectInnerViewCreate() },
         onSelectInnerViewDelete = { viewModel.selectInnerViewDelete(it) }
     )
+
+    NotificationPermissionLauncher()
 }
 
 
