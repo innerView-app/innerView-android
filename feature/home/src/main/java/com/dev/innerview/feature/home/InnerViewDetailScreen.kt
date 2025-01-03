@@ -3,18 +3,19 @@ package com.dev.innerview.feature.home
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Configuration
+import android.os.Build
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -68,12 +69,13 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 internal fun InnerViewDetailScreen(
+    padding: PaddingValues,
     innerViewId: String,
     onBackClick: () -> Unit,
     onShowToast: (text: String) -> Unit,
-    navigateToInterviewGroup: () -> Unit,
+    navigateToInterviewGroup: (String, Int) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit,
+    navigateToRecord: (String, Int) -> Unit,
     viewModel: InnerViewDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
@@ -87,10 +89,12 @@ internal fun InnerViewDetailScreen(
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
                 is InnerViewDetailUiEvent.TurnNotificationEvent -> {
-                    val hasPermission = ContextCompat.checkSelfPermission(
-                        context,
-                        Manifest.permission.POST_NOTIFICATIONS
-                    ) == PackageManager.PERMISSION_GRANTED
+                    val hasPermission =
+                        Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+                                ContextCompat.checkSelfPermission(
+                                    context,
+                                    Manifest.permission.POST_NOTIFICATIONS
+                                ) == PackageManager.PERMISSION_GRANTED
 
                     val toastText =
                         if (event.isOn && !hasPermission) {
@@ -114,12 +118,13 @@ internal fun InnerViewDetailScreen(
     }
 
     InnerViewDetailContent(
+        padding = padding,
         innerViewId = innerViewId,
         uiState = uiState,
         onBackClick = onBackClick,
-        onClickInterviewGroup = { isRecording, id, title ->
-            if (isRecording) navigateToRecord(innerViewId, id, title)
-            else navigateToInterviewGroup()
+        onClickInterviewGroup = { isRecording, id ->
+            if (isRecording) navigateToRecord(innerViewId, id)
+            else navigateToInterviewGroup(innerViewId, id)
         },
         onNotificationClick = { isOn -> viewModel.changeNotificationState(innerViewId, isOn) },
         navigateToInnerViewQuestion = navigateToInnerViewQuestion,
@@ -129,17 +134,18 @@ internal fun InnerViewDetailScreen(
 
 @Composable
 private fun InnerViewDetailContent(
+    padding: PaddingValues,
     innerViewId: String,
     uiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     onNotificationClick: (Boolean) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
     addInterviewGroup: () -> Unit
 ) {
     Box(
         modifier = Modifier
-            .systemBarsPadding()
+            .padding(padding)
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
@@ -167,7 +173,6 @@ private fun InnerViewDetailContent(
         )
         Box(
             modifier = Modifier
-                .systemBarsPadding()
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background),
@@ -215,14 +220,12 @@ private fun InnerViewDetailContent(
 
             if (uiState.type == InnerViewType.DAY) {
                 DailyInterviewGroupList(
-                    title = uiState.title,
                     interviewGroups = uiState.interviewGroups,
                     onClickInterviewGroup = onClickInterviewGroup,
                     lazyGridState = lazyGridState
                 )
             } else {
                 InterviewGroupList(
-                    title = uiState.title,
                     interviewGroups = uiState.interviewGroups,
                     onClickInterviewGroup = onClickInterviewGroup,
                     lazyGridState = lazyGridState
@@ -244,9 +247,8 @@ private fun InnerViewDetailContent(
 
 @Composable
 private fun DailyInterviewGroupList(
-    title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     lazyGridState: LazyGridState
 ) {
     val interviews = interviewGroups.groupBy {
@@ -281,13 +283,7 @@ private fun DailyInterviewGroupList(
                 InterviewGroupItem(
                     modifier = Modifier
                         .height(150.dp)
-                        .clickable {
-                            onClickInterviewGroup(
-                                it.isRecording,
-                                it.id,
-                                "$title : $createAt"
-                            )
-                        },
+                        .clickable { onClickInterviewGroup(it.isRecording, it.id) },
                     interviewGroup = it,
                     dateTextStyle = MaterialTheme.typography.labelLarge,
                     createAt = createAt,
@@ -301,9 +297,8 @@ private fun DailyInterviewGroupList(
 
 @Composable
 private fun InterviewGroupList(
-    title: String,
     interviewGroups: ImmutableList<InterviewGroup>,
-    onClickInterviewGroup: (Boolean, Int, String) -> Unit,
+    onClickInterviewGroup: (Boolean, Int) -> Unit,
     lazyGridState: LazyGridState
 ) {
     LazyVerticalGrid(
@@ -325,9 +320,7 @@ private fun InterviewGroupList(
             InterviewGroupItem(
                 modifier = Modifier
                     .height(240.dp)
-                    .clickable {
-                        onClickInterviewGroup(it.isRecording, it.id, "$title : $createAt")
-                    },
+                    .clickable { onClickInterviewGroup(it.isRecording, it.id) },
                 interviewGroup = it,
                 dateTextStyle = MaterialTheme.typography.titleSmall,
                 createAt = createAt,
@@ -372,10 +365,11 @@ private fun InnerViewDetailContentPreview() {
                 )
             ),
             onBackClick = {},
-            onClickInterviewGroup = { _, _, _ -> },
-            navigateToInnerViewQuestion = {},
+            onClickInterviewGroup = { _, _ -> },
             onNotificationClick = {},
-            addInterviewGroup = {}
+            navigateToInnerViewQuestion = {},
+            addInterviewGroup = {},
+            padding = PaddingValues()
         )
     }
 }
@@ -415,10 +409,11 @@ private fun DailyInnerViewDetailContentPreview() {
                 )
             ),
             onBackClick = {},
-            onClickInterviewGroup = { _, _, _ -> },
-            navigateToInnerViewQuestion = {},
+            onClickInterviewGroup = { _, _ -> },
             onNotificationClick = {},
-            addInterviewGroup = {}
+            navigateToInnerViewQuestion = {},
+            addInterviewGroup = {},
+            padding = PaddingValues()
         )
     }
 }

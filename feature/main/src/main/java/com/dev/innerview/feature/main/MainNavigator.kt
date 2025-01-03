@@ -17,6 +17,7 @@ import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
 import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
+import com.dev.innerview.feature.home.navigation.navigatePlayer
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
 import com.dev.innerview.feature.record.navigation.navigateFilming
@@ -57,16 +58,16 @@ internal class MainNavigator(
         navController.navigateInnerViewDetail(id)
     }
 
-    fun navigateInterviewGroup() {
-        navController.navigateInterviewGroup()
+    fun navigateInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+        navController.navigateInterviewGroup(innerViewId, interviewGroupId)
     }
 
     fun navigateInnerViewQuestion(id: String) {
         navController.navigateInnerViewQuestion(id)
     }
 
-    fun navigateRecord(innerViewId: String, interviewGroupId: Int, title:String) {
-        navController.navigateRecord(innerViewId, interviewGroupId, title)
+    fun navigateRecord(innerViewId: String, interviewGroupId: Int) {
+        navController.navigateRecord(innerViewId, interviewGroupId)
     }
 
     fun navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {
@@ -75,6 +76,10 @@ internal class MainNavigator(
 
     fun navigateEdit(innerProjectId: Int) {
         navController.navigateEdit(innerProjectId)
+    }
+
+    fun navigatePlayer() {
+        navController.navigatePlayer()
     }
 
     private fun popBackStack() {

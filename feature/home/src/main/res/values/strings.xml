@@ -36,4 +36,6 @@
     <string name="feature_home_toast_notification_permission">[설정]→[애플리케이션 정보]→[알림]\n권한을 허용해주세요.</string>
     <string name="feature_home_toast_notification_on">%1$s 알림을 켰습니다.</string>
     <string name="feature_home_toast_notification_off">%1$s 알림을 껐습니다.</string>
+
+    <string name="feature_home_interview_group_play_all">전체 재생</string>
 </resources>

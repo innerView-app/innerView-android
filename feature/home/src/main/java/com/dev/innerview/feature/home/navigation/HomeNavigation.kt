@@ -23,12 +23,16 @@ fun NavController.navigateInnerViewDetail(id: String) {
     navigate(Route.InnerViewDetail(id))
 }
 
-fun NavController.navigateInterviewGroup() {
-    navigate(Route.InterviewGroup)
+fun NavController.navigateInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+    navigate(Route.InterviewGroup(innerViewId, interviewGroupId))
 }
 
 fun NavController.navigateInnerViewQuestion(id: String) {
     navigate(Route.InnerViewQuestion(id))
+}
+
+fun NavController.navigatePlayer() {
+    navigate(Route.Player)
 }
 
 fun NavGraphBuilder.homeNavGraph(
@@ -38,8 +42,9 @@ fun NavGraphBuilder.homeNavGraph(
     onShowToast: (text: String) -> Unit,
     navigateToInnerViewDetail: (String) -> Unit,
     navigateToInnerViewQuestion: (String) -> Unit,
-    navigateToInterviewGroup: () -> Unit,
-    navigateToRecord: (String, Int, String) -> Unit
+    navigateToRecord: (String, Int) -> Unit,
+    navigateToInterviewGroup: (String, Int) -> Unit,
+    navigateToPlayer: () -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -50,12 +55,11 @@ fun NavGraphBuilder.homeNavGraph(
     }
 
     composable<Route.InnerViewDetail>(
-        deepLinks = listOf(
-            navDeepLink<Route.InnerViewDetail>(basePath = DEEP_LINK_BASE_PATH)
-        )
+        deepLinks = listOf(navDeepLink<Route.InnerViewDetail>(basePath = DEEP_LINK_BASE_PATH))
     ) { navBackStackEntry ->
         val (id) = navBackStackEntry.toRoute<Route.InnerViewDetail>()
         InnerViewDetailScreen(
+            padding = padding,
             innerViewId = id,
             onBackClick = onBackClick,
             onShowToast = onShowToast,
@@ -65,17 +69,25 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InterviewGroup> {
+    composable<Route.InterviewGroup> { navBackStackEntry ->
+        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.InterviewGroup>()
         InterviewGroupScreen(
-            onBackClick = onBackClick
+            padding = padding,
+            onBackClick = onBackClick,
+            innerViewId = innerViewId,
+            interviewGroupId = interviewGroupId,
+            navigateToPlayer = navigateToPlayer
         )
     }
 
     composable<Route.InnerViewQuestion> { navBackStackEntry ->
         val (id) = navBackStackEntry.toRoute<Route.InnerViewQuestion>()
         InnerViewQuestionScreen(
+            padding = padding,
             innerViewId = id,
             onBackClick = onBackClick
         )
     }
+
+    composable<Route.Player> {}
 }

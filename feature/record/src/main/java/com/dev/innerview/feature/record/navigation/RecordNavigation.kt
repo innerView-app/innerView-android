@@ -9,8 +9,8 @@ import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.FilmingScreen
 import com.dev.innerview.feature.record.RecordScreen
 
-fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int, title:String) {
-    navigate(Route.Records(innerViewId, interviewGroupId, title))
+fun NavController.navigateRecord(innerViewId: String, interviewGroupId: Int) {
+    navigate(Route.Records(innerViewId, interviewGroupId))
 }
 
 fun NavController.navigateFilming(innerViewId: String, interviewGroupId: Int, question: String) {

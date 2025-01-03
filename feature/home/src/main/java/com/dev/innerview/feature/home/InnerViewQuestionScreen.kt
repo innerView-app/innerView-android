@@ -7,13 +7,13 @@ import androidx.compose.foundation.gestures.rememberDraggableState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -49,6 +49,7 @@ import kotlin.math.roundToInt
 
 @Composable
 internal fun InnerViewQuestionScreen(
+    padding: PaddingValues,
     innerViewId: String,
     onBackClick: () -> Unit,
     viewModel: InnerViewQuestionViewModel = hiltViewModel()
@@ -60,6 +61,7 @@ internal fun InnerViewQuestionScreen(
     }
 
     InnerViewQuestionContent(
+        padding = padding,
         onBackClick = onBackClick,
         title = innerViewQuestionUiState.title,
         questions = innerViewQuestionUiState.interviewQuestions,
@@ -71,6 +73,7 @@ internal fun InnerViewQuestionScreen(
 
 @Composable
 private fun InnerViewQuestionContent(
+    padding: PaddingValues,
     onBackClick: () -> Unit,
     title: String,
     questions: ImmutableList<String>,
@@ -78,7 +81,7 @@ private fun InnerViewQuestionContent(
 ) {
     Box(
         modifier = Modifier
-            .systemBarsPadding()
+            .padding(padding)
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
@@ -88,7 +91,6 @@ private fun InnerViewQuestionContent(
         )
         Column(
             modifier = Modifier
-                .systemBarsPadding()
                 .padding(top = appBarSize)
                 .fillMaxSize()
                 .background(MaterialTheme.colorScheme.background)
@@ -198,6 +200,7 @@ private fun ReorderableList(
 private fun InnerViewQuestionScreenPreview() {
     InnerViewTheme {
         InnerViewQuestionContent(
+            padding = PaddingValues(),
             onBackClick = {},
             title = "title",
             questions = (1..20).map { it.toString() }.toPersistentList(),
