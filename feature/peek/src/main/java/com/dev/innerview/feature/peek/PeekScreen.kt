@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.VerticalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -99,7 +100,8 @@ private fun PeekScreen(
     Box(
         modifier = Modifier
             .padding(padding)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .background(Color.Black),
         contentAlignment = Alignment.Center
     ) {
         if (peekUiState.media.isNotEmpty()) {
@@ -121,11 +123,7 @@ private fun PeekScreen(
                 )
             }
         } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Red)
-            )
+            CircularProgressIndicator()
         }
     }
 }
