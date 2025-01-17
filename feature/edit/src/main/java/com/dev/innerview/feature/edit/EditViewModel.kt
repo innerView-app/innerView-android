@@ -10,11 +10,11 @@ import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
 import com.dev.innerview.core.domain.usecase.UpdateInnerProjectUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewPiece
+import com.dev.innerview.core.playback.playstate.PlaybackStateListener
+import com.dev.innerview.core.playback.playstate.PlaybackStateManager
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaUiState
 import com.dev.innerview.feature.edit.model.SplitOption
-import com.dev.innerview.feature.edit.playstate.PlaybackStateListener
-import com.dev.innerview.feature.edit.playstate.PlaybackStateManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.collections.immutable.toPersistentList

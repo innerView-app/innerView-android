@@ -1,16 +1,22 @@
 package com.dev.innerview.feature.peek
 
 import android.content.res.Configuration
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
@@ -35,15 +41,21 @@ internal fun PeekRoute(
 private fun PeekScreen(
     padding: PaddingValues,
 ) {
-    Box(
+    Column(
         modifier = Modifier
             .padding(padding)
             .fillMaxSize(),
-        contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "Peek Screen",
-            style = MaterialTheme.typography.titleMedium
+        Box(
+            modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+            .background(Color.Yellow))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Color.Red)
         )
     }
 }
