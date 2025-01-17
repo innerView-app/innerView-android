@@ -1,7 +1,9 @@
 package com.dev.innerview.core.designsystem.component
 
+import android.content.res.Configuration
 import android.graphics.Bitmap
 import android.media.MediaMetadataRetriever
+import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -12,6 +14,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.core.net.toUri
 import coil.ImageLoader
@@ -19,6 +22,7 @@ import coil.compose.AsyncImage
 import coil.decode.VideoFrameDecoder
 import coil.request.ImageRequest
 import com.dev.innerview.core.designsystem.R
+import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import java.io.File
 
 @Composable
@@ -55,6 +59,34 @@ fun VideoThumbnail(
 }
 
 @Composable
+fun ImageFromUri(
+    modifier: Modifier = Modifier,
+    uri: String,
+    contentScale: ContentScale = ContentScale.Crop,
+    contentDescription: String? = null
+) {
+    val context = LocalContext.current
+
+    val imageLoader = ImageLoader.Builder(context)
+        .build()
+
+    val imageRequest = ImageRequest.Builder(context)
+        .data(Uri.parse(uri))
+        .placeholder(R.drawable.video_thumbnail_placeholder)
+        .error(R.drawable.video_thumbnail_error)
+        .build()
+
+    AsyncImage(
+        model = imageRequest,
+        imageLoader = imageLoader,
+        contentDescription = contentDescription,
+        contentScale = contentScale,
+        modifier = modifier
+    )
+}
+
+
+@Composable
 fun getScaledVideoThumbnailByPath(filePath: String, targetHeight: Dp): ImageBitmap {
     val context = LocalContext.current
 
@@ -82,4 +114,16 @@ fun getScaledVideoThumbnailByPath(filePath: String, targetHeight: Dp): ImageBitm
     val scaledHeight = (bitmap.height * scale).toInt()
 
     return Bitmap.createScaledBitmap(bitmap, scaledWidth, scaledHeight, true).asImageBitmap()
+}
+
+@Composable
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_NO)
+@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES)
+private fun ImageFromUriPreview() {
+    InnerViewTheme {
+        ImageFromUri(
+            modifier = Modifier,
+            uri = "null",
+        )
+    }
 }
