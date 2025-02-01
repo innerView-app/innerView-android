@@ -24,7 +24,7 @@ class PeekViewModel @Inject constructor() : ViewModel() {
     private val testMediaItems = listOf(
         MediaUiState(
             title = "요리하기",
-            mediaUri = "https://flipfit-cdn.akamaized.net/flip_hls/661f570aab9d840019942b80-473e0b/video_h1.m3u8",
+            mediaUri = "https://server.chani.pro/api/video/894cd589-26fd-400a-983f-418a4e6cfc1a/index.m3u8",
             userId = "user_1",
             userProfileUri = "https://postfiles.pstatic.net/MjAyMjA1MjBfMjU2/MDAxNjUzMDA0NjQzNzQw.YLo0qAgenkqR5O1M4ASLlyq-0FI82aTaKYb62k4NMVgg.MuCgixpiPX_IUTLKdhXuOXKT7GkdVLTxchmHqn-kdl8g.JPEG.jsgmh7695/IMG_4834.JPG?type=w966",
         ),

@@ -89,7 +89,6 @@ private fun PeekScreen(
         lifecycleOwner.lifecycle.addObserver(observer)
 
         onDispose {
-            println("DisposableEffect onDispose")
             lifecycleOwner.lifecycle.removeObserver(observer)
             playerPair.first.release()
             playerPair.second.release()
