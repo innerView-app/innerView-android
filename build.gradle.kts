@@ -12,6 +12,10 @@ plugins {
     alias(libs.plugins.google.services) apply false
 }
 
+apply {
+    from("gradle/projectDependencyGraph.gradle")
+}
+
 allprojects {
     tasks.withType<KotlinCompile>().configureEach {
         compilerOptions {

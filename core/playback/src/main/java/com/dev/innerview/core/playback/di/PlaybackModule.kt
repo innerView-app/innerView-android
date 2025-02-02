@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.edit.di
+package com.dev.innerview.core.playback.di
 
 import android.content.Context
 import androidx.annotation.OptIn
