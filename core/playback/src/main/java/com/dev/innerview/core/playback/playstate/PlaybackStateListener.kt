@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.edit.playstate
+package com.dev.innerview.core.playback.playstate
 
 import androidx.media3.common.MediaItem
 import androidx.media3.common.PlaybackParameters

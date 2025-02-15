@@ -197,16 +197,16 @@ private fun EditContent(
                         )
                     }
                 }
-                IconButton(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = { addMedia() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ExposurePlus1,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
+//                IconButton(
+//                    modifier = Modifier.align(Alignment.BottomEnd),
+//                    onClick = { addMedia() }
+//                ) {
+//                    Icon(
+//                        imageVector = Icons.Filled.ExposurePlus1,
+//                        contentDescription = null,
+//                        tint = Color.White
+//                    )
+//                }
             }
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
             Box(
@@ -280,12 +280,12 @@ private fun EditContent(
                                     layerName = "Text",
                                     onLayerIconClick = { }
                                 ) {
-                                    Box(
-                                        modifier = Modifier
-                                            .height(50.dp)
-                                            .width(30.dp)
-                                            .background(Color.Cyan)
-                                    )
+//                                    Box(
+//                                        modifier = Modifier
+//                                            .height(50.dp)
+//                                            .width(30.dp)
+//                                            .background(Color.Cyan)
+//                                    )
                                 }
                             }
                         }

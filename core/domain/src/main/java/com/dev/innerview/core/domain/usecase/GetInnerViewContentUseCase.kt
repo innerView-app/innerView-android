@@ -16,7 +16,7 @@ class GetInnerViewContentUseCase @Inject constructor(
             .onEach { content ->
                 content.interviewGroups
                     .filter {
-                        it.isRecording && it.createdAt.plusSeconds(5).isBefore(ZonedDateTime.now())
+                        it.isRecording && it.createdAt.plusDays(10).isBefore(ZonedDateTime.now())
                     }
                     .forEach {
                         innerViewRepository.deleteInterviewGroup(

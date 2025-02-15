@@ -1,4 +1,4 @@
-package com.dev.innerview.feature.edit.playstate
+package com.dev.innerview.core.playback.playstate
 
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
