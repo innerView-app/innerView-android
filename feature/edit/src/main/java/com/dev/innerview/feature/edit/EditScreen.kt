@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
@@ -59,6 +58,7 @@ import com.dev.innerview.feature.edit.component.MediaItemBottomBar
 import com.dev.innerview.feature.edit.component.PlayerBar
 import com.dev.innerview.feature.edit.component.PlayerView
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.MediaItemSide
 import com.dev.innerview.feature.edit.model.MediaUiState
 import com.dev.innerview.feature.edit.model.SplitOption
 import kotlinx.collections.immutable.persistentListOf
@@ -94,6 +94,7 @@ internal fun EditScreen(
         cancelMediaItem = viewModel::cancelMediaItem,
         splitMediaItem = viewModel::splitMediaItem,
         deleteMediaItem = viewModel::deleteMediaItem,
+        updateMediaItemLengthen = viewModel::updateMediaItemLengthen,
     )
 }
 
@@ -113,6 +114,7 @@ private fun EditContent(
     cancelMediaItem: () -> Unit,
     splitMediaItem: (SplitOption) -> Unit,
     deleteMediaItem: () -> Unit,
+    updateMediaItemLengthen: (MediaItemSide, Int, Int) -> Unit,
 ) {
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
@@ -197,16 +199,16 @@ private fun EditContent(
                         )
                     }
                 }
-//                IconButton(
-//                    modifier = Modifier.align(Alignment.BottomEnd),
-//                    onClick = { addMedia() }
-//                ) {
-//                    Icon(
-//                        imageVector = Icons.Filled.ExposurePlus1,
-//                        contentDescription = null,
-//                        tint = Color.White
-//                    )
-//                }
+                IconButton(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    onClick = { addMedia() }
+                ) {
+                    Icon(
+                        imageVector = Icons.Filled.ExposurePlus1,
+                        contentDescription = null,
+                        tint = Color.White
+                    )
+                }
             }
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
             Box(
@@ -268,7 +270,10 @@ private fun EditContent(
                                                 .padding(vertical = 2.dp)
                                                 .offset(x = startOffset)
                                                 .clickable { selectMediaItem(i) },
-                                            mediaUiState = editUiState.media[i]
+                                            mediaUiState = editUiState.media[i],
+                                            updateMediaItemLengthen = { side, value ->
+                                                updateMediaItemLengthen(side, i, value)
+                                            }
                                         )
                                     }
                                 }
@@ -354,6 +359,7 @@ private fun EditContentPreview() {
             cancelMediaItem = {},
             splitMediaItem = {},
             deleteMediaItem = {},
+            updateMediaItemLengthen = { _, _, _ -> },
         )
     }
 }
