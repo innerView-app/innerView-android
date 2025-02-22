@@ -60,6 +60,7 @@ import com.dev.innerview.feature.edit.component.PlayerView
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaItemSide
 import com.dev.innerview.feature.edit.model.MediaUiState
+import com.dev.innerview.feature.edit.model.PositionUpdateOption
 import com.dev.innerview.feature.edit.model.SplitOption
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.flow.collectLatest
@@ -95,6 +96,7 @@ internal fun EditScreen(
         splitMediaItem = viewModel::splitMediaItem,
         deleteMediaItem = viewModel::deleteMediaItem,
         updateMediaItemLengthen = viewModel::updateMediaItemLengthen,
+        updateMediaItemPosition = viewModel::updateMediaItemPosition,
     )
 }
 
@@ -115,6 +117,7 @@ private fun EditContent(
     splitMediaItem: (SplitOption) -> Unit,
     deleteMediaItem: () -> Unit,
     updateMediaItemLengthen: (MediaItemSide, Int, Int) -> Unit,
+    updateMediaItemPosition: (PositionUpdateOption) -> Unit,
 ) {
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
@@ -307,6 +310,7 @@ private fun EditContent(
                     cancelMediaItem = cancelMediaItem,
                     splitMediaItem = splitMediaItem,
                     deleteMediaItem = deleteMediaItem,
+                    updateMediaItemPosition = updateMediaItemPosition,
                 )
             }
         }
@@ -360,6 +364,7 @@ private fun EditContentPreview() {
             splitMediaItem = {},
             deleteMediaItem = {},
             updateMediaItemLengthen = { _, _, _ -> },
+            updateMediaItemPosition = {},
         )
     }
 }
