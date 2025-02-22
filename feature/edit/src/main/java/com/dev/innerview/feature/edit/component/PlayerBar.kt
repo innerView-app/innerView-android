@@ -48,20 +48,6 @@ fun PlayerBar(
     Column(
         modifier = Modifier.fillMaxWidth()
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(18.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
-        ) {
-            Text(
-                text = "0",
-                fontSize = 12.sp,
-                color = Color.White,
-                textAlign = TextAlign.Center,
-            )
-        }
         HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
         Row(
             modifier = Modifier
