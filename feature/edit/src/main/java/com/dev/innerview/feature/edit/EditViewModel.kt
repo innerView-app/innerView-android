@@ -15,6 +15,7 @@ import com.dev.innerview.core.playback.playstate.PlaybackStateManager
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaItemSide
 import com.dev.innerview.feature.edit.model.MediaUiState
+import com.dev.innerview.feature.edit.model.PositionUpdateOption
 import com.dev.innerview.feature.edit.model.SplitOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -377,6 +378,72 @@ class EditViewModel @Inject constructor(
             )
         }
         fetchPlayer()
+    }
+
+    fun updateMediaItemPosition(positionUpdateOption: PositionUpdateOption) {
+        player.pause()
+        with(_editUiState.value) {
+            val selectedIndex = media.indexOfFirst { it.selected }
+            if (selectedIndex == -1) return
+
+            var newMedia = media.toPersistentList()
+            when (positionUpdateOption) {
+                PositionUpdateOption.START -> {
+                    val temp = newMedia[selectedIndex]
+                    newMedia = newMedia.removeAt(selectedIndex).add(0, temp)
+                }
+
+                PositionUpdateOption.LEFT -> {
+                    if (selectedIndex != 0) {
+                        val temp = newMedia[selectedIndex]
+                        newMedia = newMedia.set(selectedIndex, newMedia[selectedIndex - 1])
+                            .set(selectedIndex - 1, temp)
+                    } else {
+                        return
+                    }
+                }
+
+                PositionUpdateOption.RIGHT -> {
+                    if (selectedIndex != media.size - 1) {
+                        val temp = newMedia[selectedIndex]
+                        newMedia = newMedia.set(selectedIndex, newMedia[selectedIndex + 1])
+                            .set(selectedIndex + 1, temp)
+                    } else {
+                        return
+                    }
+                }
+
+                PositionUpdateOption.END -> {
+                    val temp = newMedia[selectedIndex]
+                    newMedia = newMedia.removeAt(selectedIndex).add(temp)
+                }
+            }
+
+            _editUiState.update {
+                it.copy(
+                    media = newMedia,
+                )
+            }
+
+            fetchPlayer()
+            when (positionUpdateOption) {
+                PositionUpdateOption.START -> {
+                    player.seekTo(0, 0)
+                }
+
+                PositionUpdateOption.LEFT -> {
+                    player.seekTo(selectedIndex - 1, 0)
+                }
+
+                PositionUpdateOption.RIGHT -> {
+                    player.seekTo(selectedIndex + 1, 0)
+                }
+
+                PositionUpdateOption.END -> {
+                    player.seekTo(media.size - 1, 0)
+                }
+            }
+        }
     }
 
     private fun fetchPlayer() {
