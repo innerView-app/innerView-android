@@ -7,18 +7,26 @@ import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
+import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
+import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
+import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.core.domain.usecase.UpdateInnerProjectUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.core.playback.playstate.PlaybackStateListener
 import com.dev.innerview.core.playback.playstate.PlaybackStateManager
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.InnerViewSelectUiState
+import com.dev.innerview.feature.edit.model.InterviewGroupSelectUiState
+import com.dev.innerview.feature.edit.model.InterviewSelectUiState
+import com.dev.innerview.feature.edit.model.MediaAddUiState
 import com.dev.innerview.feature.edit.model.MediaItemSide
 import com.dev.innerview.feature.edit.model.MediaUiState
 import com.dev.innerview.feature.edit.model.PositionUpdateOption
 import com.dev.innerview.feature.edit.model.SplitOption
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,6 +43,10 @@ class EditViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
     private val getInnerProjectByIdUseCase: GetInnerProjectByIdUseCase,
     private val updateInnerProjectUseCase: UpdateInnerProjectUseCase,
+    private val getInnerViewUseCase: GetInnerViewUseCase,
+    private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
+    private val getInterviewGroupContentUseCase: GetInterviewGroupContentUseCase,
+    private val getInnerViewProjectByIdUseCase: GetInnerProjectByIdUseCase,
     private val playbackStateManager: PlaybackStateManager,
     private val playbackStateListener: PlaybackStateListener,
     val player: Player,
@@ -45,6 +57,9 @@ class EditViewModel @Inject constructor(
 
     private val _editUiState = MutableStateFlow(EditUiState())
     val editUiState = _editUiState.asStateFlow()
+
+    private val _mediaAddUiState = MutableStateFlow(MediaAddUiState())
+    val mediaAddUiState = _mediaAddUiState.asStateFlow()
 
     init {
         playbackStateListener.attachTo(player)
@@ -107,26 +122,26 @@ class EditViewModel @Inject constructor(
         }
     }
 
-    fun addMediaItem() {
-        val newMedia = _editUiState.value.media.toPersistentList().add(
-            _editUiState.value.media.last()
-        )
-        val duration = newMedia.sumOf {
-            it.medium.endPosition - it.medium.startPosition
-        }
-        val mediaItem = newMedia.last().toMediaItem()
-        player.addMediaItem(mediaItem)
-        player.prepare()
-        val accumulatedDurations = calculateAccumulatedDurations(newMedia)
-        _editUiState.update {
-            it.copy(
-                media = newMedia,
-                accumulatedDurations = accumulatedDurations.toPersistentList(),
-                duration = duration
-            )
-        }
-        saveInnerProject()
-    }
+//    fun addMediaItem() {
+//        val newMedia = _editUiState.value.media.toPersistentList().add(
+//            _editUiState.value.media.last()
+//        )
+//        val duration = newMedia.sumOf {
+//            it.medium.endPosition - it.medium.startPosition
+//        }
+//        val mediaItem = newMedia.last().toMediaItem()
+//        player.addMediaItem(mediaItem)
+//        player.prepare()
+//        val accumulatedDurations = calculateAccumulatedDurations(newMedia)
+//        _editUiState.update {
+//            it.copy(
+//                media = newMedia,
+//                accumulatedDurations = accumulatedDurations.toPersistentList(),
+//                duration = duration
+//            )
+//        }
+//        saveInnerProject()
+//    }
 
     fun updateZoom(zoom: Float) {
         _editUiState.update {
@@ -532,6 +547,172 @@ class EditViewModel @Inject constructor(
             )
             .build()
         return mediaItem
+    }
+
+    fun selectMediaAddBottomSheet() {
+        viewModelScope.launch {
+            _mediaAddUiState.update {
+                it.copy(
+                    isOpen = !it.isOpen,
+                    innerViews = if (!it.isOpen && it.innerViews.isEmpty()) {
+                        getInnerViewUseCase().first().map { innerView ->
+                            InnerViewSelectUiState.create(innerView)
+                        }.toPersistentList()
+                    } else {
+                        it.innerViews
+                    }
+                )
+            }
+        }
+    }
+
+    fun selectInnerViewItem(id: String) {
+        viewModelScope.launch {
+            _mediaAddUiState.update {
+                it.copy(
+                    innerViews = it.innerViews.map { innerView ->
+                        if (innerView.innerViewId == id) {
+                            innerView.copy(
+                                isOpen = !innerView.isOpen,
+                                innerViewContents = if (!innerView.isOpen && innerView.innerViewContents.isEmpty()) {
+                                    getInnerViewContentUseCase(id)
+                                        .first().interviewGroups.mapNotNull { interviewGroup ->
+                                            if (!interviewGroup.isRecording) {
+                                                InterviewGroupSelectUiState.create(
+                                                    innerView.innerViewId,
+                                                    interviewGroup
+                                                )
+                                            } else {
+                                                null
+                                            }
+                                        }.toPersistentList()
+                                } else {
+                                    innerView.innerViewContents
+                                }
+                            )
+                        } else {
+                            innerView
+                        }
+                    }.toPersistentList()
+                )
+            }
+        }
+    }
+
+    fun selectInterviewGroupItem(innerViewId: String, interviewGroupId: Int) {
+        viewModelScope.launch {
+            _mediaAddUiState.update {
+                it.copy(
+                    innerViews = it.innerViews.map { innerView ->
+                        if (innerView.innerViewId == innerViewId) {
+                            innerView.copy(
+                                innerViewContents = innerView.innerViewContents.map { interviewGroup ->
+                                    if (interviewGroup.interviewGroupId == interviewGroupId) {
+                                        interviewGroup.copy(
+                                            isOpen = !interviewGroup.isOpen,
+                                            interviewContents = if (!interviewGroup.isOpen && interviewGroup.interviewContents.isEmpty()) {
+                                                getInterviewGroupContentUseCase(
+                                                    innerViewId,
+                                                    interviewGroupId
+                                                )
+                                                    .first().interviews.map { interview ->
+                                                        InterviewSelectUiState.create(
+                                                            innerViewId,
+                                                            interviewGroupId,
+                                                            interview
+                                                        )
+                                                    }.toPersistentList()
+                                            } else {
+                                                interviewGroup.interviewContents
+                                            }
+                                        )
+                                    } else {
+                                        interviewGroup
+                                    }
+                                }.toPersistentList()
+                            )
+                        } else {
+                            innerView
+                        }
+                    }.toPersistentList()
+                )
+            }
+        }
+    }
+
+    fun selectInterviewItem(innerViewId: String, interviewGroupId: Int, innerProjectId: Int) {
+        viewModelScope.launch {
+            val selectedInnerProjectId =
+                _mediaAddUiState.value.selectedInnerProjectId.toMutableList()
+            val innerViews = _mediaAddUiState.value.innerViews.map { innerView ->
+                if (innerView.innerViewId == innerViewId) {
+                    innerView.copy(
+                        innerViewContents = innerView.innerViewContents.map { interviewGroup ->
+                            if (interviewGroup.interviewGroupId == interviewGroupId) {
+                                interviewGroup.copy(
+                                    interviewContents = interviewGroup.interviewContents.map { interview ->
+                                        if (interview.innerProjectId == innerProjectId) {
+                                            if (!interview.selected) {
+                                                selectedInnerProjectId.add(interview.innerProjectId)
+                                            } else {
+                                                selectedInnerProjectId.remove(interview.innerProjectId)
+                                            }
+                                            interview.copy(
+                                                selected = !interview.selected
+                                            )
+                                        } else {
+                                            interview
+                                        }
+                                    }.toPersistentList()
+                                )
+                            } else {
+                                interviewGroup
+                            }
+                        }.toPersistentList()
+                    )
+                } else {
+                    innerView
+                }
+            }.toPersistentList()
+
+            _mediaAddUiState.update {
+                it.copy(
+                    selectedInnerProjectId = selectedInnerProjectId.toPersistentList(),
+                    innerViews = innerViews
+                )
+            }
+        }
+    }
+
+    fun addInterviewItem() {
+        viewModelScope.launch {
+            val newMediaItems =
+                _mediaAddUiState.value.selectedInnerProjectId.map { innerProjectId ->
+                    getInnerProjectByIdUseCase(innerProjectId).first()
+                }.flatMap {
+                    it.innerProjectComponents.media
+                }.map {
+                    MediaUiState(
+                        medium = it
+                    )
+                }
+
+            _editUiState.update {
+                it.copy(
+                    media = it.media.toPersistentList().addAll(newMediaItems)
+                )
+            }
+
+            fetchPlayer()
+
+            _mediaAddUiState.update {
+                it.copy(
+                    isOpen = false,
+                    selectedInnerProjectId = persistentListOf(),
+                    innerViews = persistentListOf()
+                )
+            }
+        }
     }
 
     override fun onCleared() {
