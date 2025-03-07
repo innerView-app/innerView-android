@@ -22,10 +22,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.ExposurePlus1
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -53,11 +53,13 @@ import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.feature.edit.component.EditLayer
+import com.dev.innerview.feature.edit.component.MediaAddBottomSheet
 import com.dev.innerview.feature.edit.component.MediaItem
 import com.dev.innerview.feature.edit.component.MediaItemBottomBar
 import com.dev.innerview.feature.edit.component.PlayerBar
 import com.dev.innerview.feature.edit.component.PlayerView
 import com.dev.innerview.feature.edit.model.EditUiState
+import com.dev.innerview.feature.edit.model.MediaAddUiState
 import com.dev.innerview.feature.edit.model.MediaItemSide
 import com.dev.innerview.feature.edit.model.MediaUiState
 import com.dev.innerview.feature.edit.model.PositionUpdateOption
@@ -75,6 +77,7 @@ internal fun EditScreen(
 ) {
 
     val editUiState by viewModel.editUiState.collectAsStateWithLifecycle()
+    val mediaAddUiState by viewModel.mediaAddUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
         viewModel.fetchInnerProject(innerProjectId)
@@ -85,8 +88,8 @@ internal fun EditScreen(
         innerProjectId = innerProjectId,
         player = viewModel.player,
         editUiState = editUiState,
+        mediaAddUiState = mediaAddUiState,
         onBackClick = onBackClick,
-        addMedia = viewModel::addMediaItem,
         updateZoom = viewModel::updateZoom,
         seekToScrollPosition = viewModel::seekToScrollPosition,
         seekByMediaItem = viewModel::seekByMediaItem,
@@ -97,17 +100,22 @@ internal fun EditScreen(
         deleteMediaItem = viewModel::deleteMediaItem,
         updateMediaItemLengthen = viewModel::updateMediaItemLengthen,
         updateMediaItemPosition = viewModel::updateMediaItemPosition,
+        selectMediaAddBottomSheet = viewModel::selectMediaAddBottomSheet,
+        selectInnerViewItem = viewModel::selectInnerViewItem,
+        selectInterviewGroupItem = viewModel::selectInterviewGroupItem,
+        selectInterviewItem = viewModel::selectInterviewItem,
+        addInterviewItem = viewModel::addInterviewItem,
     )
 }
 
-@OptIn(ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun EditContent(
     innerProjectId: Int,
     player: Player?,
     editUiState: EditUiState,
+    mediaAddUiState: MediaAddUiState,
     onBackClick: () -> Unit,
-    addMedia: () -> Unit,
     updateZoom: (Float) -> Unit,
     seekToScrollPosition: (Int) -> Unit,
     seekByMediaItem: (Int) -> Unit,
@@ -118,6 +126,11 @@ private fun EditContent(
     deleteMediaItem: () -> Unit,
     updateMediaItemLengthen: (MediaItemSide, Int, Int) -> Unit,
     updateMediaItemPosition: (PositionUpdateOption) -> Unit,
+    selectMediaAddBottomSheet: () -> Unit,
+    selectInnerViewItem: (String) -> Unit,
+    selectInterviewGroupItem: (String, Int) -> Unit,
+    selectInterviewItem: (String, Int, Int) -> Unit,
+    addInterviewItem: () -> Unit,
 ) {
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
@@ -202,16 +215,6 @@ private fun EditContent(
                         )
                     }
                 }
-                IconButton(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    onClick = { addMedia() }
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.ExposurePlus1,
-                        contentDescription = null,
-                        tint = Color.White
-                    )
-                }
             }
             HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
             Box(
@@ -258,7 +261,7 @@ private fun EditContent(
                                     layerIcon = Icons.Filled.AddCircleOutline,
                                     layerIconDescription = "미디어 추가",
                                     layerName = "Media",
-                                    onLayerIconClick = { }
+                                    onLayerIconClick = { selectMediaAddBottomSheet() }
                                 ) {
                                     for (i in 0 until editUiState.media.size) {
                                         val duration =
@@ -315,6 +318,18 @@ private fun EditContent(
             }
         }
     }
+
+    if (mediaAddUiState.isOpen) {
+        MediaAddBottomSheet(
+            modifier = Modifier,
+            mediaAddUiState = mediaAddUiState,
+            closeSheet = selectMediaAddBottomSheet,
+            selectInnerViewItem = selectInnerViewItem,
+            selectInterviewGroupItem = selectInterviewGroupItem,
+            selectInterviewItem = selectInterviewItem,
+            addInterviewItem = addInterviewItem,
+        )
+    }
 }
 
 @Composable
@@ -352,9 +367,9 @@ private fun EditContentPreview() {
                     0L, 5000L, 6000L
                 )
             ),
+            mediaAddUiState = MediaAddUiState(),
             player = null,
             onBackClick = {},
-            addMedia = {},
             updateZoom = {},
             seekToScrollPosition = {},
             seekByMediaItem = {},
@@ -365,6 +380,11 @@ private fun EditContentPreview() {
             deleteMediaItem = {},
             updateMediaItemLengthen = { _, _, _ -> },
             updateMediaItemPosition = {},
+            selectMediaAddBottomSheet = {},
+            selectInnerViewItem = {},
+            selectInterviewGroupItem = { _, _ -> },
+            selectInterviewItem = { _, _, _ -> },
+            addInterviewItem = {},
         )
     }
 }
