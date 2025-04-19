@@ -54,9 +54,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun FilmingScreen(
-    innerViewId: String,
-    interviewGroupId: Int,
-    question: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     navigationToEdit: (Int) -> Unit,
@@ -117,7 +114,6 @@ internal fun FilmingScreen(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.fetchFilmingUiState(innerViewId, interviewGroupId, question)
         viewModel.uiEventFlow.collectLatest { event ->
             when (event) {
                 is FilmingUiEvent.NavigateToEdit -> {
@@ -129,10 +125,9 @@ internal fun FilmingScreen(
 
     FilmingContent(
         filmingUiState = filmingUiState,
-        question = question,
         padding = padding,
         onBackClick = onBackClick,
-        addInnerProject = { viewModel.addInnerProject(innerViewId, interviewGroupId, question, it) },
+        addInnerProject = { viewModel.addInnerProject(it) },
         startRecording = viewModel::startRecording,
         resetRecording = viewModel::resetRecording,
         pauseRecording = viewModel::pauseRecording,
@@ -162,7 +157,6 @@ internal fun FilmingScreen(
 @Composable
 private fun FilmingContent(
     filmingUiState: FilmingUiState,
-    question: String,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onGoToAppSettings: () -> Unit,
@@ -181,7 +175,6 @@ private fun FilmingContent(
     if (filmingUiState.isSheetOpen) {
         PrevInterviewBottomSheet(
             filmingUiState = filmingUiState,
-            question = question,
             sheetState = sheetState,
             onDismissRequest = selectBottomSheet,
             onItemClick = {}
@@ -194,7 +187,7 @@ private fun FilmingContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = question,
+            title = filmingUiState.question,
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = onBackClick,
         )
@@ -259,7 +252,6 @@ private fun FilmingContentPreview() {
             filmingUiState = FilmingUiState(
                 permissionState = PermissionState.Granted,
             ),
-            question = "question",
             padding = PaddingValues(),
             onBackClick = {},
             onGoToAppSettings = {},

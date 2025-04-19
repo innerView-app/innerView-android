@@ -6,7 +6,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.DEEP_LINK_BASE_PATH
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
@@ -56,11 +55,9 @@ fun NavGraphBuilder.homeNavGraph(
 
     composable<Route.InnerViewDetail>(
         deepLinks = listOf(navDeepLink<Route.InnerViewDetail>(basePath = DEEP_LINK_BASE_PATH))
-    ) { navBackStackEntry ->
-        val (id) = navBackStackEntry.toRoute<Route.InnerViewDetail>()
+    ) {
         InnerViewDetailScreen(
             padding = padding,
-            innerViewId = id,
             onBackClick = onBackClick,
             onShowToast = onShowToast,
             navigateToInterviewGroup = navigateToInterviewGroup,
@@ -69,22 +66,17 @@ fun NavGraphBuilder.homeNavGraph(
         )
     }
 
-    composable<Route.InterviewGroup> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.InterviewGroup>()
+    composable<Route.InterviewGroup> {
         InterviewGroupScreen(
             padding = padding,
             onBackClick = onBackClick,
-            innerViewId = innerViewId,
-            interviewGroupId = interviewGroupId,
             navigateToPlayer = navigateToPlayer
         )
     }
 
-    composable<Route.InnerViewQuestion> { navBackStackEntry ->
-        val (id) = navBackStackEntry.toRoute<Route.InnerViewQuestion>()
+    composable<Route.InnerViewQuestion> {
         InnerViewQuestionScreen(
             padding = padding,
-            innerViewId = id,
             onBackClick = onBackClick
         )
     }

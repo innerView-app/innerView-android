@@ -1,7 +1,9 @@
 package com.dev.innerview.feature.record
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.AddQuestionUseCase
 import com.dev.innerview.core.domain.usecase.CancelNotificationAlarmUseCase
 import com.dev.innerview.core.domain.usecase.CompleteInterviewGroupUseCase
@@ -11,6 +13,7 @@ import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.core.domain.usecase.GetRecommendQuestionsByTypeUseCase
 import com.dev.innerview.core.domain.usecase.RegisterNotificationAlarmUseCase
 import com.dev.innerview.core.model.InnerViewType
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.model.InterviewItemUiState
 import com.dev.innerview.feature.record.model.RecordUiEvent
 import com.dev.innerview.feature.record.model.RecordUiState
@@ -29,6 +32,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class RecordViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getInterviewGroupContentUseCase: GetInterviewGroupContentUseCase,
     private val addQuestionUseCase: AddQuestionUseCase,
     private val completeInterviewGroupUseCase: CompleteInterviewGroupUseCase,
@@ -51,11 +55,14 @@ class RecordViewModel @Inject constructor(
     private val _recordUiState = MutableStateFlow(RecordUiState())
     val recordUiState = _recordUiState.asStateFlow()
 
-    fun fetchInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+    init {
+        val (innerViewId, interviewGroupId) = savedStateHandle.toRoute<Route.Records>()
         getInterviewGroupContentUseCase(innerViewId, interviewGroupId)
             .onEach { interviewGroupContent ->
                 _recordUiState.update {
                     it.copy(
+                        innerViewId = innerViewId,
+                        interviewGroupId = interviewGroupId,
                         title = interviewGroupContent.innerView.title,
                         type = interviewGroupContent.innerView.type,
                         createdAt = interviewGroupContent.interviewGroup.createdAt,
@@ -78,12 +85,12 @@ class RecordViewModel @Inject constructor(
         }
     }
 
-    fun addQuestion(innerViewId: String, interviewGroupId: Int) {
+    fun addQuestion() {
         viewModelScope.launch {
             runCatching {
                 addQuestionUseCase(
-                    innerViewId,
-                    interviewGroupId,
+                    _recordUiState.value.innerViewId,
+                    _recordUiState.value.interviewGroupId,
                     _recordUiState.value.let {
                         it.selectableQuestions[it.selectedQuestion]
                     }
@@ -100,25 +107,36 @@ class RecordViewModel @Inject constructor(
         }
     }
 
-    fun deleteQuestion(innerViewId: String, interviewGroupId: Int, question: String) {
+    fun deleteQuestion(question: String) {
         viewModelScope.launch {
-            deleteQuestionUseCase(innerViewId, interviewGroupId, question)
+            deleteQuestionUseCase(
+                _recordUiState.value.innerViewId,
+                _recordUiState.value.interviewGroupId,
+                question
+            )
         }
     }
 
-    fun deleteInnerProject(innerViewId: String, interviewGroupId: Int, question: String) {
+    fun deleteInnerProject(question: String) {
         viewModelScope.launch {
-            deleteInnerProjectUseCase(innerViewId, interviewGroupId, question)
+            deleteInnerProjectUseCase(
+                _recordUiState.value.innerViewId,
+                _recordUiState.value.interviewGroupId,
+                question
+            )
         }
     }
 
-    fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+    fun completeInterviewGroup() {
         viewModelScope.launch {
-            completeInterviewGroupUseCase(innerViewId, interviewGroupId)
-            cancelNotificationAlarmUseCase(innerViewId)
+            completeInterviewGroupUseCase(
+                _recordUiState.value.innerViewId,
+                _recordUiState.value.interviewGroupId
+            )
+            cancelNotificationAlarmUseCase(_recordUiState.value.innerViewId)
             with(recordUiState.value) {
                 registerNotificationAlarmUseCase(
-                    innerViewId = innerViewId,
+                    innerViewId = _recordUiState.value.innerViewId,
                     innerViewType = type,
                     innerViewTitle = title,
                     lastInnerViewTime = createdAt

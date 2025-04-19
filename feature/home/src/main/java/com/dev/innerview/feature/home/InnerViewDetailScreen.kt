@@ -70,7 +70,6 @@ import java.time.format.DateTimeFormatter
 @Composable
 internal fun InnerViewDetailScreen(
     padding: PaddingValues,
-    innerViewId: String,
     onBackClick: () -> Unit,
     onShowToast: (text: String) -> Unit,
     navigateToInterviewGroup: (String, Int) -> Unit,
@@ -80,10 +79,6 @@ internal fun InnerViewDetailScreen(
 ) {
     val uiState by viewModel.innerViewDetailUiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
-
-    LaunchedEffect(innerViewId) {
-        viewModel.fetchInnerView(innerViewId)
-    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEventFlow.collectLatest { event ->
@@ -119,23 +114,21 @@ internal fun InnerViewDetailScreen(
 
     InnerViewDetailContent(
         padding = padding,
-        innerViewId = innerViewId,
         uiState = uiState,
         onBackClick = onBackClick,
         onClickInterviewGroup = { isRecording, id ->
-            if (isRecording) navigateToRecord(innerViewId, id)
-            else navigateToInterviewGroup(innerViewId, id)
+            if (isRecording) navigateToRecord(uiState.innerViewId, id)
+            else navigateToInterviewGroup(uiState.innerViewId, id)
         },
-        onNotificationClick = { isOn -> viewModel.changeNotificationState(innerViewId, isOn) },
+        onNotificationClick = viewModel::changeNotificationState,
         navigateToInnerViewQuestion = navigateToInnerViewQuestion,
-        addInterviewGroup = { viewModel.addInnerViewGroup(innerViewId) }
+        addInterviewGroup = viewModel::addInnerViewGroup
     )
 }
 
 @Composable
 private fun InnerViewDetailContent(
     padding: PaddingValues,
-    innerViewId: String,
     uiState: InnerViewDetailUiState,
     onBackClick: () -> Unit,
     onClickInterviewGroup: (Boolean, Int) -> Unit,
@@ -156,7 +149,7 @@ private fun InnerViewDetailContent(
                 InnerViewAppBarIcon(
                     imageVector = Icons.AutoMirrored.Filled.List,
                     navigationIconContentDescription = null,
-                    onClick = { navigateToInnerViewQuestion(innerViewId) }
+                    onClick = { navigateToInnerViewQuestion(uiState.innerViewId) }
                 )
                 InnerViewAppBarIcon(
                     imageVector =
@@ -337,7 +330,6 @@ private fun InterviewGroupList(
 private fun InnerViewDetailContentPreview() {
     InnerViewTheme {
         InnerViewDetailContent(
-            innerViewId = "",
             uiState = InnerViewDetailUiState(
                 title = "title",
                 interviewGroups = persistentListOf(
@@ -380,7 +372,6 @@ private fun InnerViewDetailContentPreview() {
 private fun DailyInnerViewDetailContentPreview() {
     InnerViewTheme {
         InnerViewDetailContent(
-            innerViewId = "",
             uiState = InnerViewDetailUiState(
                 title = "title",
                 type = InnerViewType.DAY,

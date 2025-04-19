@@ -40,12 +40,12 @@ internal fun MainScreen(
             snackBarHostState.showSnackbar(
                 when (throwable) {  // throwable 타입 별 snackBar 처리
                     is IllegalArgumentException -> throwable.message ?: unknownErrorMessage
-                    else -> unknownErrorMessage
+                    else -> throwable?.message ?: unknownErrorMessage
                 }
             )
         }
     }
-    val onShowToast:(text:String) -> Unit = { text -> showToast(context, text) }
+    val onShowToast: (text: String) -> Unit = { text -> showToast(context, text) }
 
     MainScreenContent(
         navigator = navigator,

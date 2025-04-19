@@ -55,8 +55,6 @@ import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 internal fun RecordScreen(
-    innerViewId: String,
-    interviewGroupId: Int,
     padding: PaddingValues,
     onBackClick: () -> Unit,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
@@ -95,33 +93,39 @@ internal fun RecordScreen(
                 }
 
                 is RecordUiEvent.NavigateToFilming -> {
-                    navigateToFilming(innerViewId, interviewGroupId, event.question)
+                    navigateToFilming(
+                        recordUiState.innerViewId,
+                        recordUiState.interviewGroupId,
+                        event.question
+                    )
                 }
             }
         }
-    }
-
-    LaunchedEffect(innerViewId, interviewGroupId) {
-        viewModel.fetchInterviewGroup(innerViewId, interviewGroupId)
     }
 
     RecordContent(
         recordUiState = recordUiState,
         padding = padding,
         onBackClick = onBackClick,
-        selectQuestionAdd = { viewModel.selectQuestionAdd() },
-        updateCustomQuestion = { viewModel.updateCustomQuestion(it) },
-        updateDialogSelectedType = { viewModel.updateDialogSelectedType(it) },
-        addQuestion = { viewModel.addQuestion(innerViewId, interviewGroupId) },
-        navigateToFilming = { navigateToFilming(innerViewId, interviewGroupId, it) },
-        navigationToEdit = { navigationToEdit(it) },
-        completeInterviewGroup = { viewModel.completeInterviewGroup(innerViewId, interviewGroupId) },
-        onSelectInterviewDropdown = { viewModel.selectInterviewDropdown(it) },
-        onSelectQuestionDelete = { viewModel.selectQuestionDelete(it) },
-        onSelectInnerProjectDelete = { viewModel.selectInnerProjectDelete(it) },
-        deleteQuestion = { viewModel.deleteQuestion(innerViewId, interviewGroupId, it) },
-        deleteInnerProject = { viewModel.deleteInnerProject(innerViewId, interviewGroupId, it) },
-        onRefreshQuestion = { viewModel.updateRecommendQuestions() }
+        selectQuestionAdd = viewModel::selectQuestionAdd,
+        updateCustomQuestion = viewModel::updateCustomQuestion,
+        updateDialogSelectedType = viewModel::updateDialogSelectedType,
+        addQuestion = viewModel::addQuestion,
+        navigateToFilming = {
+            navigateToFilming(
+                recordUiState.innerViewId,
+                recordUiState.interviewGroupId,
+                it
+            )
+        },
+        navigationToEdit = navigationToEdit,
+        completeInterviewGroup = viewModel::completeInterviewGroup,
+        onSelectInterviewDropdown = viewModel::selectInterviewDropdown,
+        onSelectQuestionDelete = viewModel::selectQuestionDelete,
+        onSelectInnerProjectDelete = viewModel::selectInnerProjectDelete,
+        deleteQuestion = viewModel::deleteQuestion,
+        deleteInnerProject = viewModel::deleteInnerProject,
+        onRefreshQuestion = viewModel::updateRecommendQuestions
     )
 }
 

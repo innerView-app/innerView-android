@@ -8,6 +8,8 @@ import java.time.ZonedDateTime
 
 @Immutable
 data class RecordUiState(
+    val innerViewId: String = "",
+    val interviewGroupId: Int = 0,
     val title: String = "",
     val type: InnerViewType = InnerViewType.YEAR,
     val createdAt: ZonedDateTime = ZonedDateTime.now(),

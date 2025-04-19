@@ -9,6 +9,9 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Immutable
 data class FilmingUiState(
+    val innerViewId: String = "",
+    val interviewGroupId: Int = 0,
+    val question: String = "",
     val permissionState: PermissionState = PermissionState.Loading,
     val isPermissionDialogVisible: Boolean = false,
     val outputFileName: String = "sample.mp4",

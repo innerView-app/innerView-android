@@ -2,10 +2,12 @@ package com.dev.innerview.feature.edit
 
 import android.content.Context
 import androidx.core.net.toUri
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.GetInnerProjectByIdUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerViewUseCase
@@ -13,6 +15,7 @@ import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
 import com.dev.innerview.core.domain.usecase.UpdateInnerProjectUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewPiece
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.core.playback.playstate.PlaybackStateListener
 import com.dev.innerview.core.playback.playstate.PlaybackStateManager
 import com.dev.innerview.feature.edit.model.EditUiState
@@ -41,12 +44,12 @@ import javax.inject.Inject
 @HiltViewModel
 class EditViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
+    savedStateHandle: SavedStateHandle,
     private val getInnerProjectByIdUseCase: GetInnerProjectByIdUseCase,
     private val updateInnerProjectUseCase: UpdateInnerProjectUseCase,
     private val getInnerViewUseCase: GetInnerViewUseCase,
     private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
     private val getInterviewGroupContentUseCase: GetInterviewGroupContentUseCase,
-    private val getInnerViewProjectByIdUseCase: GetInnerProjectByIdUseCase,
     private val playbackStateManager: PlaybackStateManager,
     private val playbackStateListener: PlaybackStateListener,
     val player: Player,
@@ -64,7 +67,10 @@ class EditViewModel @Inject constructor(
     init {
         playbackStateListener.attachTo(player)
 
+        val innerProjectId = savedStateHandle.toRoute<Route.Edit>().innerProjectId
+
         viewModelScope.launch {
+            fetchInnerProject(innerProjectId)
             playbackStateManager.flow.collect { playbackState ->
                 _editUiState.update {
                     it.copy(
@@ -81,28 +87,29 @@ class EditViewModel @Inject constructor(
         }
     }
 
-    fun fetchInnerProject(id: Int) {
-        viewModelScope.launch {
-            val innerProject = getInnerProjectByIdUseCase(id).first()
-            val duration = innerProject.innerProjectComponents.media.sumOf {
-                it.endPosition - it.startPosition
-            }
-            val media = innerProject.innerProjectComponents.media.map { mediaItem ->
-                MediaUiState(medium = mediaItem)
-            }
-            val accumulatedDurations =
-                calculateAccumulatedDurations(media)
-            _editUiState.update {
-                it.copy(
-                    innerProjectId = id,
-                    title = innerProject.title,
-                    duration = duration,
-                    media = media.toPersistentList(),
-                    accumulatedDurations = accumulatedDurations.toPersistentList(),
-                    subtitles = innerProject.innerProjectComponents.subtitles.toPersistentList(),
-                )
-            }
-            setMediaItems(innerProject.innerProjectComponents.media)
+    private suspend fun fetchInnerProject(id: Int) {
+        val innerProject = getInnerProjectByIdUseCase(id).first()
+        val duration = innerProject.innerProjectComponents.media.sumOf {
+            it.endPosition - it.startPosition
+        }
+        val media = innerProject.innerProjectComponents.media.map { mediaItem ->
+            MediaUiState(medium = mediaItem)
+        }
+        val accumulatedDurations =
+            calculateAccumulatedDurations(media)
+
+        setMediaItems(innerProject.innerProjectComponents.media)
+
+        _editUiState.update {
+            it.copy(
+                innerProjectId = id,
+                isRecording = innerProject.isRecording,
+                title = innerProject.title,
+                duration = duration,
+                media = media.toPersistentList(),
+                accumulatedDurations = accumulatedDurations.toPersistentList(),
+                subtitles = innerProject.innerProjectComponents.subtitles.toPersistentList(),
+            )
         }
     }
 

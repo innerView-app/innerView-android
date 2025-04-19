@@ -9,6 +9,7 @@ import java.time.LocalDate
 
 @Immutable
 data class InnerViewDetailUiState(
+    val innerViewId: String = "",
     val title: String = "",
     val type: InnerViewType = InnerViewType.YEAR,
     val interviewGroups: ImmutableList<InterviewGroup> = persistentListOf(),

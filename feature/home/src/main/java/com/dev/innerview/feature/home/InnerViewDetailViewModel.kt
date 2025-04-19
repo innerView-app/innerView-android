@@ -1,7 +1,9 @@
 package com.dev.innerview.feature.home
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.AddInterviewGroupUseCase
 import com.dev.innerview.core.domain.usecase.CancelNotificationAlarmUseCase
 import com.dev.innerview.core.domain.usecase.ChangeInnerViewNotificationUseCase
@@ -9,6 +11,7 @@ import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
 import com.dev.innerview.core.domain.usecase.RegisterNotificationAlarmUseCase
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.InterviewGroup
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.home.model.InnerViewDetailUiEvent
 import com.dev.innerview.feature.home.model.InnerViewDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +30,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InnerViewDetailViewModel @Inject constructor(
-    private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
+    savedStateHandle: SavedStateHandle,
+    getInnerViewContentUseCase: GetInnerViewContentUseCase,
     private val addInterviewGroupUseCase: AddInterviewGroupUseCase,
     private val changeInnerViewNotificationUseCase: ChangeInnerViewNotificationUseCase,
     private val registerNotificationAlarmUseCase: RegisterNotificationAlarmUseCase,
@@ -43,7 +47,8 @@ class InnerViewDetailViewModel @Inject constructor(
     private val _innerViewDetailUiState = MutableStateFlow(InnerViewDetailUiState())
     val innerViewDetailUiState = _innerViewDetailUiState.asStateFlow()
 
-    fun fetchInnerView(innerViewId: String) {
+    init {
+        val innerViewId = savedStateHandle.toRoute<Route.InnerViewDetail>().id
         getInnerViewContentUseCase(innerViewId)
             .onEach { innerViewContent ->
                 val reactivateAt = findReactivateDate(
@@ -52,6 +57,7 @@ class InnerViewDetailViewModel @Inject constructor(
                 )
                 _innerViewDetailUiState.update {
                     it.copy(
+                        innerViewId = innerViewId,
                         title = innerViewContent.innerView.title,
                         type = innerViewContent.innerView.type,
                         interviewGroups = innerViewContent.interviewGroups.toPersistentList(),
@@ -82,13 +88,13 @@ class InnerViewDetailViewModel @Inject constructor(
         }
     }
 
-    fun changeNotificationState(innerViewId: String, isOn: Boolean) {
+    fun changeNotificationState(isOn: Boolean) {
         viewModelScope.launch {
-            changeInnerViewNotificationUseCase(innerViewId, isOn)
+            changeInnerViewNotificationUseCase(_innerViewDetailUiState.value.innerViewId, isOn)
             if (isOn) {
                 with(innerViewDetailUiState.value) {
                     registerNotificationAlarmUseCase(
-                        innerViewId = innerViewId,
+                        innerViewId = _innerViewDetailUiState.value.innerViewId,
                         innerViewType = type,
                         innerViewTitle = title,
                         lastInnerViewTime = interviewGroups
@@ -98,16 +104,16 @@ class InnerViewDetailViewModel @Inject constructor(
                     )
                 }
             } else {
-                cancelNotificationAlarmUseCase(innerViewId)
+                cancelNotificationAlarmUseCase(_innerViewDetailUiState.value.innerViewId)
             }
             _uiEventFlow.emit(InnerViewDetailUiEvent.TurnNotificationEvent(isOn))
         }
     }
 
-    fun addInnerViewGroup(innerViewId: String) {
+    fun addInnerViewGroup() {
         viewModelScope.launch {
             addInterviewGroupUseCase(
-                innerViewId,
+                _innerViewDetailUiState.value.innerViewId,
                 _innerViewDetailUiState.value.type != InnerViewType.DAY
             )
         }

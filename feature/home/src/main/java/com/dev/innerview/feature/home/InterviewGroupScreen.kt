@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -43,17 +42,11 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 internal fun InterviewGroupScreen(
     padding: PaddingValues,
-    innerViewId: String,
-    interviewGroupId: Int,
     onBackClick: () -> Unit,
     navigateToPlayer: () -> Unit,
     viewModel: InterviewGroupViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.interviewGroupUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(innerViewId) {
-        viewModel.fetchInterviewGroup(innerViewId, interviewGroupId)
-    }
 
     InterviewGroupContent(
         uiState = uiState,
