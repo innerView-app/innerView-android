@@ -4,7 +4,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
-import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.FilmingScreen
 import com.dev.innerview.feature.record.RecordScreen
@@ -25,11 +24,8 @@ fun NavGraphBuilder.recordNavGraph(
     navigateToEdit: (Int) -> Unit
 ) {
 
-    composable<Route.Records> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId) = navBackStackEntry.toRoute<Route.Records>()
+    composable<Route.Records> {
         RecordScreen(
-            innerViewId = innerViewId,
-            interviewGroupId = interviewGroupId,
             padding = padding,
             onBackClick = onBackClick,
             onShowErrorSnackBar = onShowErrorSnackBar,
@@ -38,12 +34,8 @@ fun NavGraphBuilder.recordNavGraph(
         )
     }
 
-    composable<Route.Filming> { navBackStackEntry ->
-        val (innerViewId, interviewGroupId, question) = navBackStackEntry.toRoute<Route.Filming>()
+    composable<Route.Filming> {
         FilmingScreen(
-            innerViewId = innerViewId,
-            interviewGroupId = interviewGroupId,
-            question = question,
             padding = padding,
             onBackClick = onBackClick,
             navigationToEdit = navigateToEdit,

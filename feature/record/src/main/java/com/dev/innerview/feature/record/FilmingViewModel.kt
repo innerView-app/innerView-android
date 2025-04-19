@@ -1,12 +1,15 @@
 package com.dev.innerview.feature.record
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.GetInterviewByQuestionUseCase
 import com.dev.innerview.core.model.InnerProjectComponents
 import com.dev.innerview.core.model.InterviewPiece
 import com.dev.innerview.core.model.RecordState
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.record.model.FilmingUiEvent
 import com.dev.innerview.feature.record.model.FilmingUiState
 import com.dev.innerview.feature.record.model.PermissionState
@@ -26,6 +29,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FilmingViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val addInnerProjectUseCase: AddInnerProjectUseCase,
     private val getInterviewByQuestionUseCase: GetInterviewByQuestionUseCase
 ) : ViewModel() {
@@ -39,11 +43,15 @@ class FilmingViewModel @Inject constructor(
     private val _filmingUiState = MutableStateFlow(FilmingUiState())
     val filmingUiState = _filmingUiState.asStateFlow()
 
-    fun fetchFilmingUiState(innerViewId: String, interviewGroupId: Int, question: String) {
+    init {
+        val (innerViewId, interviewGroupId, question) = savedStateHandle.toRoute<Route.Filming>()
         getInterviewByQuestionUseCase(innerViewId, question)
             .onEach { interviews ->
                 _filmingUiState.update {
                     it.copy(
+                        innerViewId = innerViewId,
+                        interviewGroupId = interviewGroupId,
+                        question = question,
                         outputFileName = sha256(innerViewId + interviewGroupId + question) + ".mp4",
                         interviews = interviews.toPersistentList()
                     )
@@ -51,14 +59,14 @@ class FilmingViewModel @Inject constructor(
             }.launchIn(viewModelScope)
     }
 
-    fun addInnerProject(innerViewId: String, interviewGroupId: Int, question: String, duration: Long) {
+    fun addInnerProject(duration: Long) {
         viewModelScope.launch {
             runCatching {
                 val innerProjectId = addInnerProjectUseCase(
-                    question,
-                    innerViewId,
-                    interviewGroupId,
-                    InnerProjectComponents(
+                    title = _filmingUiState.value.question,
+                    innerViewId = _filmingUiState.value.innerViewId,
+                    interviewGroupId = _filmingUiState.value.interviewGroupId,
+                    innerProjectComponents = InnerProjectComponents(
                         media = listOf(
                             InterviewPiece(
                                 filePath = "interviews/${_filmingUiState.value.outputFileName}",

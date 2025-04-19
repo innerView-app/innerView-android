@@ -8,6 +8,8 @@ import java.time.ZonedDateTime
 
 @Immutable
 data class InterviewGroupUiState(
+    val innerViewId: String = "",
+    val interviewGroupId: Int = 0,
     val title: String = "",
     val createdAt: ZonedDateTime = ZonedDateTime.now(),
     val interviews: ImmutableList<Interview> = persistentListOf()

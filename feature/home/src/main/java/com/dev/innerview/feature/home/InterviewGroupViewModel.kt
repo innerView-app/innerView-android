@@ -1,9 +1,11 @@
 package com.dev.innerview.feature.home
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.GetInterviewGroupContentUseCase
-import com.dev.innerview.core.model.InterviewGroupContent
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.home.model.InterviewGroupUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -18,6 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InterviewGroupViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getInterviewGroupContentUseCase: GetInterviewGroupContentUseCase
 ) : ViewModel() {
 
@@ -27,11 +30,14 @@ class InterviewGroupViewModel @Inject constructor(
     private val _interviewGroupUiState = MutableStateFlow(InterviewGroupUiState())
     val interviewGroupUiState get() = _interviewGroupUiState.asStateFlow()
 
-    fun fetchInterviewGroup(innerViewId: String, interviewGroupId: Int) {
+    init {
+        val (innerViewId, interviewGroupId) = savedStateHandle.toRoute<Route.InterviewGroup>()
         getInterviewGroupContentUseCase(innerViewId, interviewGroupId)
             .onEach { interviewGroupContent ->
                 _interviewGroupUiState.update {
                     it.copy(
+                        innerViewId = innerViewId,
+                        interviewGroupId = interviewGroupId,
                         title = interviewGroupContent.innerView.title,
                         createdAt = interviewGroupContent.interviewGroup.createdAt,
                         interviews = interviewGroupContent.interviews.toPersistentList()

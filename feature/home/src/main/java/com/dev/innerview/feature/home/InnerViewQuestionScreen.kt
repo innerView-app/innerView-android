@@ -20,7 +20,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -50,15 +49,10 @@ import kotlin.math.roundToInt
 @Composable
 internal fun InnerViewQuestionScreen(
     padding: PaddingValues,
-    innerViewId: String,
     onBackClick: () -> Unit,
     viewModel: InnerViewQuestionViewModel = hiltViewModel()
 ) {
     val innerViewQuestionUiState by viewModel.innerViewQuestionUiState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(innerViewId) {
-        viewModel.fetchInnerViewQuestions(innerViewId)
-    }
 
     InnerViewQuestionContent(
         padding = padding,
@@ -66,7 +60,7 @@ internal fun InnerViewQuestionScreen(
         title = innerViewQuestionUiState.title,
         questions = innerViewQuestionUiState.interviewQuestions,
         updateQuestions = { oldIndex, newIndex ->
-            viewModel.updateQuestions(innerViewId, oldIndex, newIndex)
+            viewModel.updateQuestions(oldIndex, newIndex)
         }
     )
 }

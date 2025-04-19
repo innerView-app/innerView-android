@@ -33,7 +33,6 @@ import java.time.ZonedDateTime
 @Composable
 fun PrevInterviewBottomSheet(
     filmingUiState: FilmingUiState,
-    question: String,
     sheetState: SheetState,
     onDismissRequest: () -> Unit,
     onItemClick: () -> Unit
@@ -51,7 +50,7 @@ fun PrevInterviewBottomSheet(
         ) {
             item {
                 Text(
-                    text = question,
+                    text = filmingUiState.question,
                     style = MaterialTheme.typography.titleSmall
                 )
                 Spacer(modifier = Modifier.size(20.dp))
@@ -98,7 +97,6 @@ private fun PrevInterviewBottomSheetPreview() {
                     Interview(createdAt = ZonedDateTime.now(), thumbnailVideoPath = "3"),
                 )
             ),
-            question = "question",
             sheetState = sheetState,
             onDismissRequest = {},
             onItemClick = {}

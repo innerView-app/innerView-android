@@ -1,9 +1,12 @@
 package com.dev.innerview.feature.home
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation.toRoute
 import com.dev.innerview.core.domain.usecase.GetInnerViewContentUseCase
 import com.dev.innerview.core.domain.usecase.ReorderQuestionsUseCase
+import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.home.model.InnerViewQuestionUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.collections.immutable.toPersistentList
@@ -18,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InnerViewQuestionViewModel @Inject constructor(
+    savedStateHandle: SavedStateHandle,
     private val getInnerViewContentUseCase: GetInnerViewContentUseCase,
     private val reorderQuestionsUseCase: ReorderQuestionsUseCase
 ) : ViewModel() {
@@ -28,11 +32,13 @@ class InnerViewQuestionViewModel @Inject constructor(
     private val _innerViewQuestionUiState = MutableStateFlow(InnerViewQuestionUiState())
     val innerViewQuestionUiState = _innerViewQuestionUiState.asStateFlow()
 
-    fun fetchInnerViewQuestions(innerViewId: String) {
+    init {
+        val innerViewId = savedStateHandle.toRoute<Route.InnerViewQuestion>().id
         viewModelScope.launch {
             val innerViewContent = getInnerViewContentUseCase(innerViewId).first()
             _innerViewQuestionUiState.update {
                 it.copy(
+                    innerViewId = innerViewId,
                     title = innerViewContent.innerView.title,
                     interviewQuestions = innerViewContent.innerView.questions.toPersistentList()
                 )
@@ -40,12 +46,12 @@ class InnerViewQuestionViewModel @Inject constructor(
         }
     }
 
-    fun updateQuestions(innerViewId: String, oldIndex: Int, newIndex: Int) {
+    fun updateQuestions(oldIndex: Int, newIndex: Int) {
         reorderQuestions(oldIndex, newIndex)
         viewModelScope.launch {
             runCatching {
                 reorderQuestionsUseCase(
-                    innerViewId,
+                    _innerViewQuestionUiState.value.innerViewId,
                     oldIndex,
                     newIndex
                 )

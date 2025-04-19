@@ -34,10 +34,8 @@ fun NavGraphBuilder.editNavGraph(
         )
     }
 
-    composable<Route.Edit> { navBackStackEntry ->
-        val (innerProjectId) = navBackStackEntry.toRoute<Route.Edit>()
+    composable<Route.Edit> {
         EditScreen(
-            innerProjectId = innerProjectId,
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick
         )

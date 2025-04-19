@@ -70,7 +70,6 @@ import kotlinx.coroutines.flow.filter
 
 @Composable
 internal fun EditScreen(
-    innerProjectId: Int,
     onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     onBackClick: () -> Unit,
     viewModel: EditViewModel = hiltViewModel(),
@@ -80,12 +79,10 @@ internal fun EditScreen(
     val mediaAddUiState by viewModel.mediaAddUiState.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.fetchInnerProject(innerProjectId)
         viewModel.errorFlow.collectLatest { throwable -> onShowErrorSnackBar(throwable) }
     }
 
     EditContent(
-        innerProjectId = innerProjectId,
         player = viewModel.player,
         editUiState = editUiState,
         mediaAddUiState = mediaAddUiState,
@@ -111,7 +108,6 @@ internal fun EditScreen(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun EditContent(
-    innerProjectId: Int,
     player: Player?,
     editUiState: EditUiState,
     mediaAddUiState: MediaAddUiState,
@@ -338,7 +334,6 @@ private fun EditContent(
 private fun EditContentPreview() {
     InnerViewTheme {
         EditContent(
-            innerProjectId = 0,
             editUiState = EditUiState(
                 isPlaying = true,
                 duration = 6000L,
