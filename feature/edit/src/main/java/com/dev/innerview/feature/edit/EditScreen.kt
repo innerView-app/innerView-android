@@ -22,6 +22,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircleOutline
 import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.TextFields
@@ -83,6 +84,7 @@ internal fun EditScreen(
     }
 
     EditContent(
+        onShowErrorSnackBar = onShowErrorSnackBar,
         player = viewModel.player,
         editUiState = editUiState,
         mediaAddUiState = mediaAddUiState,
@@ -108,6 +110,7 @@ internal fun EditScreen(
 @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
 @Composable
 private fun EditContent(
+    onShowErrorSnackBar: (throwable: Throwable?) -> Unit,
     player: Player?,
     editUiState: EditUiState,
     mediaAddUiState: MediaAddUiState,
@@ -156,12 +159,25 @@ private fun EditContent(
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
-                InnerViewAppBarIcon(
-                    imageVector = Icons.Filled.Done,
-                    navigationIconContentDescription = null
-                )
+                when (editUiState.isRecording) {
+                    true -> {
+                        InnerViewAppBarIcon(
+                            imageVector = Icons.Filled.Done,
+                            navigationIconContentDescription = null,
+                            onClick = { onBackClick() }
+                        )
+                    }
+
+                    else -> {
+                        InnerViewAppBarIcon(
+                            imageVector = Icons.Filled.Download,
+                            navigationIconContentDescription = null
+                        )
+                    }
+                }
             }
         )
+
         Column(
             modifier = Modifier
                 .systemBarsPadding()
@@ -228,7 +244,10 @@ private fun EditContent(
                         seekToMediaItem = seekByMediaItem,
                         seekByPosition = seekByPosition,
                     )
-                    HorizontalDivider(thickness = 1.dp, color = MaterialTheme.colorScheme.onSurface)
+                    HorizontalDivider(
+                        thickness = 1.dp,
+                        color = MaterialTheme.colorScheme.onSurface
+                    )
 
                     Box(
                         modifier = Modifier
@@ -257,7 +276,17 @@ private fun EditContent(
                                     layerIcon = Icons.Filled.AddCircleOutline,
                                     layerIconDescription = "미디어 추가",
                                     layerName = "Media",
-                                    onLayerIconClick = { selectMediaAddBottomSheet() }
+                                    onLayerIconClick = {
+                                        when (editUiState.isRecording) {
+                                            true -> {
+                                                onShowErrorSnackBar(Throwable(message = "녹화 중인 인터뷰는 Media를 추가할 수 없습니다."))
+                                            }
+
+                                            else -> {
+                                                selectMediaAddBottomSheet()
+                                            }
+                                        }
+                                    }
                                 ) {
                                     for (i in 0 until editUiState.media.size) {
                                         val duration =
@@ -334,8 +363,10 @@ private fun EditContent(
 private fun EditContentPreview() {
     InnerViewTheme {
         EditContent(
+            onShowErrorSnackBar = { },
             editUiState = EditUiState(
                 isPlaying = true,
+                isRecording = true,
                 duration = 6000L,
                 zoom = 1f,
                 media = persistentListOf(
