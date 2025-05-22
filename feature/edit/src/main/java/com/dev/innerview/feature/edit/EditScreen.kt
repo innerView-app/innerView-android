@@ -59,6 +59,7 @@ import com.dev.innerview.feature.edit.component.MediaItem
 import com.dev.innerview.feature.edit.component.MediaItemBottomBar
 import com.dev.innerview.feature.edit.component.PlayerBar
 import com.dev.innerview.feature.edit.component.PlayerView
+import com.dev.innerview.feature.edit.component.RenderDialog
 import com.dev.innerview.feature.edit.model.EditUiState
 import com.dev.innerview.feature.edit.model.MediaAddUiState
 import com.dev.innerview.feature.edit.model.MediaItemSide
@@ -89,6 +90,7 @@ internal fun EditScreen(
         editUiState = editUiState,
         mediaAddUiState = mediaAddUiState,
         onBackClick = onBackClick,
+        selectRender = viewModel::selectRender,
         updateZoom = viewModel::updateZoom,
         seekToScrollPosition = viewModel::seekToScrollPosition,
         seekByMediaItem = viewModel::seekByMediaItem,
@@ -115,6 +117,7 @@ private fun EditContent(
     editUiState: EditUiState,
     mediaAddUiState: MediaAddUiState,
     onBackClick: () -> Unit,
+    selectRender: () -> Unit,
     updateZoom: (Float) -> Unit,
     seekToScrollPosition: (Int) -> Unit,
     seekByMediaItem: (Int) -> Unit,
@@ -172,11 +175,22 @@ private fun EditContent(
                         InnerViewAppBarIcon(
                             imageVector = Icons.Filled.Download,
                             navigationIconContentDescription = null
-                        )
+                        ) {
+                            selectRender()
+                        }
                     }
                 }
             }
         )
+
+        if (editUiState.isRenderDialogVisible) {
+            RenderDialog(
+                onDismissRequest = selectRender,
+                onConfirmRequest = {
+                    selectRender()
+                }
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -396,6 +410,7 @@ private fun EditContentPreview() {
             mediaAddUiState = MediaAddUiState(),
             player = null,
             onBackClick = {},
+            selectRender = {},
             updateZoom = {},
             seekToScrollPosition = {},
             seekByMediaItem = {},

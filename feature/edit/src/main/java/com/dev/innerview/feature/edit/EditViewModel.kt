@@ -129,27 +129,6 @@ class EditViewModel @Inject constructor(
         }
     }
 
-//    fun addMediaItem() {
-//        val newMedia = _editUiState.value.media.toPersistentList().add(
-//            _editUiState.value.media.last()
-//        )
-//        val duration = newMedia.sumOf {
-//            it.medium.endPosition - it.medium.startPosition
-//        }
-//        val mediaItem = newMedia.last().toMediaItem()
-//        player.addMediaItem(mediaItem)
-//        player.prepare()
-//        val accumulatedDurations = calculateAccumulatedDurations(newMedia)
-//        _editUiState.update {
-//            it.copy(
-//                media = newMedia,
-//                accumulatedDurations = accumulatedDurations.toPersistentList(),
-//                duration = duration
-//            )
-//        }
-//        saveInnerProject()
-//    }
-
     fun updateZoom(zoom: Float) {
         _editUiState.update {
             it.copy(
@@ -719,6 +698,14 @@ class EditViewModel @Inject constructor(
                     innerViews = persistentListOf()
                 )
             }
+        }
+    }
+
+    fun selectRender() {
+        _editUiState.update {
+            it.copy(
+                isRenderDialogVisible = !it.isRenderDialogVisible
+            )
         }
     }
 

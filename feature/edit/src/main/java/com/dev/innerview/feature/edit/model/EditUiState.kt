@@ -15,6 +15,7 @@ data class EditUiState(
     val innerProjectId: Int = 0,
     val isRecording: Boolean = false,
     val title: String = "",
+    val isRenderDialogVisible: Boolean = false,
     val isPlaying: Boolean = false,
     val currentMediaItemIndex: Int = 0,
     val position: Long = 0,
