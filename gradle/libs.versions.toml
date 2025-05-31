@@ -42,6 +42,7 @@ kotlinxSerializationJson = "1.7.0"
 kotlinxImmutable = "0.3.7"
 
 ## Coroutine
+smartExceptionJava = "0.2.1"
 turbine = "1.1.0"
 coroutine = "1.9.0-RC"
 
@@ -53,6 +54,10 @@ camerax = "1.4.0-rc01"
 
 ## media3
 media3 = "1.4.1"
+
+## FFMPEG
+ffmpegKitFull = "6.0-2"
+
 
 junit = "4.13.2"
 ui-test-junit4 = "1.6.8"
@@ -129,6 +134,9 @@ media3-exoplayer-dash = { group = "androidx.media3", name = "media3-exoplayer-da
 media3-exoplayer-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "media3" }
 media3-player-session = { group = "androidx.media3", name = "media3-session", version.ref = "media3" }
 media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "media3" }
+
+ffmpeg-kit-full = { module = "com.arthenica:ffmpeg-kit-full", version.ref = "ffmpegKitFull" }
+smart-exception-java = { module = "com.arthenica:smart-exception-java", version.ref = "smartExceptionJava" }
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
