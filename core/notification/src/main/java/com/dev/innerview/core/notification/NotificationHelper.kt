@@ -36,7 +36,7 @@ class NotificationHelper @Inject constructor(private val context: Context) {
         }
 
         val notificationBuilder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_stat_name)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(notificationTitle)
             .setContentText(context.getString(R.string.core_notification_content))
             .setContentIntent(pendingIntent)
@@ -77,7 +77,7 @@ class NotificationHelper @Inject constructor(private val context: Context) {
         }
 
         return NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_stat_name)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setOngoing(true)
@@ -86,7 +86,7 @@ class NotificationHelper @Inject constructor(private val context: Context) {
             .let {
                 if (progress < 100) {
                     it.addAction(
-                        R.drawable.ic_stat_name,
+                        R.drawable.ic_cancel_24,
                         context.getString(R.string.core_notification_render_cancel_action),
                         stopPendingIntent
                     )
@@ -132,7 +132,7 @@ class NotificationHelper @Inject constructor(private val context: Context) {
         }
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(R.drawable.ic_stat_name)
+            .setSmallIcon(R.mipmap.ic_launcher)
             .setContentTitle(notificationTitle)
             .setContentText(notificationText)
             .setContentIntent(pendingIntent)
