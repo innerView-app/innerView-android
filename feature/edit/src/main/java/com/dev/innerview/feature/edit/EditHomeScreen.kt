@@ -25,6 +25,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -85,7 +86,7 @@ private fun EditHomeContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = "프로젝트 편집"
+            title = stringResource(R.string.feature_edit_home_top_app_bar_title)
         )
 
         Box(
@@ -107,7 +108,7 @@ private fun EditHomeContent(
                         .align(Alignment.BottomEnd)
                         .padding(end = Paddings.large, bottom = Paddings.large),
                     iconImageVector = Icons.Filled.Add,
-                    text = "새로운 프로젝트",
+                    text = stringResource(R.string.feature_edit_new_project),
                     onClick = { onSelectInnerViewCreate() }
                 )
             }
@@ -116,18 +117,18 @@ private fun EditHomeContent(
 
     if (editHomeUiState.isInnerProjectCreateDialogVisible) {
         InnerViewDialog(
-            titleText = "프로젝트 생성",
-            contentText = "새로운 프로젝트의 제목을 지정해주세요.",
-            confirmText = "생성",
-            dismissText = "취소",
+            titleText = stringResource(R.string.feature_edit_create_project),
+            contentText = stringResource(R.string.feature_edit_create_project_content_text),
+            confirmText = stringResource(R.string.feature_edit_create_project_confirm),
+            dismissText = stringResource(R.string.feature_edit_create_project_dismiss),
             onDismissRequest = { onSelectInnerViewCreate() },
             onConfirmRequest = { addInnerProject() }
         ) {
             InnerViewDialogTextField(
                 value = { editHomeUiState.dialogInnerProjectTitle },
                 onValueChange = { updateDialogInnerProjectTitle(it) },
-                placeholderText = "프로젝트 제목을 입력하세요.",
-                labelText = "제목",
+                placeholderText = stringResource(R.string.feature_edit_create_project_placeholder),
+                labelText = stringResource(R.string.feature_edit_create_project_label),
                 supportingText = "${editHomeUiState.dialogInnerProjectTitle.length}/$maxInnerProjectTitleLength"
             )
         }

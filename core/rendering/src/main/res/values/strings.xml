@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="core_rendering_already_running_text">현재 렌더링 중인 프로젝트가 있습니다.\n중지 후 다시 시도해주세요.</string>
+</resources>

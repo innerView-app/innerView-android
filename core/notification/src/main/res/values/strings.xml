@@ -1,6 +1,16 @@
 <resources>
-    <string name="feature_notification_channel_name">이너뷰 알림</string>
-    <string name="feature_notification_channel_description">이너뷰 알림을 보내는 채널입니다</string>
-    <string name="feature_notification_title">이너뷰</string>
-    <string name="feature_notification_content">새로운 인터뷰를 촬영할 수 있습니다.</string>
+    <string name="core_notification_channel_name">이너뷰 알림</string>
+    <string name="core_notification_channel_description">이너뷰 알림을 보내는 채널입니다</string>
+    <string name="core_notification_title">이너뷰</string>
+    <string name="core_notification_content">새로운 인터뷰를 촬영할 수 있습니다.</string>
+
+    <string name="core_notification_render_title">%1$s 렌더링 중…</string>
+    <string name="core_notification_render_gallery_saving">갤러리 저장 중…</string>
+    <string name="core_notification_render_progress">진행률: %1$d%%</string>
+    <string name="core_notification_render_cancel_action">중지</string>
+
+    <string name="core_notification_render_complete_title">%1$s 렌더링 작업 완료</string>
+    <string name="core_notification_render_complete">렌더링이 완료되었습니다.</string>
+    <string name="core_notification_render_error">렌더링 중 오류가 발생했습니다.</string>
+    <string name="core_notification_render_cancel">렌더링이 취소되었습니다.</string>
 </resources>

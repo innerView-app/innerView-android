@@ -25,6 +25,7 @@ import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -32,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import com.dev.innerview.core.designsystem.component.VideoThumbnail
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.feature.edit.R
 import com.dev.innerview.feature.edit.model.InnerViewSelectUiState
 import com.dev.innerview.feature.edit.model.InterviewGroupSelectUiState
 import com.dev.innerview.feature.edit.model.InterviewSelectUiState
@@ -71,7 +73,10 @@ internal fun MediaAddBottomSheet(
                 if (mediaAddUiState.selectedInnerProjectId.isNotEmpty()) {
                     Text(
                         modifier = Modifier.padding(end = Paddings.large),
-                        text = "선택된 인터뷰 ${mediaAddUiState.selectedInnerProjectId.size}개",
+                        text = stringResource(
+                            R.string.feature_edit_selected_media,
+                            mediaAddUiState.selectedInnerProjectId.size
+                        ),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                     )
@@ -87,7 +92,7 @@ internal fun MediaAddBottomSheet(
                 ) {
                     Text(
                         modifier = Modifier,
-                        text = "추가",
+                        text = stringResource(R.string.feature_edit_media_add),
                         style = MaterialTheme.typography.bodyMedium,
                         color = MaterialTheme.colorScheme.tertiary,
                         textAlign = TextAlign.Center

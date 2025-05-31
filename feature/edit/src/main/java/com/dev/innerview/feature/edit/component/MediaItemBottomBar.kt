@@ -32,6 +32,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -99,12 +100,12 @@ fun MediaItemBottomBar(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.DeleteOutline,
-                                            contentDescription = "ContentCut",
+                                            contentDescription = "ContentDelete",
                                             tint = MaterialTheme.colorScheme.surfaceContainer
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "삭제",
+                                            text = stringResource(R.string.feature_edit_media_item_content_delete),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -121,12 +122,12 @@ fun MediaItemBottomBar(
                                         Icon(
                                             modifier = Modifier.size(24.dp),
                                             imageVector = ImageVector.vectorResource(R.drawable.left_cut),
-                                            contentDescription = "ContentCut",
+                                            contentDescription = "ContentLeftCut",
                                             tint = MaterialTheme.colorScheme.surfaceContainer
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "현재부터 자르기",
+                                            text = stringResource(R.string.feature_edit_media_item_content_left_cut),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -142,12 +143,12 @@ fun MediaItemBottomBar(
                                     ) {
                                         Icon(
                                             imageVector = Icons.Filled.ContentCut,
-                                            contentDescription = "ContentCut",
+                                            contentDescription = "ContentSplit",
                                             tint = MaterialTheme.colorScheme.surfaceContainer
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "분할",
+                                            text = stringResource(R.string.feature_edit_media_item_content_split),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -164,12 +165,12 @@ fun MediaItemBottomBar(
                                         Icon(
                                             modifier = Modifier.size(24.dp),
                                             imageVector = ImageVector.vectorResource(R.drawable.right_cut),
-                                            contentDescription = "ContentCut",
+                                            contentDescription = "ContentRightCut",
                                             tint = MaterialTheme.colorScheme.surfaceContainer
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "현재까지 자르기",
+                                            text = stringResource(R.string.feature_edit_media_item_content_right_cut),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -197,7 +198,7 @@ fun MediaItemBottomBar(
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "맨 앞으로",
+                                            text = stringResource(R.string.feature_edit_media_item_position_change_to_start),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -219,7 +220,7 @@ fun MediaItemBottomBar(
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "왼쪽으로",
+                                            text = stringResource(R.string.feature_edit_media_item_position_change_to_left),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -240,7 +241,7 @@ fun MediaItemBottomBar(
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "오른쪽으로",
+                                            text = stringResource(R.string.feature_edit_media_item_position_change_to_right),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -262,7 +263,7 @@ fun MediaItemBottomBar(
                                         )
                                         Text(
                                             modifier = Modifier.padding(top = Paddings.xsmall),
-                                            text = "맨 뒤로",
+                                            text = stringResource(R.string.feature_edit_media_item_position_change_to_end),
                                             style = MaterialTheme.typography.labelSmall,
                                             color = MaterialTheme.colorScheme.surfaceContainer
                                         )
@@ -294,7 +295,7 @@ fun MediaItemBottomBar(
                     modifier = Modifier
                         .align(Alignment.Center)
                         .padding(vertical = Paddings.large),
-                    text = "완료",
+                    text = stringResource(R.string.feature_edit_media_item_select_complete),
                     style = MaterialTheme.typography.labelSmall,
                     color = MaterialTheme.colorScheme.surfaceContainer,
                 )

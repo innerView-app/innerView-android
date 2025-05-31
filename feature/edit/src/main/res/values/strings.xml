@@ -1,1 +1,39 @@
-<resources></resources>
+<resources>
+    <string name="feature_edit_render_dismiss">취소</string>
+    <string name="feature_edit_render_confirm">렌더링</string>
+    <string name="feature_edit_render_dialog_content">지금까지 편집한 프로젝트를 갤러리에 저장합니다.</string>
+    <string name="feature_edit_render_dialog_title">프로젝트 다운로드</string>
+
+    <string name="feature_edit_top_app_bar_title">편집</string>
+
+    <string name="feature_edit_media_layer">Media</string>
+    <string name="feature_edit_media_layer_description">미디어 추가</string>
+    <string name="feature_edit_is_recording_interview_not_add_media">녹화 중인 인터뷰는 Media를 추가할 수 없습니다.</string>
+
+    <string name="feature_edit_subtitle_layer">Text</string>
+    <string name="feature_edit_subtitle_layer_description">자막 추가</string>
+
+    <string name="feature_edit_home_top_app_bar_title">프로젝트 편집</string>
+    <string name="feature_edit_new_project">새로운 프로젝트</string>
+    <string name="feature_edit_create_project">프로젝트 생성</string>
+    <string name="feature_edit_create_project_content_text">새로운 프로젝트의 제목을 지정해주세요.</string>
+    <string name="feature_edit_create_project_confirm">생성</string>
+    <string name="feature_edit_create_project_dismiss">취소</string>
+    <string name="feature_edit_create_project_placeholder">프로젝트 제목을 입력하세요.</string>
+    <string name="feature_edit_create_project_label">제목</string>
+
+    <string name="feature_edit_selected_media">선택된 인터뷰 %1$s개</string>
+    <string name="feature_edit_media_add">추가</string>
+
+    <string name="feature_edit_media_item_select_complete">완료</string>
+    <string name="feature_edit_media_item_position_change_to_end">맨 뒤로</string>
+    <string name="feature_edit_media_item_position_change_to_right">오른쪽으로</string>
+    <string name="feature_edit_media_item_position_change_to_left">왼쪽으로</string>
+    <string name="feature_edit_media_item_position_change_to_start">맨 앞으로</string>
+    <string name="feature_edit_media_item_content_right_cut">현재까지 자르기</string>
+    <string name="feature_edit_media_item_content_split">분할</string>
+    <string name="feature_edit_media_item_content_left_cut">현재부터 자르기</string>
+    <string name="feature_edit_media_item_content_delete">삭제</string>
+
+
+</resources>
