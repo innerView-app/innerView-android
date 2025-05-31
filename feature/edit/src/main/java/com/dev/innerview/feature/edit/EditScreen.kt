@@ -1,5 +1,6 @@
 package com.dev.innerview.feature.edit
 
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.LocalOverscrollConfiguration
@@ -41,7 +42,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -53,6 +56,7 @@ import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.model.InterviewPiece
+import com.dev.innerview.core.rendering.InnerViewRenderService
 import com.dev.innerview.feature.edit.component.EditLayer
 import com.dev.innerview.feature.edit.component.MediaAddBottomSheet
 import com.dev.innerview.feature.edit.component.MediaItem
@@ -134,6 +138,7 @@ private fun EditContent(
     selectInterviewItem: (String, Int, Int) -> Unit,
     addInterviewItem: () -> Unit,
 ) {
+    val context = LocalContext.current
     val density = LocalDensity.current
     val scrollState = rememberScrollState()
 
@@ -158,7 +163,7 @@ private fun EditContent(
             .fillMaxSize()
     ) {
         InnerViewTopAppBar(
-            title = "편집",
+            title = stringResource(R.string.feature_edit_top_app_bar_title),
             navigationType = TopAppBarNavigationType.Back,
             onNavigationClick = { onBackClick() },
             actionButtons = {
@@ -186,7 +191,13 @@ private fun EditContent(
         if (editUiState.isRenderDialogVisible) {
             RenderDialog(
                 onDismissRequest = selectRender,
-                onConfirmRequest = {
+                onConfirmRequest = { scale ->
+                    val serviceIntent = Intent(context, InnerViewRenderService::class.java).apply {
+                        action = InnerViewRenderService.INTENT_ACTION_START_RENDER
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_INNER_PROJECT_ID, editUiState.innerProjectId)
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_SCALE, scale.name)
+                    }
+                    context.startForegroundService(serviceIntent)
                     selectRender()
                 }
             )
@@ -288,12 +299,14 @@ private fun EditContent(
                                     scrollState = scrollState,
                                     editUiState = editUiState,
                                     layerIcon = Icons.Filled.AddCircleOutline,
-                                    layerIconDescription = "미디어 추가",
-                                    layerName = "Media",
+                                    layerIconDescription = stringResource(R.string.feature_edit_media_layer_description),
+                                    layerName = stringResource(R.string.feature_edit_media_layer),
                                     onLayerIconClick = {
                                         when (editUiState.isRecording) {
                                             true -> {
-                                                onShowErrorSnackBar(Throwable(message = "녹화 중인 인터뷰는 Media를 추가할 수 없습니다."))
+                                                onShowErrorSnackBar(Throwable(message = context.getString(
+                                                    R.string.feature_edit_is_recording_interview_not_add_media
+                                                )))
                                             }
 
                                             else -> {
@@ -326,8 +339,8 @@ private fun EditContent(
                                     scrollState = scrollState,
                                     editUiState = editUiState,
                                     layerIcon = Icons.Filled.TextFields,
-                                    layerIconDescription = "자막 추가",
-                                    layerName = "Text",
+                                    layerIconDescription = stringResource(R.string.feature_edit_subtitle_layer_description),
+                                    layerName = stringResource(R.string.feature_edit_subtitle_layer),
                                     onLayerIconClick = { }
                                 ) {
 //                                    Box(
