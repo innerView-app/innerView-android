@@ -25,7 +25,7 @@ class NotificationHelper @Inject constructor(private val context: Context) {
     ) {
         val notificationIntent = Intent(
             Intent.ACTION_VIEW,
-            getDeepLinkOf(notificationId)
+            getDeepLinkOf("detail/$notificationId")
         )
 
         val pendingIntent: PendingIntent? = TaskStackBuilder.create(context).run {

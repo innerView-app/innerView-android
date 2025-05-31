@@ -54,7 +54,7 @@ fun NavGraphBuilder.homeNavGraph(
     }
 
     composable<Route.InnerViewDetail>(
-        deepLinks = listOf(navDeepLink<Route.InnerViewDetail>(basePath = DEEP_LINK_BASE_PATH))
+        deepLinks = listOf(navDeepLink<Route.InnerViewDetail>(basePath = "$DEEP_LINK_BASE_PATH/detail"))
     ) {
         InnerViewDetailScreen(
             padding = padding,

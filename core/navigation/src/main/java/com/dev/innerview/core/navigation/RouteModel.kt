@@ -2,11 +2,12 @@ package com.dev.innerview.core.navigation
 
 import android.net.Uri
 import kotlinx.serialization.Serializable
+import androidx.core.net.toUri
 
 const val DEEP_LINK_BASE_PATH = "iv://innerview.com"
 
-fun getDeepLinkOf(vararg path: String): Uri {
-    return Uri.parse(listOf(DEEP_LINK_BASE_PATH, *path).joinToString("/"))
+fun getDeepLinkOf(path: String): Uri {
+    return listOf(DEEP_LINK_BASE_PATH, path).joinToString("/").toUri()
 }
 
 sealed interface Route {
