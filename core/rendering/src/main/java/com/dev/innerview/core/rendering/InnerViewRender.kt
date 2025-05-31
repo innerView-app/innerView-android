@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class InnerViewRender @Inject constructor() {
 
-    private val _progressFlow = MutableStateFlow<RenderProgress>(RenderProgress.Idle)
+    private val _progressFlow = MutableStateFlow<RenderProgress>(RenderProgress.InProgress(0))
     val progressFlow: StateFlow<RenderProgress> = _progressFlow.asStateFlow()
 
     private var currentSession: FFmpegSession? = null

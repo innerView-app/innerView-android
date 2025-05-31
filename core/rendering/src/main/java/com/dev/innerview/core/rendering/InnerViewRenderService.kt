@@ -84,6 +84,15 @@ class InnerViewRenderService : Service() {
                 innerProject = getInnerProjectByIdUseCase(innerProjectId).first()
                 renderFilePath = "${innerProject.title}_${System.currentTimeMillis()}.mp4"
 
+                startForeground(
+                    FOREGROUND_ID, notificationHelper.createRenderNotification(
+                        innerProject.title,
+                        innerProjectId,
+                        0,
+                        stopPendingIntent
+                    )
+                )
+
                 innerViewRender.startRendering(
                     innerProject.innerProjectComponents,
                     filesDir.absolutePath,
@@ -92,17 +101,6 @@ class InnerViewRenderService : Service() {
                 )
                 innerViewRender.progressFlow.collectLatest { progress ->
                     when (progress) {
-                        is RenderProgress.Idle -> {
-                            startForeground(
-                                FOREGROUND_ID, notificationHelper.createRenderNotification(
-                                    innerProject.title,
-                                    innerProjectId,
-                                    0,
-                                    stopPendingIntent
-                                )
-                            )
-                        }
-
                         is RenderProgress.InProgress -> {
                             startForeground(
                                 FOREGROUND_ID, notificationHelper.createRenderNotification(
