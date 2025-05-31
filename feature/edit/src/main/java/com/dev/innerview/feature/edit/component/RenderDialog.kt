@@ -15,15 +15,15 @@ import com.dev.innerview.core.designsystem.component.InnerViewDialog
 import com.dev.innerview.core.designsystem.component.InnerViewRadioButton
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.model.InnerViewType
-import com.dev.innerview.core.model.Resolution
+import com.dev.innerview.core.model.Scale
 import com.dev.innerview.feature.edit.R
 
 @Composable
 fun RenderDialog(
     onDismissRequest: () -> Unit,
-    onConfirmRequest: () -> Unit
+    onConfirmRequest: (Scale) -> Unit
 ) {
-    var resolution by remember { mutableStateOf(Resolution.SIZE_1080P) }
+    var resolution by remember { mutableStateOf(Scale.SIZE_1080P) }
 
     InnerViewDialog(
         titleText = stringResource(R.string.feature_edit_render_dialog_title),
@@ -31,9 +31,9 @@ fun RenderDialog(
         confirmText = stringResource(R.string.feature_edit_render_confirm),
         dismissText = stringResource(R.string.feature_edit_render_dismiss),
         onDismissRequest = { onDismissRequest() },
-        onConfirmRequest = { onConfirmRequest() }
+        onConfirmRequest = { onConfirmRequest(resolution) }
     ) {
-        Resolution.entries.forEachIndexed { i, sizeOption ->
+        Scale.entries.forEachIndexed { i, sizeOption ->
             val typeText = sizeOption.text
 
             InnerViewRadioButton(

@@ -19,4 +19,10 @@ data class InterviewPiece(
 @Serializable
 data class Subtitle(
     val text: String = "",
+    val startPosition: Long = 0L,
+    val endPosition: Long = 0L,
+    val x: Float = 0f,
+    val y: Float = 0f,
+    val fontSize: Float = 0f,
+    val color: Int = 0,
 )
