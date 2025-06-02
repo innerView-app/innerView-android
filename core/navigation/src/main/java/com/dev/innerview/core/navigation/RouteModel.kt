@@ -1,8 +1,8 @@
 package com.dev.innerview.core.navigation
 
 import android.net.Uri
-import kotlinx.serialization.Serializable
 import androidx.core.net.toUri
+import kotlinx.serialization.Serializable
 
 const val DEEP_LINK_BASE_PATH = "iv://innerview.com"
 
@@ -21,7 +21,7 @@ sealed interface Route {
     data class InterviewGroup(val innerViewId: String, val interviewGroupId: Int) : Route
 
     @Serializable
-    data object Player : Route
+    data class Player(val innerProjectIds: List<Int>) : Route
 
     @Serializable
     data class Records(val innerViewId: String, val interviewGroupId: Int) : Route

@@ -30,10 +30,6 @@ fun NavController.navigateInnerViewQuestion(id: String) {
     navigate(Route.InnerViewQuestion(id))
 }
 
-fun NavController.navigatePlayer() {
-    navigate(Route.Player)
-}
-
 fun NavGraphBuilder.homeNavGraph(
     padding: PaddingValues,
     onBackClick: () -> Unit,
@@ -43,7 +39,7 @@ fun NavGraphBuilder.homeNavGraph(
     navigateToInnerViewQuestion: (String) -> Unit,
     navigateToRecord: (String, Int) -> Unit,
     navigateToInterviewGroup: (String, Int) -> Unit,
-    navigateToPlayer: () -> Unit
+    navigateToPlayer: (List<Int>) -> Unit
 ) {
     composable<MainTabRoute.Home> {
         HomeRoute(
@@ -80,6 +76,4 @@ fun NavGraphBuilder.homeNavGraph(
             onBackClick = onBackClick
         )
     }
-
-    composable<Route.Player> {}
 }
