@@ -13,11 +13,11 @@ import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.navigation.navigateEdit
 import com.dev.innerview.feature.edit.navigation.navigateEditHome
+import com.dev.innerview.feature.edit.navigation.navigatePlayer
 import com.dev.innerview.feature.home.navigation.navigateHome
 import com.dev.innerview.feature.home.navigation.navigateInnerViewDetail
 import com.dev.innerview.feature.home.navigation.navigateInnerViewQuestion
 import com.dev.innerview.feature.home.navigation.navigateInterviewGroup
-import com.dev.innerview.feature.home.navigation.navigatePlayer
 import com.dev.innerview.feature.peek.navigation.navigatePeek
 import com.dev.innerview.feature.peek.navigation.navigateProfile
 import com.dev.innerview.feature.record.navigation.navigateFilming
@@ -78,8 +78,8 @@ internal class MainNavigator(
         navController.navigateEdit(innerProjectId)
     }
 
-    fun navigatePlayer() {
-        navController.navigatePlayer()
+    fun navigatePlayer(innerProjectIds: List<Int>) {
+        navController.navigatePlayer(innerProjectIds)
     }
 
     private fun popBackStack() {

@@ -6,12 +6,12 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavOptions
 import androidx.navigation.compose.composable
 import androidx.navigation.navDeepLink
-import androidx.navigation.toRoute
 import com.dev.innerview.core.navigation.DEEP_LINK_BASE_PATH
 import com.dev.innerview.core.navigation.MainTabRoute
 import com.dev.innerview.core.navigation.Route
 import com.dev.innerview.feature.edit.EditHomeScreen
 import com.dev.innerview.feature.edit.EditScreen
+import com.dev.innerview.feature.edit.PlayerScreen
 
 fun NavController.navigateEditHome(navOptions: NavOptions) {
     navigate(MainTabRoute.EditHome, navOptions)
@@ -20,6 +20,10 @@ fun NavController.navigateEditHome(navOptions: NavOptions) {
 fun NavController.navigateEdit(innerProjectId: Int) {
     popBackStack<Route.Records>(inclusive = false)
     navigate(Route.Edit(innerProjectId))
+}
+
+fun NavController.navigatePlayer(innerProjectIds: List<Int>) {
+    navigate(Route.Player(innerProjectIds))
 }
 
 fun NavGraphBuilder.editNavGraph(
@@ -40,6 +44,13 @@ fun NavGraphBuilder.editNavGraph(
         deepLinks = listOf(navDeepLink<Route.Edit>(basePath = "$DEEP_LINK_BASE_PATH/edit"))
     ) {
         EditScreen(
+            onShowErrorSnackBar = onShowErrorSnackBar,
+            onBackClick = onBackClick
+        )
+    }
+
+    composable<Route.Player> {
+        PlayerScreen(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick
         )

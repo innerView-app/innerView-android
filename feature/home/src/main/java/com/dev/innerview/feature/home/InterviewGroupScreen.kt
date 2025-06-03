@@ -43,7 +43,7 @@ import kotlinx.collections.immutable.persistentListOf
 internal fun InterviewGroupScreen(
     padding: PaddingValues,
     onBackClick: () -> Unit,
-    navigateToPlayer: () -> Unit,
+    navigateToPlayer: (List<Int>) -> Unit,
     viewModel: InterviewGroupViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.interviewGroupUiState.collectAsStateWithLifecycle()
@@ -60,7 +60,7 @@ internal fun InterviewGroupScreen(
 private fun InterviewGroupContent(
     padding: PaddingValues,
     uiState: InterviewGroupUiState,
-    navigateToPlayer: () -> Unit,
+    navigateToPlayer: (List<Int>) -> Unit,
     onBackClick: () -> Unit,
 ) {
     Box(
@@ -93,8 +93,7 @@ private fun InterviewGroupContent(
                             .fillMaxWidth()
                             .height(80.dp)
                             .clickable {
-                                navigateToPlayer()
-                                // TODO("인터뷰 재생")
+                                navigateToPlayer(listOf(interview.innerProjectId))
                             },
                         interviewDescription = interview.question,
                         filePath = interview.thumbnailVideoPath
@@ -125,8 +124,7 @@ private fun InterviewGroupContent(
                 iconImageVector = Icons.Filled.PlayArrow,
                 text = stringResource(R.string.feature_home_interview_group_play_all),
                 onClick = {
-                    navigateToPlayer()
-                    // TODO("인터뷰 그룹 전체 재생")
+                    navigateToPlayer(uiState.interviews.map { it.innerProjectId })
                 }
             )
         }

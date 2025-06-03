@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -26,7 +25,6 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -47,6 +45,7 @@ import androidx.media3.common.Player
 import com.dev.innerview.core.designsystem.component.ImageFromUri
 import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
 import com.dev.innerview.core.designsystem.component.OutlinedText
+import com.dev.innerview.core.designsystem.component.PositionSeekBar
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
 import com.dev.innerview.feature.peek.model.MediaUiState
@@ -177,7 +176,7 @@ internal fun PeekView(
             modifier = Modifier
                 .fillMaxWidth()
                 .align(Alignment.BottomCenter)
-                .offset(y = 10.dp),
+                .padding(horizontal = Paddings.medium),
             position = currentPosition,
             duration = duration,
             onPositionChange = {
@@ -233,23 +232,6 @@ internal fun MediaInfo(
             )
         )
     }
-}
-
-@Composable
-internal fun PositionSeekBar(
-    modifier: Modifier = Modifier,
-    position: Long,
-    duration: Long,
-    onPositionChange: (Long) -> Unit,
-) {
-    Slider(
-        modifier = modifier,
-        value = position.toFloat(),
-        onValueChange = {
-            onPositionChange(it.toLong())
-        },
-        valueRange = 0F..duration.toFloat().coerceAtLeast(0F)
-    )
 }
 
 @Composable
