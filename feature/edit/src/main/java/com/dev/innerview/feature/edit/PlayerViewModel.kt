@@ -153,6 +153,14 @@ class PlayerViewModel @Inject constructor(
         player.play()
     }
 
+    fun selectRender() {
+        _playerUiState.update {
+            it.copy(
+                isRenderDialogVisible = !it.isRenderDialogVisible
+            )
+        }
+    }
+
     private fun calculateCurrentPosition(
         currentMediaItemIndex: Int,
         currentMediaPosition: Long

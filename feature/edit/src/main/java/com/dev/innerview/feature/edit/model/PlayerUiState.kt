@@ -9,6 +9,7 @@ import kotlinx.collections.immutable.persistentListOf
 data class PlayerUiState(
     val innerProjectIds: ImmutableList<Int> = persistentListOf(),
     val title: String = "",
+    val isRenderDialogVisible: Boolean = false,
     val isPlaying: Boolean = false,
     val currentMediaItemIndex: Int = 0,
     val position: Long = 0,
