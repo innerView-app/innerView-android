@@ -49,7 +49,9 @@ fun NavGraphBuilder.editNavGraph(
         )
     }
 
-    composable<Route.Player> {
+    composable<Route.Player>(
+        deepLinks = listOf(navDeepLink<Route.Player>(basePath = "$DEEP_LINK_BASE_PATH/player"))
+    ) {
         PlayerScreen(
             onShowErrorSnackBar = onShowErrorSnackBar,
             onBackClick = onBackClick

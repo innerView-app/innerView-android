@@ -56,7 +56,8 @@ class NotificationHelper @Inject constructor(private val context: Context) {
         innerProjectTitle: String,
         innerProjectId: Int,
         progress: Int,
-        stopPendingIntent: PendingIntent
+        stopPendingIntent: PendingIntent,
+        enableEdit: Boolean,
     ): Notification {
         val notificationTitle =
             context.getString(R.string.core_notification_render_title, innerProjectTitle)
@@ -66,10 +67,18 @@ class NotificationHelper @Inject constructor(private val context: Context) {
             context.getString(R.string.core_notification_render_progress, progress)
         }
 
+        val routeUri = if (enableEdit) {
+            getDeepLinkOf("edit/${innerProjectId}")
+        } else {
+            getDeepLinkOf("player?innerProjectIds=$innerProjectId")
+        }
+
         val notificationIntent = Intent(
             Intent.ACTION_VIEW,
-            getDeepLinkOf("edit/$innerProjectId")
-        )
+            routeUri
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
 
         val pendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(notificationIntent)
@@ -101,7 +110,8 @@ class NotificationHelper @Inject constructor(private val context: Context) {
     fun notifyRenderCompleteNotification(
         innerProjectTitle: String,
         innerProjectId: Int,
-        renderProgress: RenderProgress
+        renderProgress: RenderProgress,
+        enableEdit: Boolean,
     ) {
         val notificationTitle =
             context.getString(R.string.core_notification_render_complete_title, innerProjectTitle)
@@ -121,10 +131,18 @@ class NotificationHelper @Inject constructor(private val context: Context) {
             else -> ""
         }
 
+        val routeUri = if (enableEdit) {
+            getDeepLinkOf("edit/${innerProjectId}")
+        } else {
+            getDeepLinkOf("player?innerProjectIds=$innerProjectId")
+        }
+
         val notificationIntent = Intent(
             Intent.ACTION_VIEW,
-            getDeepLinkOf("edit/$innerProjectId")
-        )
+            routeUri,
+        ).apply {
+            flags = Intent.FLAG_ACTIVITY_SINGLE_TOP or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        }
 
         val pendingIntent = TaskStackBuilder.create(context).run {
             addNextIntentWithParentStack(notificationIntent)
