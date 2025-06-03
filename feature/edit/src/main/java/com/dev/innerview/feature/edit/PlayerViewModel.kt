@@ -101,7 +101,7 @@ class PlayerViewModel @Inject constructor(
 
         _playerUiState.update {
             it.copy(
-                innerProjectId = innerProjectIds.toPersistentList(),
+                innerProjectIds = innerProjectIds.toPersistentList(),
                 title = if (innerProjectIds.size == 1) {
                     firstInnerProject.title
                 } else {
