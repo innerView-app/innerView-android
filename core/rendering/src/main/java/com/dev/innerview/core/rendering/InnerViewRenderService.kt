@@ -46,11 +46,12 @@ class InnerViewRenderService : Service() {
         val action = intent?.action
         val innerProjectId = intent?.getIntExtra(INTENT_EXTRA_INNER_PROJECT_ID, -1)
         val scale = Scale.stringToScale(intent?.getStringExtra(INTENT_EXTRA_SCALE))
+        val enableEdit = intent?.getBooleanExtra(INTENT_EXTRA_ENABLE_EDIT, false) ?: false
 
         when (action) {
             INTENT_ACTION_START_RENDER -> {
                 if (innerProjectId != null && innerProjectId != -1) {
-                    renderVideo(innerProjectId, scale)
+                    renderVideo(innerProjectId, scale, enableEdit)
                 }
             }
 
@@ -65,7 +66,7 @@ class InnerViewRenderService : Service() {
         return START_NOT_STICKY
     }
 
-    private fun renderVideo(innerProjectId: Int, scale: Scale) {
+    private fun renderVideo(innerProjectId: Int, scale: Scale, enableEdit: Boolean) {
         if (renderJob != null) {
             Toast.makeText(
                 this@InnerViewRenderService,
@@ -89,7 +90,8 @@ class InnerViewRenderService : Service() {
                         innerProject.title,
                         innerProjectId,
                         0,
-                        stopPendingIntent
+                        stopPendingIntent,
+                        enableEdit
                     )
                 )
 
@@ -107,7 +109,8 @@ class InnerViewRenderService : Service() {
                                     innerProject.title,
                                     innerProjectId,
                                     progress.percentage,
-                                    stopPendingIntent
+                                    stopPendingIntent,
+                                    enableEdit
                                 )
                             )
                         }
@@ -118,7 +121,8 @@ class InnerViewRenderService : Service() {
                                     innerProject.title,
                                     innerProjectId,
                                     100,
-                                    stopPendingIntent
+                                    stopPendingIntent,
+                                    enableEdit
                                 )
                             )
 
@@ -127,7 +131,8 @@ class InnerViewRenderService : Service() {
                             notificationHelper.notifyRenderCompleteNotification(
                                 innerProject.title,
                                 innerProjectId,
-                                progress
+                                progress,
+                                enableEdit
                             )
                             this.cancel()
                         }
@@ -136,7 +141,8 @@ class InnerViewRenderService : Service() {
                             notificationHelper.notifyRenderCompleteNotification(
                                 innerProject.title,
                                 innerProjectId,
-                                progress
+                                progress,
+                                enableEdit
                             )
                             this.cancel()
                         }
@@ -145,7 +151,8 @@ class InnerViewRenderService : Service() {
                             notificationHelper.notifyRenderCompleteNotification(
                                 innerProject.title,
                                 innerProjectId,
-                                progress
+                                progress,
+                                enableEdit
                             )
                             this.cancel()
                         }
@@ -216,5 +223,6 @@ class InnerViewRenderService : Service() {
 
         const val INTENT_EXTRA_INNER_PROJECT_ID = "intentExtraInnerProjectId"
         const val INTENT_EXTRA_SCALE = "intentExtraScale"
+        const val INTENT_EXTRA_ENABLE_EDIT = "intentExtraEnableEdit"
     }
 }

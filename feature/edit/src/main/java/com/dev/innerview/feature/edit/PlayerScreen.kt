@@ -1,6 +1,7 @@
 package com.dev.innerview.feature.edit
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.res.Configuration
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
@@ -21,6 +22,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
@@ -37,20 +39,25 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.media3.common.Player
+import com.dev.innerview.core.designsystem.component.InnerViewAppBarIcon
 import com.dev.innerview.core.designsystem.component.InnerViewTopAppBar
 import com.dev.innerview.core.designsystem.component.PositionSeekBar
 import com.dev.innerview.core.designsystem.component.TopAppBarNavigationType
 import com.dev.innerview.core.designsystem.component.appBarSize
 import com.dev.innerview.core.designsystem.theme.InnerViewTheme
 import com.dev.innerview.core.designsystem.theme.Paddings
+import com.dev.innerview.core.rendering.InnerViewRenderService
 import com.dev.innerview.feature.edit.component.PlayerView
+import com.dev.innerview.feature.edit.component.RenderDialog
 import com.dev.innerview.feature.edit.model.PlayerUiState
+import kotlinx.collections.immutable.persistentListOf
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 
@@ -71,7 +78,8 @@ internal fun PlayerScreen(
         player = viewModel.player,
         playerUiState = playerUiState,
         onBackClick = onBackClick,
-        seekToPosition = viewModel::seekToPosition
+        seekToPosition = viewModel::seekToPosition,
+        selectRender = viewModel::selectRender,
     )
 }
 
@@ -81,7 +89,9 @@ internal fun PlayerContent(
     playerUiState: PlayerUiState,
     onBackClick: () -> Unit,
     seekToPosition: (Long) -> Unit,
+    selectRender: () -> Unit,
 ) {
+    val context = LocalContext.current
     var latestPlayerState: Boolean? by remember { mutableStateOf(null) }
 
     Box(
@@ -92,8 +102,33 @@ internal fun PlayerContent(
         InnerViewTopAppBar(
             title = playerUiState.title,
             navigationType = TopAppBarNavigationType.Back,
-            onNavigationClick = { onBackClick() }
+            onNavigationClick = { onBackClick() },
+            actionButtons = {
+                if (playerUiState.innerProjectIds.size == 1) {
+                    InnerViewAppBarIcon(
+                        imageVector = Icons.Filled.Download,
+                        navigationIconContentDescription = null,
+                        onClick = selectRender
+                    )
+                }
+            }
         )
+
+        if (playerUiState.isRenderDialogVisible) {
+            RenderDialog(
+                onDismissRequest = selectRender,
+                onConfirmRequest = { scale ->
+                    val serviceIntent = Intent(context, InnerViewRenderService::class.java).apply {
+                        action = InnerViewRenderService.INTENT_ACTION_START_RENDER
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_INNER_PROJECT_ID, playerUiState.innerProjectIds.first())
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_SCALE, scale.name)
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_ENABLE_EDIT, false)
+                    }
+                    context.startForegroundService(serviceIntent)
+                    selectRender()
+                }
+            )
+        }
 
         Column(
             modifier = Modifier
@@ -266,12 +301,14 @@ private fun PlayerContentPreview() {
         PlayerContent(
             player = null,
             playerUiState = PlayerUiState(
+                innerProjectIds = persistentListOf(1),
                 title = "sample title",
                 duration = 10000,
                 position = 4000
             ),
             onBackClick = {},
-            seekToPosition = {}
+            seekToPosition = {},
+            selectRender = {}
         )
     }
 }

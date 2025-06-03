@@ -196,6 +196,7 @@ private fun EditContent(
                         action = InnerViewRenderService.INTENT_ACTION_START_RENDER
                         putExtra(InnerViewRenderService.INTENT_EXTRA_INNER_PROJECT_ID, editUiState.innerProjectId)
                         putExtra(InnerViewRenderService.INTENT_EXTRA_SCALE, scale.name)
+                        putExtra(InnerViewRenderService.INTENT_EXTRA_ENABLE_EDIT, true)
                     }
                     context.startForegroundService(serviceIntent)
                     selectRender()

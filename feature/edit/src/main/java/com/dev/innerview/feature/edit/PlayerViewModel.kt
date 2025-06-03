@@ -101,7 +101,7 @@ class PlayerViewModel @Inject constructor(
 
         _playerUiState.update {
             it.copy(
-                innerProjectId = innerProjectIds.toPersistentList(),
+                innerProjectIds = innerProjectIds.toPersistentList(),
                 title = if (innerProjectIds.size == 1) {
                     firstInnerProject.title
                 } else {
@@ -151,6 +151,14 @@ class PlayerViewModel @Inject constructor(
         player.addMediaItems(mediaItems)
         player.prepare()
         player.play()
+    }
+
+    fun selectRender() {
+        _playerUiState.update {
+            it.copy(
+                isRenderDialogVisible = !it.isRenderDialogVisible
+            )
+        }
     }
 
     private fun calculateCurrentPosition(
