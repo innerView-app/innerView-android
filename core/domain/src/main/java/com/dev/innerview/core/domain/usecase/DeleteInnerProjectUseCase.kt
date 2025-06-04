@@ -11,4 +11,8 @@ class DeleteInnerProjectUseCase @Inject constructor(
         interviewGroupId: Int,
         question: String
     ) = innerViewRepository.deleteInnerProject(innerViewId, interviewGroupId, question)
+
+    suspend operator fun invoke(
+        innerProjectId: Int
+    ) = innerViewRepository.deleteInnerProject(innerProjectId)
 }

@@ -3,6 +3,7 @@ package com.dev.innerview.feature.edit
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.dev.innerview.core.domain.usecase.AddInnerProjectUseCase
+import com.dev.innerview.core.domain.usecase.DeleteInnerProjectUseCase
 import com.dev.innerview.core.domain.usecase.GetInnerProjectUseCase
 import com.dev.innerview.feature.edit.model.EditHomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,8 @@ import javax.inject.Inject
 @HiltViewModel
 class EditHomeViewModel @Inject constructor(
     getInnerProjectUseCase: GetInnerProjectUseCase,
-    private val addInnerProjectUseCase: AddInnerProjectUseCase
+    private val addInnerProjectUseCase: AddInnerProjectUseCase,
+    private val deleteInnerProjectUseCase: DeleteInnerProjectUseCase
 ) : ViewModel() {
 
     val maxInnerProjectTitleLength = 40
@@ -65,6 +67,12 @@ class EditHomeViewModel @Inject constructor(
             _editHomeUiState.update {
                 it.copy(dialogInnerProjectTitle = title)
             }
+        }
+    }
+
+    fun deleteInnerProject(innerProjectId: Int) {
+        viewModelScope.launch {
+            deleteInnerProjectUseCase(innerProjectId)
         }
     }
 }
