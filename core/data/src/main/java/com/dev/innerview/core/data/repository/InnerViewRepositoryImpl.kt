@@ -1,5 +1,6 @@
 package com.dev.innerview.core.data.repository
 
+import android.content.Context
 import com.dev.innerview.core.data.mapper.toData
 import com.dev.innerview.core.data_api.InnerViewRepository
 import com.dev.innerview.core.database.datasource.InnerViewDataSource
@@ -10,13 +11,16 @@ import com.dev.innerview.core.model.InnerViewContent
 import com.dev.innerview.core.model.InnerViewType
 import com.dev.innerview.core.model.Interview
 import com.dev.innerview.core.model.InterviewGroupContent
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import java.io.File
 import javax.inject.Inject
 
 class InnerViewRepositoryImpl @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val innerViewDataSource: InnerViewDataSource
 ) : InnerViewRepository {
 
@@ -90,7 +94,13 @@ class InnerViewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteInnerView(id: String) {
-        innerViewDataSource.deleteInnerView(id)
+        val deleteInnerProjectContent = innerViewDataSource.deleteInnerView(id)
+        deleteInnerProjectContent.forEach { jsonData ->
+            val innerProjectComponents: InnerProjectComponents = Json.decodeFromString(jsonData)
+            innerProjectComponents.media.forEach {
+                File(context.filesDir, it.filePath).delete()
+            }
+        }
     }
 
     override suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean) {
@@ -102,7 +112,14 @@ class InnerViewRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteInterviewGroup(innerViewId: String, interviewGroupId: Int) {
-        innerViewDataSource.deleteInterviewGroup(innerViewId, interviewGroupId)
+        val deleteInnerProjectContent =
+            innerViewDataSource.deleteInterviewGroup(innerViewId, interviewGroupId)
+        deleteInnerProjectContent.forEach { jsonData ->
+            val innerProjectComponents: InnerProjectComponents = Json.decodeFromString(jsonData)
+            innerProjectComponents.media.forEach {
+                File(context.filesDir, it.filePath).delete()
+            }
+        }
     }
 
     override suspend fun addQuestion(
@@ -122,7 +139,14 @@ class InnerViewRepositoryImpl @Inject constructor(
         interviewGroupId: Int,
         question: String
     ) {
-        innerViewDataSource.deleteQuestion(innerViewId, interviewGroupId, question)
+        val deleteInnerProjectContent =
+            innerViewDataSource.deleteQuestion(innerViewId, interviewGroupId, question)
+        deleteInnerProjectContent.forEach { jsonData ->
+            val innerProjectComponents: InnerProjectComponents = Json.decodeFromString(jsonData)
+            innerProjectComponents.media.forEach {
+                File(context.filesDir, it.filePath).delete()
+            }
+        }
     }
 
     override suspend fun addInnerProject(
@@ -148,7 +172,14 @@ class InnerViewRepositoryImpl @Inject constructor(
         interviewGroupId: Int,
         question: String
     ) {
-        innerViewDataSource.deleteInnerProject(innerViewId, interviewGroupId, question)
+        val deleteInnerProjectContent =
+            innerViewDataSource.deleteInnerProject(innerViewId, interviewGroupId, question)
+        deleteInnerProjectContent.forEach { jsonData ->
+            val innerProjectComponents: InnerProjectComponents = Json.decodeFromString(jsonData)
+            innerProjectComponents.media.forEach {
+                File(context.filesDir, it.filePath).delete()
+            }
+        }
     }
 
     override suspend fun deleteInnerProject(innerProjectId: Int) {

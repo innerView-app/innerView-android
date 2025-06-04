@@ -67,18 +67,23 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
-    suspend fun deleteInnerView(id: String) {
+    suspend fun deleteInnerView(id: String): List<String> {
+        val deleteInnerProjectContent = mutableListOf<String>()
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", id).find().first()
 
             innerView.interviewGroups.forEach { interviewGroup ->
                 interviewGroup.interviews.forEach { interview ->
-                    interview.innerProject?.let { delete(it) }
+                    interview.innerProject?.let {
+                        deleteInnerProjectContent.add(it.jsonData)
+                        delete(it)
+                    }
                 }
             }
 
             delete(innerView)
         }
+        return deleteInnerProjectContent
     }
 
     suspend fun addInterviewGroup(innerViewId: String, addPrevQuestions: Boolean = true) {
@@ -119,17 +124,22 @@ class InnerViewDataSource @Inject constructor(
     suspend fun deleteInterviewGroup(
         innerViewId: String,
         interviewGroupId: Int,
-    ) {
+    ): List<String> {
+        val deleteInnerProjectContent = mutableListOf<String>()
         realm.write {
             val interviewGroup = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
                 .interviewGroups.first { it.id == interviewGroupId }
 
             interviewGroup.interviews.forEach { interview ->
-                interview.innerProject?.let { delete(it) }
+                interview.innerProject?.let {
+                    deleteInnerProjectContent.add(it.jsonData)
+                    delete(it)
+                }
             }
 
             delete(interviewGroup)
         }
+        return deleteInnerProjectContent
     }
 
     suspend fun addQuestion(
@@ -175,7 +185,8 @@ class InnerViewDataSource @Inject constructor(
         innerViewId: String,
         interviewGroupId: Int,
         question: String
-    ) {
+    ): List<String> {
+        val deleteInnerProjectContent = mutableListOf<String>()
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
@@ -183,10 +194,14 @@ class InnerViewDataSource @Inject constructor(
                 .interviews.first { it.question == question }
 
             if (!interview.isRequired) {
-                interview.innerProject?.let { delete(it) }
+                interview.innerProject?.let {
+                    deleteInnerProjectContent.add(it.jsonData)
+                    delete(it)
+                }
                 delete(interview)
             }
         }
+        return deleteInnerProjectContent
     }
 
     suspend fun addInnerProject(
@@ -243,15 +258,20 @@ class InnerViewDataSource @Inject constructor(
         innerViewId: String,
         interviewGroupId: Int,
         question: String,
-    ) {
+    ): List<String> {
+        val deleteInnerProjectContent = mutableListOf<String>()
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
             val innerProject = innerView.interviewGroups.first { it.id == interviewGroupId }
                 .interviews.first { it.question == question }.innerProject
 
-            innerProject?.let { delete(it) }
+            innerProject?.let {
+                deleteInnerProjectContent.add(it.jsonData)
+                delete(it)
+            }
         }
+        return deleteInnerProjectContent
     }
 
     suspend fun deleteInnerProject(innerProjectId: Int) {
