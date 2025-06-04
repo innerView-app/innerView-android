@@ -108,7 +108,7 @@ class InnerViewDataSource @Inject constructor(
         }
     }
 
-    suspend fun changeInnerViewNotification(innerViewId:String, isOn:Boolean) {
+    suspend fun changeInnerViewNotification(innerViewId: String, isOn: Boolean) {
         realm.write {
             val innerView = query<InnerViewSchema>("_id == $0", innerViewId).find().first()
 
@@ -250,6 +250,14 @@ class InnerViewDataSource @Inject constructor(
             val innerProject = innerView.interviewGroups.first { it.id == interviewGroupId }
                 .interviews.first { it.question == question }.innerProject
 
+            innerProject?.let { delete(it) }
+        }
+    }
+
+    suspend fun deleteInnerProject(innerProjectId: Int) {
+        realm.write {
+            val innerProject =
+                query<InnerProjectSchema>("_id == $0", innerProjectId).find().firstOrNull()
             innerProject?.let { delete(it) }
         }
     }

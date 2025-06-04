@@ -78,6 +78,10 @@ interface InnerViewRepository {
         question: String,
     )
 
+    suspend fun deleteInnerProject(
+        innerProjectId: Int
+    )
+
     suspend fun completeInterviewGroup(
         innerViewId: String,
         interviewGroupId: Int

@@ -151,6 +151,10 @@ class InnerViewRepositoryImpl @Inject constructor(
         innerViewDataSource.deleteInnerProject(innerViewId, interviewGroupId, question)
     }
 
+    override suspend fun deleteInnerProject(innerProjectId: Int) {
+        innerViewDataSource.deleteInnerProject(innerProjectId)
+    }
+
     override suspend fun completeInterviewGroup(innerViewId: String, interviewGroupId: Int) {
         innerViewDataSource.completeInterviewGroup(innerViewId, interviewGroupId)
     }
